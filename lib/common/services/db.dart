@@ -1,4 +1,5 @@
 import 'package:dishful/common/domain/recipe.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -9,7 +10,6 @@ class BoxName {
   static const recipeIngredient = '${_base}_recipe_ingredient';
   static const recipeStep = '${_base}_recipe_step';
   static const recipeReview = '${_base}_recipe_review';
-  static const recipeDuration = '${_base}_recipe_duration';
 }
 
 Future<void> setUpDb() async {
@@ -21,6 +21,8 @@ void closeDb() async {
 }
 
 typedef E FromMapFunction<E extends DataClass>(Map<String, dynamic> map);
+typedef Widget DbListener<E extends DataClass>(
+    BuildContext context, List<E> data);
 
 abstract class DataClass<E> {
   String get id;
@@ -42,37 +44,42 @@ class Client<T extends DataClass> {
   }
 
   List<T> getAll() {
-    assert(box != null);
-    var data = box?.values.map(fromMap).toList() ?? [];
+    var data = box!.values.map(fromMap).toList();
     return data;
   }
 
   T? get(String id) {
-    assert(box != null);
-    var dataAsMap = box?.get(id);
+    var dataAsMap = box!.get(id);
     if (dataAsMap == null) return null;
     T data = fromMap(dataAsMap);
     return data;
   }
 
   void post(T data) {
-    assert(box != null);
     var dataAsMap = data.toMap();
-    box?.put(data.id, dataAsMap);
+    box!.put(data.id, dataAsMap);
   }
 
   T put(String id, Map<String, dynamic> overrides) {
-    assert(box != null);
-    var oldDataAsMap = box?.get(id);
+    var oldDataAsMap = box!.get(id);
     var newDataAsMap = {...oldDataAsMap ?? {}, ...overrides};
-    box?.put(id, newDataAsMap);
+    box!.put(id, newDataAsMap);
     var newData = fromMap(newDataAsMap);
     return newData;
   }
 
   void delete(String id) {
-    assert(box != null);
-    box?.delete(id);
+    box!.delete(id);
+  }
+
+  Widget listener(DbListener<T> callback) {
+    return ValueListenableBuilder(
+      valueListenable: box!.listenable(),
+      builder: (BuildContext context, Box<Map<String, dynamic>> box, _) {
+        List<T> data = getAll();
+        return callback(context, data);
+      },
+    );
   }
 }
 
@@ -104,8 +111,8 @@ class Db {
         BoxName.recipeReview,
         RecipeReview.fromMap,
       );
-  static Client<RecipeDuration> get recipeDuration => _build(
-        BoxName.recipeDuration,
-        RecipeDuration.fromMap,
-      );
+}
+
+void main() {
+  Db.recipe.listener((context, data) => Container());
 }

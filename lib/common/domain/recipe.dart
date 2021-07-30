@@ -20,20 +20,10 @@ class Recipe extends DataClass {
   }
 }
 
-class RecipeDuration extends DataClass {
-  late String id;
-  late String recipeId;
-  late Duration total;
-  Duration? cook;
-  Duration? prep;
-
-  Map<String, dynamic> toMap() {
-    return {};
-  }
-
-  static RecipeDuration fromMap(Map<String, dynamic> map) {
-    throw UnimplementedError();
-  }
+class RecipeDuration {
+  late Duration cook;
+  late Duration prep;
+  Duration get total => cook + prep;
 }
 
 class RecipeIteration extends DataClass {
