@@ -1,13 +1,13 @@
-import 'package:dishful/common/services/db.dart';
-import 'package:dishful/common/services/route.dart';
+import 'package:dishful/common/services/db.service.dart';
+import 'package:dishful/common/services/route.service.dart';
+import 'package:dishful/theme/theme_data.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:dishful/common/theme/theme_data.dart';
 
 void main() async {
   setUpRoutes();
-  await setUpDb();
+  await setUpHiveDb();
   runApp(
     ProviderScope(
       child: Dishful(),

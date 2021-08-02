@@ -9,7 +9,7 @@ class RoutePath {
   static const recipe = '/recipes/:id';
 }
 
-class RouteHandler {
+class _RouteHandler {
   static final home = Handler(handlerFunc: (context, params) {
     return Home();
   });
@@ -24,8 +24,16 @@ class RouteHandler {
 }
 
 void setUpRoutes() {
-  FluroRouter.appRouter.define(RoutePath.home, handler: RouteHandler.home);
-  FluroRouter.appRouter
-      .define(RoutePath.recipes, handler: RouteHandler.recipes);
-  FluroRouter.appRouter.define(RoutePath.recipe, handler: RouteHandler.recipe);
+  FluroRouter.appRouter.define(
+    RoutePath.home,
+    handler: _RouteHandler.home,
+  );
+  FluroRouter.appRouter.define(
+    RoutePath.recipes,
+    handler: _RouteHandler.recipes,
+  );
+  FluroRouter.appRouter.define(
+    RoutePath.recipe,
+    handler: _RouteHandler.recipe,
+  );
 }

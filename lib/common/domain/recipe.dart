@@ -1,6 +1,6 @@
-import 'package:dishful/common/services/db.dart';
+import 'package:dishful/common/services/db.service.dart';
 
-class Recipe extends DataClass {
+class Recipe extends Serializable {
   late String id;
   late String name;
   int? serves;
@@ -26,7 +26,7 @@ class RecipeDuration {
   Duration get total => cook + prep;
 }
 
-class RecipeIteration extends DataClass {
+class RecipeIteration extends Serializable {
   late String id;
   late String recipeId;
   late String name;
@@ -44,7 +44,7 @@ class RecipeIteration extends DataClass {
   }
 }
 
-class RecipeIngredient extends DataClass {
+class RecipeIngredient extends Serializable {
   late String id;
   late String recipeId;
   late String name;
@@ -62,7 +62,7 @@ class RecipeIngredient extends DataClass {
   }
 }
 
-class RecipeStep extends DataClass {
+class RecipeStep extends Serializable {
   late String id;
   late String recipeId;
   late int position;
@@ -88,7 +88,7 @@ class RecipeIngredientQuantity {
 
 enum RecipeIngredientUnit { l, ml, kg, g, tsp, tbsp, cup, ounce }
 
-class RecipeReview extends DataClass {
+class RecipeReview extends Serializable {
   late String id;
   late String parentId;
   late int rating;
