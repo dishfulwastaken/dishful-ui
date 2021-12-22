@@ -1,5 +1,4 @@
 import 'package:dishful/common/services/route.service.dart';
-import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,7 +15,7 @@ class Home extends ConsumerWidget {
         child: TextButton(
           child: Text(value),
           onPressed: () {
-            FluroRouter.appRouter.navigateTo(context, RoutePath.recipes);
+            AppRouter.goTo(context, RoutePath.recipes);
           },
         ),
       ),

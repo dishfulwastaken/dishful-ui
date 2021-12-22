@@ -3,7 +3,11 @@ import 'package:dishful/common/services/db.service.dart';
 class Recipe extends Serializable {
   late String id;
   late String name;
+  late String description;
+  String? inspiration;
   int? serves;
+  int? spiceLevel;
+  List<RecipeDiet>? diets;
   late RecipeDuration duration;
   late RecipeStatus status;
   late List<String> iterationIds;
@@ -18,6 +22,48 @@ class Recipe extends Serializable {
   static Recipe fromMap(Map<String, dynamic> map) {
     throw UnimplementedError();
   }
+
+  Recipe operator +(RecipeDiff diff) {
+    var recipe = toMap();
+
+    for (MapEntry<String, dynamic> entry in diff.entries) {
+      if (recipe.containsKey(entry.key)) {
+        try {
+          // If a + operator is defined, the diff will use it.
+          recipe.update(entry.key, (value) => value + entry.value);
+        } catch (e) {
+          // Else, the diff will override the value in [recipe].
+          recipe.update(entry.key, (value) => entry.value);
+        }
+      } else {
+        recipe.putIfAbsent(entry.key, () => entry.value);
+      }
+    }
+
+    return Recipe.fromMap(recipe);
+  }
+
+  RecipeDiff operator -(Recipe other) {
+    var recipe = toMap();
+    var diff = Map<String, dynamic>();
+
+    for (MapEntry<String, dynamic> entry in other.toMap().entries) {
+      var containsKey = recipe.containsKey(entry.key);
+      var sameValue = recipe[entry.key] == entry.value;
+
+      if (containsKey && !sameValue) {
+        try {
+          // If a - operator is defined, the diff will use it.
+          diff.putIfAbsent(entry.key, () => recipe[entry.key] - entry.value);
+        } catch (e) {
+          // Else, the diff will take the value in [other].
+          diff.putIfAbsent(entry.key, () => entry.value);
+        }
+      }
+    }
+
+    return diff;
+  }
 }
 
 class RecipeDuration {
@@ -31,8 +77,7 @@ class RecipeIteration extends Serializable {
   late String recipeId;
   late String name;
 
-  /// TODO: only store difference with recipe.
-  late dynamic diff;
+  late RecipeDiff diff;
   String? reviewId;
 
   Map<String, dynamic> toMap() {
@@ -43,6 +88,8 @@ class RecipeIteration extends Serializable {
     throw UnimplementedError();
   }
 }
+
+typedef RecipeDiff = Map<String, dynamic>;
 
 class RecipeIngredient extends Serializable {
   late String id;
@@ -79,7 +126,8 @@ class RecipeStep extends Serializable {
   }
 }
 
-enum RecipeStatus { perfected, inDevelopment, notStarted }
+enum RecipeStatus { perfected, iterating, dropped }
+enum RecipeDiet { vegetarian, vegan, gluttenFree }
 
 class RecipeIngredientQuantity {
   late RecipeIngredientUnit unit;

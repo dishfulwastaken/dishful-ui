@@ -1,12 +1,12 @@
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/services/route.service.dart';
 import 'package:dishful/theme/theme_data.dart';
-import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
-  setUpRoutes();
+  AppRouter.setUp();
+  // TODO: decouple from hive, similar to router
   await setUpHiveDb();
   runApp(
     ProviderScope(
@@ -21,7 +21,7 @@ class Dishful extends StatelessWidget {
     return MaterialApp(
       title: 'Dishful',
       theme: themeData,
-      onGenerateRoute: FluroRouter.appRouter.generator,
+      onGenerateRoute: AppRouter.onGenerateRoute,
     );
   }
 }
