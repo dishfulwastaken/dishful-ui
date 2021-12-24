@@ -9,16 +9,8 @@ class _HiveBoxName {
   static const recipeReview = '${_base}_recipe_review';
 }
 
-Future<void> setUpHiveDb() async {
-  await Hive.initFlutter();
-}
-
-void closeHiveDb() async {
-  await Hive.close();
-}
-
 class HiveClient<T extends Serializable> extends Client<T> {
-  Box<Map<String, dynamic>>? box;
+  Box<Map>? box;
   late FromMapFunction<T> fromMap;
 
   Future<void> init({
@@ -49,7 +41,7 @@ class HiveClient<T extends Serializable> extends Client<T> {
     box!.put(data.id, dataAsMap);
   }
 
-  Future<T> update(String id, Map<String, dynamic> overrides) async {
+  Future<T> update(String id, Map overrides) async {
     assert(box != null, 'HiveClient.init must be called first!');
     final oldDataAsMap = box!.get(id);
     final newDataAsMap = {...oldDataAsMap ?? {}, ...overrides};
@@ -62,41 +54,83 @@ class HiveClient<T extends Serializable> extends Client<T> {
     box!.delete(id);
   }
 
-  Stream<T> watch({String? id}) {
+  Stream<T?> watch({String? id}) {
     assert(box != null, 'HiveClient.init must be called first!');
     final rawStream = box!.watch(key: id);
-    return rawStream.asyncMap<T>((event) {
-      return fromMap(event.value);
-    });
+    final serializedStream = rawStream.map<T?>(
+      (event) => event.deleted ? null : fromMap(event.value),
+    );
+    return serializedStream;
   }
 }
 
 class HiveDb extends Db {
-  HiveClient<T> _build<T extends Serializable>(
+  Future<HiveClient<T>> _buildClient<T extends Serializable>(
     String boxName,
     FromMapFunction<T> fromMap,
-  ) {
-    return HiveClient<T>()..init(boxName: boxName, fromMap: fromMap);
+  ) async {
+    final client = HiveClient<T>();
+    await client.init(boxName: boxName, fromMap: fromMap);
+    return client;
   }
 
-  HiveClient<Recipe> get recipe => _build(
-        _HiveBoxName.recipe,
-        Recipe.fromMap,
-      );
-  HiveClient<RecipeIteration> get recipeIteration => _build(
-        _HiveBoxName.recipeIteration,
-        RecipeIteration.fromMap,
-      );
-  HiveClient<RecipeIngredient> get recipeIngredient => _build(
-        _HiveBoxName.recipeIngredient,
-        RecipeIngredient.fromMap,
-      );
-  HiveClient<RecipeStep> get recipeStep => _build(
-        _HiveBoxName.recipeStep,
-        RecipeStep.fromMap,
-      );
-  HiveClient<RecipeReview> get recipeReview => _build(
-        _HiveBoxName.recipeReview,
-        RecipeReview.fromMap,
-      );
+  HiveClient<Recipe>? _recipe;
+  HiveClient<RecipeIteration>? _recipeIteration;
+  HiveClient<RecipeIngredient>? _recipeIngredient;
+  HiveClient<RecipeStep>? _recipeStep;
+  HiveClient<RecipeReview>? _recipeReview;
+
+  Future<void> init() async {
+    await Hive.initFlutter();
+
+    _recipe = await _buildClient(
+      _HiveBoxName.recipe,
+      Recipe.fromMap,
+    );
+    _recipeIteration = await _buildClient(
+      _HiveBoxName.recipeIteration,
+      RecipeIteration.fromMap,
+    );
+    _recipeIngredient = await _buildClient(
+      _HiveBoxName.recipeIngredient,
+      RecipeIngredient.fromMap,
+    );
+    _recipeStep = await _buildClient(
+      _HiveBoxName.recipeStep,
+      RecipeStep.fromMap,
+    );
+    _recipeReview = await _buildClient(
+      _HiveBoxName.recipeReview,
+      RecipeReview.fromMap,
+    );
+  }
+
+  Future<void> close() async {
+    await Hive.close();
+  }
+
+  HiveClient<Recipe> get recipe {
+    assert(_recipe != null, 'HiveDb.init must be called first!');
+    return _recipe!;
+  }
+
+  HiveClient<RecipeIteration> get recipeIteration {
+    assert(_recipeIteration != null, 'HiveDb.init must be called first!');
+    return _recipeIteration!;
+  }
+
+  HiveClient<RecipeIngredient> get recipeIngredient {
+    assert(_recipeIngredient != null, 'HiveDb.init must be called first!');
+    return _recipeIngredient!;
+  }
+
+  HiveClient<RecipeStep> get recipeStep {
+    assert(_recipeStep != null, 'HiveDb.init must be called first!');
+    return _recipeStep!;
+  }
+
+  HiveClient<RecipeReview> get recipeReview {
+    assert(_recipeReview != null, 'HiveDb.init must be called first!');
+    return _recipeReview!;
+  }
 }

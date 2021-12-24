@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
-  AppRouter.setUp();
-  // TODO: decouple from hive, similar to router
-  await setUpHiveDb();
+  RouteService.setUp();
+  await DbService.init();
   runApp(
     ProviderScope(
       child: Dishful(),
     ),
   );
+  // TODO: await DbService.close() on app shutdown
 }
 
 class Dishful extends StatelessWidget {
@@ -21,7 +21,7 @@ class Dishful extends StatelessWidget {
     return MaterialApp(
       title: 'Dishful',
       theme: themeData,
-      onGenerateRoute: AppRouter.onGenerateRoute,
+      onGenerateRoute: RouteService.onGenerateRoute,
     );
   }
 }

@@ -24,7 +24,7 @@ class _RouteHandler {
   });
 }
 
-class AppRouter {
+class RouteService {
   static void goTo(BuildContext context, String destination) {
     FluroRouter.appRouter.navigateTo(context, destination);
   }

@@ -29,7 +29,7 @@ class MockClient<T extends Serializable> extends Client<T> {
     return Future.delayed(mockDelay, () => data);
   }
 
-  Future<T> update(String id, Map<String, dynamic> overrides) {
+  Future<T> update(String id, Map overrides) {
     final newData = db.update(id, (oldData) {
       final newDataAsMap = {...oldData.toMap(), ...overrides};
       return fromMap(newDataAsMap);
@@ -51,6 +51,9 @@ class MockDb extends Db {
   ) {
     return MockClient<T>()..init(fromMap: fromMap);
   }
+
+  Future<void> init() async {}
+  Future<void> close() async {}
 
   MockClient<Recipe> get recipe => _build(
         Recipe.fromMap,

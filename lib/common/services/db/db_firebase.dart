@@ -17,7 +17,7 @@ class FirebaseClient<T extends Serializable> extends Client<T> {
     throw UnimplementedError();
   }
 
-  Future<T> update(String id, Map<String, dynamic> overrides) {
+  Future<T> update(String id, Map overrides) {
     throw UnimplementedError();
   }
 
@@ -27,6 +27,8 @@ class FirebaseClient<T extends Serializable> extends Client<T> {
 }
 
 class FirebaseDb extends Db {
+  Future<void> init() async {}
+  Future<void> close() async {}
   Client<Recipe> get recipe => throw UnimplementedError();
   Client<RecipeIngredient> get recipeIngredient => throw UnimplementedError();
   Client<RecipeIteration> get recipeIteration => throw UnimplementedError();

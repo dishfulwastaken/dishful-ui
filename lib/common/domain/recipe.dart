@@ -1,3 +1,4 @@
+import 'package:dishful/common/data/durations.dart';
 import 'package:dishful/common/services/db.service.dart';
 
 class Recipe extends Serializable {
@@ -8,25 +9,73 @@ class Recipe extends Serializable {
   int? serves;
   int? spiceLevel;
   List<RecipeDiet>? diets;
-  late RecipeDuration duration;
+  late Duration cookTime;
+  late Duration prepTime;
   late RecipeStatus status;
   late List<String> iterationIds;
   late List<String> ingredientIds;
   late List<String> stepIds;
   String? reviewId;
 
-  Map<String, dynamic> toMap() {
-    return {};
+  Recipe({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.inspiration,
+    required this.serves,
+    required this.spiceLevel,
+    required this.diets,
+    required this.cookTime,
+    required this.prepTime,
+    required this.status,
+    required this.iterationIds,
+    required this.ingredientIds,
+    required this.stepIds,
+    required this.reviewId,
+  });
+
+  Map toMap() {
+    return {
+      "id": id,
+      "name": name,
+      "description": description,
+      "inspiration": inspiration,
+      "serves": serves,
+      "spiceLevel": spiceLevel,
+      "diets": diets?.map((diet) => diet.toString()),
+      "cookTime": cookTime.toString(),
+      "prepTime": prepTime.toString(),
+      "status": status.toString(),
+      "iterationIds": iterationIds,
+      "ingredientIds": ingredientIds,
+      "stepIds": stepIds,
+      "reviewId": reviewId,
+    };
   }
 
-  static Recipe fromMap(Map<String, dynamic> map) {
-    throw UnimplementedError();
+  static Recipe fromMap(Map map) {
+    return Recipe(
+      id: map["id"],
+      name: map["name"],
+      description: map["description"],
+      inspiration: map["inspiration"],
+      serves: map["serves"],
+      spiceLevel: map["spiceLevel"],
+      diets: map["diets"]?.map(parseRecipeDiet),
+      cookTime: parseDuration(map["cookTime"]),
+      prepTime: parseDuration(map["prepTime"]),
+      status: parseRecipeStatus(map["status"]),
+      iterationIds: map["iterationIds"],
+      ingredientIds: map["ingredientIds"],
+      stepIds: map["stepIds"],
+      reviewId: map["reviewId"],
+    );
   }
 
   Recipe operator +(RecipeDiff diff) {
     var recipe = toMap();
 
-    for (MapEntry<String, dynamic> entry in diff.entries) {
+    for (MapEntry entry in diff.entries) {
       if (recipe.containsKey(entry.key)) {
         try {
           // If a + operator is defined, the diff will use it.
@@ -45,9 +94,9 @@ class Recipe extends Serializable {
 
   RecipeDiff operator -(Recipe other) {
     var recipe = toMap();
-    var diff = Map<String, dynamic>();
+    var diff = Map();
 
-    for (MapEntry<String, dynamic> entry in other.toMap().entries) {
+    for (MapEntry entry in other.toMap().entries) {
       var containsKey = recipe.containsKey(entry.key);
       var sameValue = recipe[entry.key] == entry.value;
 
@@ -64,12 +113,8 @@ class Recipe extends Serializable {
 
     return diff;
   }
-}
 
-class RecipeDuration {
-  late Duration cook;
-  late Duration prep;
-  Duration get total => cook + prep;
+  Duration get totalTime => cookTime + prepTime;
 }
 
 class RecipeIteration extends Serializable {
@@ -80,16 +125,16 @@ class RecipeIteration extends Serializable {
   late RecipeDiff diff;
   String? reviewId;
 
-  Map<String, dynamic> toMap() {
+  Map toMap() {
     return {};
   }
 
-  static RecipeIteration fromMap(Map<String, dynamic> map) {
+  static RecipeIteration fromMap(Map map) {
     throw UnimplementedError();
   }
 }
 
-typedef RecipeDiff = Map<String, dynamic>;
+typedef RecipeDiff = Map;
 
 class RecipeIngredient extends Serializable {
   late String id;
@@ -100,11 +145,11 @@ class RecipeIngredient extends Serializable {
   /// Each substitute may require multiple ingredients to be replaced.
   List<List<RecipeIngredientQuantity>>? substitutes;
 
-  Map<String, dynamic> toMap() {
+  Map toMap() {
     return {};
   }
 
-  static RecipeIngredient fromMap(Map<String, dynamic> map) {
+  static RecipeIngredient fromMap(Map map) {
     throw UnimplementedError();
   }
 }
@@ -117,17 +162,25 @@ class RecipeStep extends Serializable {
   String? description;
   Duration? timer;
 
-  Map<String, dynamic> toMap() {
+  Map toMap() {
     return {};
   }
 
-  static RecipeStep fromMap(Map<String, dynamic> map) {
+  static RecipeStep fromMap(Map map) {
     throw UnimplementedError();
   }
 }
 
 enum RecipeStatus { perfected, iterating, dropped }
-enum RecipeDiet { vegetarian, vegan, gluttenFree }
+RecipeStatus parseRecipeStatus(String s) => RecipeStatus.values.firstWhere(
+      (e) => e.toString() == s,
+      orElse: () => RecipeStatus.iterating,
+    );
+enum RecipeDiet { none, vegetarian, vegan, gluttenFree }
+RecipeDiet parseRecipeDiet(String s) => RecipeDiet.values.firstWhere(
+      (e) => e.toString() == s,
+      orElse: () => RecipeDiet.none,
+    );
 
 class RecipeIngredientQuantity {
   late RecipeIngredientUnit unit;
@@ -135,6 +188,11 @@ class RecipeIngredientQuantity {
 }
 
 enum RecipeIngredientUnit { l, ml, kg, g, tsp, tbsp, cup, ounce }
+RecipeIngredientUnit parseRecipeIngredientUnit(String s) =>
+    RecipeIngredientUnit.values.firstWhere(
+      (e) => e.toString() == s,
+      orElse: () => RecipeIngredientUnit.g,
+    );
 
 class RecipeReview extends Serializable {
   late String id;
@@ -142,11 +200,11 @@ class RecipeReview extends Serializable {
   late int rating;
   String? review;
 
-  Map<String, dynamic> toMap() {
+  Map toMap() {
     return {};
   }
 
-  static RecipeReview fromMap(Map<String, dynamic> map) {
+  static RecipeReview fromMap(Map map) {
     throw UnimplementedError();
   }
 }

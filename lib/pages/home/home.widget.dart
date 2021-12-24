@@ -15,7 +15,7 @@ class Home extends ConsumerWidget {
         child: TextButton(
           child: Text(value),
           onPressed: () {
-            AppRouter.goTo(context, RoutePath.recipes);
+            RouteService.goTo(context, RoutePath.recipes);
           },
         ),
       ),
