@@ -17,6 +17,10 @@ class Recipe extends Serializable {
   late List<String> stepIds;
   String? reviewId;
 
+  // TODO: this
+  // DateTime createdAt;
+  // DateTime? updatedAt;
+
   Recipe({
     required this.id,
     required this.name,
@@ -124,6 +128,9 @@ class RecipeIteration extends Serializable {
 
   late RecipeDiff diff;
   String? reviewId;
+
+  // TODO: this
+  // DateTime createdAt;
 
   Map toMap() {
     return {};

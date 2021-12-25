@@ -11,10 +11,13 @@ class RecipesCard extends StatelessWidget {
     return Card(
       child: Column(
         children: [
-          Text(_recipe.name),
+          Text(
+            _recipe.name,
+            textScaleFactor: 1.25,
+          ),
+          Text("ID: ${_recipe.id}"),
           Text("Serves: ${_recipe.serves}"),
-          Text(_recipe.description),
-          Text(_recipe.status.toString()),
+          Text("Spice Level: ${_recipe.spiceLevel}"),
         ],
       ),
     );
