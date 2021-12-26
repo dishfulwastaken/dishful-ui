@@ -4,29 +4,85 @@ import 'package:dishful/pages/home/home.widget.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/widgets.dart';
 
-class RoutePath {
-  static const home = '/';
-  static const recipes = '/recipes';
-  static const recipe = '/recipes/:id';
+typedef _RouteHandler<A> = Widget? Function(
+  BuildContext?,
+  Map<String, List<String>>,
+  Map<String, A>?,
+);
+
+class _AppRoute<A> {
+  final _AppRoute? parent;
+  final String path;
+  final _RouteHandler<A> handlerFunc;
+
+  _AppRoute({
+    this.parent,
+    required this.path,
+    required this.handlerFunc,
+  });
+
+  String get fullPath {
+    final isParentHome = parent?.parent == null;
+    final prefix = isParentHome ? '/' : parent!.fullPath + '/';
+
+    return prefix + path;
+  }
+
+  Handler get handler {
+    return Handler(handlerFunc: (context, params) {
+      final arguments = context?.settings?.arguments as Map<String, A>?;
+
+      return handlerFunc(context, params, arguments);
+    });
+  }
 }
 
-class _RouteHandler {
-  static final home = Handler(handlerFunc: (context, params) {
+final _home = _AppRoute(
+  path: "",
+  handlerFunc: (context, params, args) {
     return Home();
-  });
-  static final recipes = Handler(handlerFunc: (context, params) {
+  },
+);
+
+final _recipes = _AppRoute(
+  parent: _home,
+  path: "recipes",
+  handlerFunc: (context, params, args) {
     return Recipes();
-  });
-  static final recipe = Handler(handlerFunc: (context, params) {
-    /// TODO: get strong typing on params.
-    final id = params['id']?.first ?? '';
+  },
+);
+
+final _recipe = _AppRoute(
+  parent: _recipes,
+  path: ":recipeId",
+  handlerFunc: (context, params, args) {
+    final id = params["recipeId"]!.first;
     return Recipe(id);
-  });
-}
+  },
+);
+
+List<_AppRoute> appRoutes = [_home, _recipes, _recipe];
 
 class RouteService {
-  static void goTo(BuildContext context, String destination) {
-    FluroRouter.appRouter.navigateTo(context, destination);
+  static void goToRecipes(BuildContext context) {
+    _goTo(context, _recipes.fullPath);
+  }
+
+  static void goToRecipe(BuildContext context, String recipeId) {
+    final destination = _recipe.fullPath.replaceAll(_recipe.path, recipeId);
+    _goTo(context, destination);
+  }
+
+  static void _goTo(
+    BuildContext context,
+    String destination, {
+    Map<String, dynamic>? arguments,
+  }) {
+    FluroRouter.appRouter.navigateTo(
+      context,
+      destination,
+      routeSettings: RouteSettings(arguments: arguments),
+    );
   }
 
   static Route<dynamic>? onGenerateRoute(RouteSettings routeSettings) {
@@ -34,17 +90,11 @@ class RouteService {
   }
 
   static void setUp() {
-    FluroRouter.appRouter.define(
-      RoutePath.home,
-      handler: _RouteHandler.home,
-    );
-    FluroRouter.appRouter.define(
-      RoutePath.recipes,
-      handler: _RouteHandler.recipes,
-    );
-    FluroRouter.appRouter.define(
-      RoutePath.recipe,
-      handler: _RouteHandler.recipe,
-    );
+    for (_AppRoute appRoute in appRoutes) {
+      FluroRouter.appRouter.define(
+        appRoute.fullPath,
+        handler: appRoute.handler,
+      );
+    }
   }
 }

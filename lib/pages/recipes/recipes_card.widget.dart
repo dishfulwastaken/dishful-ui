@@ -1,4 +1,5 @@
 import 'package:dishful/common/domain/recipe.dart';
+import 'package:dishful/common/services/route.service.dart';
 import 'package:flutter/material.dart';
 
 class RecipesCard extends StatelessWidget {
@@ -9,16 +10,21 @@ class RecipesCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Column(
-        children: [
-          Text(
-            _recipe.name,
-            textScaleFactor: 1.25,
-          ),
-          Text("ID: ${_recipe.id}"),
-          Text("Serves: ${_recipe.serves}"),
-          Text("Spice Level: ${_recipe.spiceLevel}"),
-        ],
+      child: InkWell(
+        onTap: () {
+          RouteService.goToRecipe(context, _recipe.id);
+        },
+        child: Column(
+          children: [
+            Text(
+              _recipe.name,
+              textScaleFactor: 1.25,
+            ),
+            Text("ID: ${_recipe.id}"),
+            Text("Serves: ${_recipe.serves}"),
+            Text("Spice Level: ${_recipe.spiceLevel}"),
+          ],
+        ),
       ),
     );
   }
