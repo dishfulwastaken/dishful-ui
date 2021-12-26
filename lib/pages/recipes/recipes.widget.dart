@@ -1,7 +1,4 @@
-import 'dart:math';
-
 import 'package:dishful/common/data/providers.dart';
-import 'package:dishful/common/domain/recipe.dart';
 import 'package:dishful/common/test.dart';
 import 'package:dishful/common/widgets/async_loading.widget.dart';
 import 'package:dishful/pages/recipes/recipes_card.widget.dart';
@@ -20,7 +17,7 @@ class Recipes extends ConsumerWidget {
       appBar: AppBar(title: const Text('Recipes')),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          await localDb.recipe.create(getRandomRecipe);
+          await localDb.recipe.create(randomRecipe);
         },
         child: const Icon(Icons.plus_one_rounded),
       ),

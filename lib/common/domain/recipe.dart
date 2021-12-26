@@ -46,7 +46,7 @@ class Recipe extends Serializable {
       "inspiration": inspiration,
       "serves": serves,
       "spiceLevel": spiceLevel,
-      "diets": diets?.map((diet) => diet.toString()),
+      "diets": diets?.map((diet) => diet.toString()).toList(),
       "cookTime": cookTime.toString(),
       "prepTime": prepTime.toString(),
       "status": status.toString(),
@@ -65,7 +65,7 @@ class Recipe extends Serializable {
       inspiration: map["inspiration"],
       serves: map["serves"],
       spiceLevel: map["spiceLevel"],
-      diets: map["diets"]?.map(parseRecipeDiet),
+      diets: (map["diets"] as List<String>?)?.map(parseRecipeDiet).toList(),
       cookTime: parseDuration(map["cookTime"]),
       prepTime: parseDuration(map["prepTime"]),
       status: parseRecipeStatus(map["status"]),
@@ -183,6 +183,7 @@ RecipeStatus parseRecipeStatus(String s) => RecipeStatus.values.firstWhere(
       (e) => e.toString() == s,
       orElse: () => RecipeStatus.iterating,
     );
+
 enum RecipeDiet { none, vegetarian, vegan, gluttenFree }
 RecipeDiet parseRecipeDiet(String s) => RecipeDiet.values.firstWhere(
       (e) => e.toString() == s,
