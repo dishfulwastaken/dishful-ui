@@ -2,40 +2,40 @@ import 'package:dishful/common/data/durations.dart';
 import 'package:dishful/common/services/db.service.dart';
 
 class Recipe extends Serializable {
-  late String id;
-  late String name;
-  late String description;
-  String? inspiration;
-  int? serves;
-  int? spiceLevel;
-  List<RecipeDiet>? diets;
-  late Duration cookTime;
-  late Duration prepTime;
-  late RecipeStatus status;
-  late List<String> iterationIds;
-  late List<String> ingredientIds;
-  late List<String> stepIds;
-  String? reviewId;
-
-  // TODO: this
-  // DateTime createdAt;
-  // DateTime? updatedAt;
+  final String id;
+  final String name;
+  final String description;
+  final String? inspiration;
+  final int? serves;
+  final int? spiceLevel;
+  final List<RecipeDiet>? diets;
+  final Duration cookTime;
+  final Duration prepTime;
+  final RecipeStatus status;
+  final List<String> iterationIds;
+  final List<String> ingredientIds;
+  final List<String> stepIds;
+  final String? reviewId;
+  final DateTime createdAt;
+  final DateTime? updatedAt;
 
   Recipe({
     required this.id,
     required this.name,
     required this.description,
-    required this.inspiration,
-    required this.serves,
-    required this.spiceLevel,
-    required this.diets,
+    this.inspiration,
+    this.serves,
+    this.spiceLevel,
+    this.diets,
     required this.cookTime,
     required this.prepTime,
     required this.status,
     required this.iterationIds,
     required this.ingredientIds,
     required this.stepIds,
-    required this.reviewId,
+    this.reviewId,
+    required this.createdAt,
+    this.updatedAt,
   });
 
   Map toMap() {
@@ -54,6 +54,8 @@ class Recipe extends Serializable {
       "ingredientIds": ingredientIds,
       "stepIds": stepIds,
       "reviewId": reviewId,
+      "createdAt": createdAt.toString(),
+      "updatedAt": updatedAt?.toString()
     };
   }
 
@@ -73,6 +75,8 @@ class Recipe extends Serializable {
       ingredientIds: map["ingredientIds"],
       stepIds: map["stepIds"],
       reviewId: map["reviewId"],
+      createdAt: DateTime.parse(map["createdAt"]),
+      updatedAt: DateTime.tryParse(map["updatedAt"] ?? ''),
     );
   }
 
@@ -129,8 +133,7 @@ class RecipeIteration extends Serializable {
   late RecipeDiff diff;
   String? reviewId;
 
-  // TODO: this
-  // DateTime createdAt;
+  late DateTime createdAt;
 
   Map toMap() {
     return {};

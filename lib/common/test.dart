@@ -27,4 +27,6 @@ Recipe get randomRecipe => Recipe(
       ingredientIds: [],
       stepIds: [],
       reviewId: "",
+      createdAt: f.date.dateTime(),
+      updatedAt: f.date.dateTime(),
     );
