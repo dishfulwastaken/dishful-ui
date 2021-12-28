@@ -40,7 +40,7 @@ class _AppRoute<A> {
 final _home = _AppRoute(
   path: "",
   handlerFunc: (context, params, args) {
-    return Home();
+    return HomePage();
   },
 );
 
@@ -48,7 +48,7 @@ final _recipes = _AppRoute(
   parent: _home,
   path: "recipes",
   handlerFunc: (context, params, args) {
-    return Recipes();
+    return RecipesPage();
   },
 );
 
@@ -57,7 +57,7 @@ final _recipe = _AppRoute(
   path: ":recipeId",
   handlerFunc: (context, params, args) {
     final id = params["recipeId"]!.first;
-    return Recipe(id);
+    return RecipePage(id);
   },
 );
 

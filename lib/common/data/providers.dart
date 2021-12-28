@@ -39,9 +39,8 @@ AutoDisposeStreamProvider<T?> getProvider<T extends Serializable>(
   String id,
 ) {
   return StreamProvider.autoDispose<T?>((ref) async* {
-    final noValue = await client.get(id) == null;
+    yield await client.get(id);
 
-    if (noValue) yield null;
     await for (final _ in client.watch(id: id)) {
       yield await client.get(id);
     }
