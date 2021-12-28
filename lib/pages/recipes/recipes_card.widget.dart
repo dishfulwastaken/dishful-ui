@@ -1,3 +1,4 @@
+import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/domain/recipe.dart';
 import 'package:dishful/common/services/route.service.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,12 @@ class RecipesCard extends StatelessWidget {
             Text(
               _recipe.name,
               textScaleFactor: 1.25,
+            ),
+            IconButton(
+              onPressed: () async {
+                await localDb.recipe.delete(_recipe.id);
+              },
+              icon: Icon(Icons.delete),
             ),
             Text("ID: ${_recipe.id}"),
             Text("Serves: ${_recipe.serves}"),

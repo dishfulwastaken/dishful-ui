@@ -21,18 +21,15 @@ AutoDisposeStreamProvider<List<T?>> getAllProvider<T extends Serializable>(
   Client<T> client,
 ) {
   return StreamProvider.autoDispose<List<T?>>((ref) async* {
-    final initialValues = await client.getAll();
-
     /// We yield a list with null here because Riverpod needs
     /// a value so that it knows that the data has loaded but in
     /// this case there is none.
-    if (initialValues.isEmpty)
-      yield [null];
-    else
-      yield initialValues;
+    final initialValues = await client.getAll();
+    yield initialValues.isEmpty ? [null] : initialValues;
 
     await for (final _ in client.watch()) {
-      yield await client.getAll();
+      final latestValues = await client.getAll();
+      yield latestValues.isEmpty ? [null] : latestValues;
     }
   });
 }

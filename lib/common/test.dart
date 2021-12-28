@@ -13,7 +13,7 @@ Duration get randomDuration => Duration(
     );
 
 Recipe get randomRecipe => Recipe(
-      id: f.randomGenerator.integer(100).toString(),
+      id: f.guid.guid(),
       name: f.food.dish(),
       description: f.lorem.sentence(),
       inspiration: f.lorem.sentence(),
