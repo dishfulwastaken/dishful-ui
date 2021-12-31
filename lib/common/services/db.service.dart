@@ -1,11 +1,16 @@
 library db;
 
 import 'dart:async';
-import 'dart:collection';
 
-import 'package:dishful/common/domain/recipe.dart';
+import 'package:dishful/common/data/json.dart';
+import 'package:dishful/common/domain/recipe_ingredient.dart';
+import 'package:dishful/common/domain/recipe_iteration.dart';
+import 'package:dishful/common/domain/recipe_meta.dart';
+import 'package:dishful/common/domain/recipe_review.dart';
+import 'package:dishful/common/domain/recipe_step.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 part 'db/db_hive.dart';
 part 'db/db_firebase.dart';

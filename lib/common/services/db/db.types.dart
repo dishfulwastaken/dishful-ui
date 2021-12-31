@@ -1,10 +1,16 @@
 part of db;
 
-typedef T FromMapFunction<T extends Serializable>(Map map);
+// typedef T FromMapFunction<T extends Serializable>(Map map);
 
 abstract class Serializable {
   String get id;
-  Map toMap();
+}
+
+abstract class Serializer<T extends Serializable>
+    extends JsonConverter<T, Map<String, dynamic>> {
+  const Serializer();
+  Map<String, dynamic> toJson(T data);
+  T fromJson(Map<String, dynamic> json);
 }
 
 abstract class Client<T extends Serializable> {
@@ -19,7 +25,7 @@ abstract class Client<T extends Serializable> {
 abstract class Db {
   Future<void> init();
   Future<void> close();
-  Client<Recipe> get recipe;
+  Client<RecipeMeta> get recipeMeta;
   Client<RecipeIteration> get recipeIteration;
   Client<RecipeIngredient> get recipeIngredient;
   Client<RecipeStep> get recipeStep;

@@ -2,7 +2,7 @@ part of db;
 
 class _HiveBoxName {
   static const _base = 'dishful_hive_storage';
-  static const recipe = '${_base}_recipe';
+  static const recipeMeta = '${_base}_recipe_meta';
   static const recipeIteration = '${_base}_recipe_iteration';
   static const recipeIngredient = '${_base}_recipe_ingredient';
   static const recipeStep = '${_base}_recipe_step';
@@ -11,13 +11,13 @@ class _HiveBoxName {
 
 class HiveClient<T extends Serializable> extends Client<T> {
   Box<Map>? box;
-  late FromMapFunction<T> fromMap;
+  late final Serializer<T> serializer;
 
   Future<void> init({
     required String boxName,
-    required FromMapFunction<T> fromMap,
+    required Serializer<T> serializer,
   }) async {
-    this.fromMap = fromMap;
+    this.serializer = serializer;
     bool notOpen = !Hive.isBoxOpen(boxName);
 
     box = notOpen ? await Hive.openBox(boxName) : Hive.box(boxName);
@@ -25,19 +25,21 @@ class HiveClient<T extends Serializable> extends Client<T> {
 
   Future<List<T>> getAll() async {
     assert(box != null, 'HiveClient.init must be called first!');
-    final data = box!.values.map(fromMap);
+    final data = (box!.values).map(jsonifyMap).map(serializer.fromJson);
     return data.toList();
   }
 
   Future<T?> get(String id) async {
     assert(box != null, 'HiveClient.init must be called first!');
     final dataAsMap = box!.get(id);
-    return dataAsMap == null ? null : fromMap(dataAsMap);
+    return dataAsMap == null
+        ? null
+        : serializer.fromJson(jsonifyMap(dataAsMap));
   }
 
   Future<void> create(T data) async {
     assert(box != null, 'HiveClient.init must be called first!');
-    final dataAsMap = data.toMap();
+    final dataAsMap = serializer.toJson(data).cast<dynamic, dynamic>();
     box!.put(data.id, dataAsMap);
   }
 
@@ -46,7 +48,7 @@ class HiveClient<T extends Serializable> extends Client<T> {
     final oldDataAsMap = box!.get(id);
     final newDataAsMap = {...oldDataAsMap ?? {}, ...overrides};
     box!.put(id, newDataAsMap);
-    return fromMap(newDataAsMap);
+    return serializer.fromJson(jsonifyMap(newDataAsMap));
   }
 
   Future<void> delete(String id) async {
@@ -58,7 +60,8 @@ class HiveClient<T extends Serializable> extends Client<T> {
     assert(box != null, 'HiveClient.init must be called first!');
     final rawStream = box!.watch(key: id);
     final serializedStream = rawStream.map<T?>(
-      (event) => event.deleted ? null : fromMap(event.value),
+      (event) =>
+          event.deleted ? null : serializer.fromJson(jsonifyMap(event.value)),
     );
     return serializedStream;
   }
@@ -67,14 +70,14 @@ class HiveClient<T extends Serializable> extends Client<T> {
 class HiveDb extends Db {
   Future<HiveClient<T>> _buildClient<T extends Serializable>(
     String boxName,
-    FromMapFunction<T> fromMap,
+    Serializer<T> serializer,
   ) async {
     final client = HiveClient<T>();
-    await client.init(boxName: boxName, fromMap: fromMap);
+    await client.init(boxName: boxName, serializer: serializer);
     return client;
   }
 
-  HiveClient<Recipe>? _recipe;
+  HiveClient<RecipeMeta>? _recipeMeta;
   HiveClient<RecipeIteration>? _recipeIteration;
   HiveClient<RecipeIngredient>? _recipeIngredient;
   HiveClient<RecipeStep>? _recipeStep;
@@ -83,25 +86,25 @@ class HiveDb extends Db {
   Future<void> init() async {
     await Hive.initFlutter();
 
-    _recipe = await _buildClient(
-      _HiveBoxName.recipe,
-      Recipe.fromMap,
+    _recipeMeta = await _buildClient(
+      _HiveBoxName.recipeMeta,
+      RecipeMetaSerializer(),
     );
     _recipeIteration = await _buildClient(
       _HiveBoxName.recipeIteration,
-      RecipeIteration.fromMap,
+      RecipeIterationSerializer(),
     );
     _recipeIngredient = await _buildClient(
       _HiveBoxName.recipeIngredient,
-      RecipeIngredient.fromMap,
+      RecipeIngredientSerializer(),
     );
     _recipeStep = await _buildClient(
       _HiveBoxName.recipeStep,
-      RecipeStep.fromMap,
+      RecipeStepSerializer(),
     );
     _recipeReview = await _buildClient(
       _HiveBoxName.recipeReview,
-      RecipeReview.fromMap,
+      RecipeReviewSerializer(),
     );
   }
 
@@ -109,9 +112,9 @@ class HiveDb extends Db {
     await Hive.close();
   }
 
-  HiveClient<Recipe> get recipe {
-    assert(_recipe != null, 'HiveDb.init must be called first!');
-    return _recipe!;
+  HiveClient<RecipeMeta> get recipeMeta {
+    assert(_recipeMeta != null, 'HiveDb.init must be called first!');
+    return _recipeMeta!;
   }
 
   HiveClient<RecipeIteration> get recipeIteration {

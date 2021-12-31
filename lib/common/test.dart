@@ -1,8 +1,8 @@
 import 'dart:math';
 
+import 'package:dishful/common/domain/recipe_iteration.dart';
+import 'package:dishful/common/domain/recipe_meta.dart';
 import 'package:faker/faker.dart';
-
-import 'domain/recipe.dart';
 
 final r = Random();
 final f = Faker();
@@ -12,21 +12,23 @@ Duration get randomDuration => Duration(
       minutes: f.randomGenerator.integer(5) * 10,
     );
 
-Recipe get randomRecipe => Recipe(
+RecipeMeta get randomRecipeMeta => RecipeMeta(
       id: f.guid.guid(),
       name: f.food.dish(),
       description: f.lorem.sentence(),
       inspiration: f.lorem.sentence(),
-      serves: f.randomGenerator.integer(10, min: 1),
-      spiceLevel: f.randomGenerator.integer(5),
-      diets: [f.randomGenerator.element(RecipeDiet.values)],
-      cookTime: randomDuration,
-      prepTime: randomDuration,
       status: f.randomGenerator.element(RecipeStatus.values),
       iterationIds: [],
-      ingredientIds: [],
-      stepIds: [],
-      reviewId: "",
       createdAt: f.date.dateTime(),
-      updatedAt: f.date.dateTime(),
     );
+
+RecipeIteration get randomRecipeIteration => RecipeIteration(
+      id: f.guid.guid(),
+      cookTime: randomDuration,
+      prepTime: randomDuration,
+      ingredients: [],
+      steps: [],
+      createdAt: f.date.dateTime(),
+    );
+
+void main() {}

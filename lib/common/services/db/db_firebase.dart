@@ -29,7 +29,7 @@ class FirebaseClient<T extends Serializable> extends Client<T> {
 class FirebaseDb extends Db {
   Future<void> init() async {}
   Future<void> close() async {}
-  Client<Recipe> get recipe => throw UnimplementedError();
+  Client<RecipeMeta> get recipeMeta => throw UnimplementedError();
   Client<RecipeIngredient> get recipeIngredient => throw UnimplementedError();
   Client<RecipeIteration> get recipeIteration => throw UnimplementedError();
   Client<RecipeReview> get recipeReview => throw UnimplementedError();

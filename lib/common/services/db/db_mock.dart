@@ -3,10 +3,10 @@ part of db;
 class MockClient<T extends Serializable> extends Client<T> {
   Map<String, T> db = Map();
   Duration mockDelay = Duration(milliseconds: 100);
-  late FromMapFunction<T> fromMap;
+  late final Serializer<T> serializer;
 
-  void init({required FromMapFunction<T> fromMap}) {
-    this.fromMap = fromMap;
+  void init({required Serializer<T> serializer}) {
+    this.serializer = serializer;
   }
 
   Future<void> create(T data) {
@@ -31,8 +31,11 @@ class MockClient<T extends Serializable> extends Client<T> {
 
   Future<T> update(String id, Map overrides) {
     final newData = db.update(id, (oldData) {
-      final newDataAsMap = {...oldData.toMap(), ...overrides};
-      return fromMap(newDataAsMap);
+      final newDataAsMap = <String, dynamic>{
+        ...serializer.toJson(oldData),
+        ...overrides
+      };
+      return serializer.fromJson(newDataAsMap);
     });
     return Future.delayed(mockDelay, () => newData);
   }
@@ -47,27 +50,27 @@ class MockClient<T extends Serializable> extends Client<T> {
 
 class MockDb extends Db {
   MockClient<T> _build<T extends Serializable>(
-    FromMapFunction<T> fromMap,
+    Serializer<T> serializer,
   ) {
-    return MockClient<T>()..init(fromMap: fromMap);
+    return MockClient<T>()..init(serializer: serializer);
   }
 
   Future<void> init() async {}
   Future<void> close() async {}
 
-  MockClient<Recipe> get recipe => _build(
-        Recipe.fromMap,
+  MockClient<RecipeMeta> get recipeMeta => _build(
+        RecipeMetaSerializer(),
       );
   MockClient<RecipeIteration> get recipeIteration => _build(
-        RecipeIteration.fromMap,
+        RecipeIterationSerializer(),
       );
   MockClient<RecipeIngredient> get recipeIngredient => _build(
-        RecipeIngredient.fromMap,
+        RecipeIngredientSerializer(),
       );
   MockClient<RecipeStep> get recipeStep => _build(
-        RecipeStep.fromMap,
+        RecipeStepSerializer(),
       );
   MockClient<RecipeReview> get recipeReview => _build(
-        RecipeReview.fromMap,
+        RecipeReviewSerializer(),
       );
 }
