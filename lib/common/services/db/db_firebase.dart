@@ -1,6 +1,15 @@
 part of db;
 
+class _FirebaseCollectionName {
+  static const _base = 'dishful_firebase_storage';
+  static const recipeMeta = '${_base}_recipe_meta';
+  static const recipeIteration = '${_base}_recipe_iteration';
+  static const recipeReview = '${_base}_recipe_review';
+}
+
 class FirebaseClient<T extends Serializable> extends Client<T> {
+  final FirebaseFirestore _instance = FirebaseFirestore.instance;
+
   Future<void> create(T data) {
     throw UnimplementedError();
   }
@@ -34,7 +43,7 @@ class FirebaseDb extends Db {
   }
 
   Future<void> close() async {}
-  Client<RecipeMeta> get recipeMeta => throw UnimplementedError();
+  Client<RecipeMeta> get recipeMeta => FirebaseClient<RecipeMeta>();
   Client<RecipeIngredient> get recipeIngredient => throw UnimplementedError();
   Client<RecipeIteration> get recipeIteration => throw UnimplementedError();
   Client<RecipeReview> get recipeReview => throw UnimplementedError();
