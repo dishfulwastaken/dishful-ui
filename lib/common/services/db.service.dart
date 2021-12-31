@@ -11,6 +11,9 @@ import 'package:dishful/common/domain/recipe_step.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:firebase_core/firebase_core.dart';
+
+import 'db/firebase_options.dart';
 
 part 'db/db_hive.dart';
 part 'db/db_firebase.dart';
