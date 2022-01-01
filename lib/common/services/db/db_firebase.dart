@@ -8,62 +8,95 @@ class _FirebaseCollectionName {
 }
 
 class FirebaseClient<T extends Serializable> extends Client<T> {
-  final FirebaseFirestore _instance = FirebaseFirestore.instance;
+  late final CollectionReference<T?> _collection;
 
-  Future<void> create(T data) {
-    throw UnimplementedError();
+  FirebaseClient(String collectionPath, Serializer<T> serializer) {
+    _collection =
+        FirebaseFirestore.instance.collection(collectionPath).withConverter(
+      fromFirestore: (doc, _) {
+        final json = doc.data();
+        if (json == null) return null;
+
+        return serializer.fromJson(json);
+      },
+      toFirestore: (data, _) {
+        if (data == null) return {};
+
+        return serializer.toJson(data);
+      },
+    );
   }
 
-  Future<void> delete(String id) {
-    throw UnimplementedError();
+  Future<void> create(T data) async {
+    await _collection.doc(data.id).set(data);
   }
 
-  Future<T?> get(String id) {
-    throw UnimplementedError();
+  Future<void> delete(String id) async {
+    await _collection.doc(id).delete();
   }
 
-  Future<List<T>> getAll() {
-    throw UnimplementedError();
+  Future<T?> get(String id) async {
+    final doc = await _collection.doc(id).get();
+    return doc.data();
   }
 
-  Future<T> update(String id, Map overrides) {
-    throw UnimplementedError();
+  Future<List<T>> getAll() async {
+    final docs = (await _collection.get()).docs;
+    final data = docs.fold<List<T>>([], (previousValue, element) {
+      if (!element.exists) return previousValue;
+      previousValue.add(element.data()!);
+
+      return previousValue;
+    });
+    return data.toList();
   }
 
-  Stream<T> watch({String? id}) {
-    throw UnimplementedError();
+  Future<void> update(T data) async {
+    await _collection.doc(data.id).set(data);
+  }
+
+  Stream<T?> watch({String? id}) {
+    final queryStream = _collection.snapshots();
+    final docStream = queryStream.map((query) => query.docs.first);
+    final dataStream = docStream.map((doc) => doc.data());
+    return dataStream;
   }
 }
 
 class FirebaseDb extends Db {
-  FirebaseClient<RecipeMeta>? _recipeMeta;
-  FirebaseClient<RecipeIteration>? _recipeIteration;
-  FirebaseClient<RecipeReview>? _recipeReview;
-
   Future<void> init() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
 
-    _recipeMeta = FirebaseClient<RecipeMeta>();
-    _recipeIteration = FirebaseClient<RecipeIteration>();
-    _recipeReview = FirebaseClient<RecipeReview>();
+    /// Current user can be accessed via singleton:
+    /// [FirebaseAuth.instance.currentUser].
+    await FirebaseAuth.instance.signInAnonymously();
   }
 
   Future<void> close() async {}
 
   FirebaseClient<RecipeMeta> get recipeMeta {
-    assert(_recipeMeta != null, 'FirebaseDb.init must be called first!');
-    return _recipeMeta!;
+    return FirebaseClient<RecipeMeta>(
+      _FirebaseCollectionName.recipeMeta,
+      RecipeMetaSerializer(),
+    );
   }
 
-  FirebaseClient<RecipeIteration> get recipeIteration {
-    assert(_recipeIteration != null, 'FirebaseDb.init must be called first!');
-    return _recipeIteration!;
+  FirebaseClient<RecipeIteration> recipeIteration(String recipeId) {
+    final collectionPath = _FirebaseCollectionName.recipeMeta +
+        recipeId +
+        _FirebaseCollectionName.recipeIteration;
+    return FirebaseClient<RecipeIteration>(
+      collectionPath,
+      RecipeIterationSerializer(),
+    );
   }
 
   FirebaseClient<RecipeReview> get recipeReview {
-    assert(_recipeReview != null, 'FirebaseDb.init must be called first!');
-    return _recipeReview!;
+    return FirebaseClient<RecipeReview>(
+      _FirebaseCollectionName.recipeReview,
+      RecipeReviewSerializer(),
+    );
   }
 }

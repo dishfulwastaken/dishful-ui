@@ -12,7 +12,7 @@ class RecipesPage extends ConsumerWidget {
   late final AutoDisposeStreamProvider<List<RecipeMeta?>> recipesProvider;
 
   RecipesPage() {
-    recipesProvider = getAllProvider(DbService.privateDb.recipeMeta);
+    recipesProvider = getAllProvider(DbService.publicDb.recipeMeta);
   }
 
   @override
@@ -23,7 +23,7 @@ class RecipesPage extends ConsumerWidget {
       appBar: AppBar(title: const Text('Recipes')),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          await DbService.privateDb.recipeMeta.create(randomRecipeMeta);
+          await DbService.publicDb.recipeMeta.create(randomRecipeMeta);
         },
         child: const Icon(Icons.plus_one_rounded),
       ),

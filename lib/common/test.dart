@@ -30,8 +30,6 @@ RecipeMeta get randomRecipeMeta => RecipeMeta(
       description: f.lorem.sentence(),
       inspiration: f.lorem.sentence(),
       status: f.randomGenerator.element(RecipeStatus.values),
-      // TODO: remove this? Iterations will be a subcollection of metas
-      iterationIds: [],
       createdAt: f.date.dateTime(),
     );
 

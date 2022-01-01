@@ -12,11 +12,26 @@ abstract class Serializer<T extends Serializable>
 }
 
 abstract class Client<T extends Serializable> {
+  /// Get all documents in the collection.
   Future<List<T>> getAll();
+
+  /// Get a document with ID = [id].
   Future<T?> get(String id);
-  Future<T> update(String id, Map overrides);
+
+  /// Update the document with ID = [data.id],
+  /// setting the content to [data].
+  Future<void> update(T data);
+
+  /// Create a new document with ID = [data.id],
+  /// setting the content to [data]. This
+  /// will create a collection if it does not
+  /// exist.
   Future<void> create(T data);
+
+  /// Delete a document with ID = [id].
   Future<void> delete(String id);
+
+  /// TODO: define this!
   Stream<T?> watch({String? id});
 }
 
@@ -24,7 +39,7 @@ abstract class Db {
   Future<void> init();
   Future<void> close();
   Client<RecipeMeta> get recipeMeta;
-  Client<RecipeIteration> get recipeIteration;
+  Client<RecipeIteration> recipeIteration(String recipeId);
   Client<RecipeReview> get recipeReview;
 }
 

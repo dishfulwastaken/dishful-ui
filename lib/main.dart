@@ -8,6 +8,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   RouteService.setUp();
   await DbService.initPrivateDb();
+  await DbService.initPublicDb();
   runApp(
     ProviderScope(
       child: Dishful(),

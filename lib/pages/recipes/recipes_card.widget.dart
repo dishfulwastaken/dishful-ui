@@ -23,7 +23,7 @@ class RecipesCard extends StatelessWidget {
             ),
             IconButton(
               onPressed: () async {
-                await DbService.privateDb.recipeMeta.delete(_recipe.id);
+                await DbService.publicDb.recipeMeta.delete(_recipe.id);
               },
               icon: Icon(Icons.delete),
             ),

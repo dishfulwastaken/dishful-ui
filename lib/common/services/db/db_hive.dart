@@ -41,12 +41,9 @@ class HiveClient<T extends Serializable> extends Client<T> {
     box!.put(data.id, dataAsMap);
   }
 
-  Future<T> update(String id, Map overrides) async {
+  Future<void> update(T data) async {
     assert(box != null, 'HiveClient.init must be called first!');
-    final oldDataAsMap = box!.get(id);
-    final newDataAsMap = {...oldDataAsMap ?? {}, ...overrides};
-    box!.put(id, newDataAsMap);
-    return serializer.fromJson(jsonifyMap(newDataAsMap));
+    await box!.put(data.id, serializer.toJson(data));
   }
 
   Future<void> delete(String id) async {
@@ -100,18 +97,8 @@ class HiveDb extends Db {
     await Hive.close();
   }
 
-  HiveClient<RecipeMeta> get recipeMeta {
-    assert(_recipeMeta != null, 'HiveDb.init must be called first!');
-    return _recipeMeta!;
-  }
-
-  HiveClient<RecipeIteration> get recipeIteration {
-    assert(_recipeIteration != null, 'HiveDb.init must be called first!');
-    return _recipeIteration!;
-  }
-
-  HiveClient<RecipeReview> get recipeReview {
-    assert(_recipeReview != null, 'HiveDb.init must be called first!');
-    return _recipeReview!;
-  }
+  HiveClient<RecipeMeta> get recipeMeta => _recipeMeta!;
+  HiveClient<RecipeIteration> recipeIteration(String recipeId) =>
+      _recipeIteration!;
+  HiveClient<RecipeReview> get recipeReview => _recipeReview!;
 }

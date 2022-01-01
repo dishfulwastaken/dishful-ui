@@ -10,7 +10,6 @@ class RecipeMeta extends Serializable {
   final String description;
   final String? inspiration;
   final RecipeStatus status;
-  final List<String> iterationIds;
   final DateTime createdAt;
 
   RecipeMeta({
@@ -19,7 +18,6 @@ class RecipeMeta extends Serializable {
     required this.description,
     this.inspiration,
     required this.status,
-    required this.iterationIds,
     required this.createdAt,
   });
 }

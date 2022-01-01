@@ -29,15 +29,9 @@ class MockClient<T extends Serializable> extends Client<T> {
     return Future.delayed(mockDelay, () => data);
   }
 
-  Future<T> update(String id, Map overrides) {
-    final newData = db.update(id, (oldData) {
-      final newDataAsMap = <String, dynamic>{
-        ...serializer.toJson(oldData),
-        ...overrides
-      };
-      return serializer.fromJson(newDataAsMap);
-    });
-    return Future.delayed(mockDelay, () => newData);
+  Future<void> update(T data) {
+    db.update(data.id, (_) => data);
+    return Future.delayed(mockDelay, () {});
   }
 
   Stream<T> watch({String? id}) {
@@ -61,7 +55,7 @@ class MockDb extends Db {
   MockClient<RecipeMeta> get recipeMeta => _build(
         RecipeMetaSerializer(),
       );
-  MockClient<RecipeIteration> get recipeIteration => _build(
+  MockClient<RecipeIteration> recipeIteration(String recipeId) => _build(
         RecipeIterationSerializer(),
       );
   MockClient<RecipeIngredient> get recipeIngredient => _build(
