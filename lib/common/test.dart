@@ -1,11 +1,23 @@
 import 'dart:math';
 
+import 'package:dishful/common/domain/recipe_ingredient.dart';
 import 'package:dishful/common/domain/recipe_iteration.dart';
 import 'package:dishful/common/domain/recipe_meta.dart';
+import 'package:dishful/common/domain/recipe_step.dart';
+import 'package:dishful/common/services/db.service.dart';
 import 'package:faker/faker.dart';
 
 final r = Random();
 final f = Faker();
+
+List<T> generateAtMost<T extends Serializable>(
+  int max,
+  T Function() generator,
+) {
+  return List.filled(f.randomGenerator.integer(max), 0)
+      .map((_) => generator.call())
+      .toList();
+}
 
 Duration get randomDuration => Duration(
       hours: f.randomGenerator.integer(2),
@@ -18,6 +30,7 @@ RecipeMeta get randomRecipeMeta => RecipeMeta(
       description: f.lorem.sentence(),
       inspiration: f.lorem.sentence(),
       status: f.randomGenerator.element(RecipeStatus.values),
+      // TODO: remove this? Iterations will be a subcollection of metas
       iterationIds: [],
       createdAt: f.date.dateTime(),
     );
@@ -26,9 +39,22 @@ RecipeIteration get randomRecipeIteration => RecipeIteration(
       id: f.guid.guid(),
       cookTime: randomDuration,
       prepTime: randomDuration,
-      ingredients: [],
-      steps: [],
+      ingredients: generateAtMost(5, () => randomRecipeIngredient),
+      steps: generateAtMost(8, () => randomRecipeStep),
       createdAt: f.date.dateTime(),
+    );
+
+RecipeIngredient get randomRecipeIngredient => RecipeIngredient(
+      id: f.guid.guid(),
+      name: f.food.cuisine(),
+      amount: f.randomGenerator.decimal(min: 0.1) * 10,
+      unit: f.randomGenerator.element(RecipeIngredientUnit.values),
+    );
+
+RecipeStep get randomRecipeStep => RecipeStep(
+      id: f.guid.guid(),
+      position: f.randomGenerator.integer(100),
+      description: f.lorem.sentence(),
     );
 
 void main() {}

@@ -1,4 +1,3 @@
-import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/domain/recipe_meta.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/services/route.service.dart';
