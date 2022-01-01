@@ -14,9 +14,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // ) =>
 //     FutureProvider<T?>((ref) async => await client.get(id));
 
-final localDb = DbService.getDb(DbProvider.hive);
-final shareDb = DbService.getDb(DbProvider.firebase);
-
 AutoDisposeStreamProvider<List<T?>> getAllProvider<T extends Serializable>(
   Client<T> client,
 ) {

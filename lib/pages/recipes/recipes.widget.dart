@@ -1,5 +1,6 @@
 import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/domain/recipe_meta.dart';
+import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/test.dart';
 import 'package:dishful/common/widgets/async_loading.widget.dart';
 import 'package:dishful/pages/recipes/recipes_card.widget.dart';
@@ -11,7 +12,7 @@ class RecipesPage extends ConsumerWidget {
   late final AutoDisposeStreamProvider<List<RecipeMeta?>> recipesProvider;
 
   RecipesPage() {
-    recipesProvider = getAllProvider(localDb.recipeMeta);
+    recipesProvider = getAllProvider(DbService.privateDb.recipeMeta);
   }
 
   @override
@@ -22,7 +23,7 @@ class RecipesPage extends ConsumerWidget {
       appBar: AppBar(title: const Text('Recipes')),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          await localDb.recipeMeta.create(randomRecipeMeta);
+          await DbService.privateDb.recipeMeta.create(randomRecipeMeta);
         },
         child: const Icon(Icons.plus_one_rounded),
       ),

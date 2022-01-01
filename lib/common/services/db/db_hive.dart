@@ -4,8 +4,6 @@ class _HiveBoxName {
   static const _base = 'dishful_hive_storage';
   static const recipeMeta = '${_base}_recipe_meta';
   static const recipeIteration = '${_base}_recipe_iteration';
-  static const recipeIngredient = '${_base}_recipe_ingredient';
-  static const recipeStep = '${_base}_recipe_step';
   static const recipeReview = '${_base}_recipe_review';
 }
 
@@ -79,8 +77,6 @@ class HiveDb extends Db {
 
   HiveClient<RecipeMeta>? _recipeMeta;
   HiveClient<RecipeIteration>? _recipeIteration;
-  HiveClient<RecipeIngredient>? _recipeIngredient;
-  HiveClient<RecipeStep>? _recipeStep;
   HiveClient<RecipeReview>? _recipeReview;
 
   Future<void> init() async {
@@ -93,14 +89,6 @@ class HiveDb extends Db {
     _recipeIteration = await _buildClient(
       _HiveBoxName.recipeIteration,
       RecipeIterationSerializer(),
-    );
-    _recipeIngredient = await _buildClient(
-      _HiveBoxName.recipeIngredient,
-      RecipeIngredientSerializer(),
-    );
-    _recipeStep = await _buildClient(
-      _HiveBoxName.recipeStep,
-      RecipeStepSerializer(),
     );
     _recipeReview = await _buildClient(
       _HiveBoxName.recipeReview,
@@ -120,16 +108,6 @@ class HiveDb extends Db {
   HiveClient<RecipeIteration> get recipeIteration {
     assert(_recipeIteration != null, 'HiveDb.init must be called first!');
     return _recipeIteration!;
-  }
-
-  HiveClient<RecipeIngredient> get recipeIngredient {
-    assert(_recipeIngredient != null, 'HiveDb.init must be called first!');
-    return _recipeIngredient!;
-  }
-
-  HiveClient<RecipeStep> get recipeStep {
-    assert(_recipeStep != null, 'HiveDb.init must be called first!');
-    return _recipeStep!;
   }
 
   HiveClient<RecipeReview> get recipeReview {

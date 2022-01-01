@@ -36,16 +36,34 @@ class FirebaseClient<T extends Serializable> extends Client<T> {
 }
 
 class FirebaseDb extends Db {
+  FirebaseClient<RecipeMeta>? _recipeMeta;
+  FirebaseClient<RecipeIteration>? _recipeIteration;
+  FirebaseClient<RecipeReview>? _recipeReview;
+
   Future<void> init() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+
+    _recipeMeta = FirebaseClient<RecipeMeta>();
+    _recipeIteration = FirebaseClient<RecipeIteration>();
+    _recipeReview = FirebaseClient<RecipeReview>();
   }
 
   Future<void> close() async {}
-  Client<RecipeMeta> get recipeMeta => FirebaseClient<RecipeMeta>();
-  Client<RecipeIngredient> get recipeIngredient => throw UnimplementedError();
-  Client<RecipeIteration> get recipeIteration => throw UnimplementedError();
-  Client<RecipeReview> get recipeReview => throw UnimplementedError();
-  Client<RecipeStep> get recipeStep => throw UnimplementedError();
+
+  FirebaseClient<RecipeMeta> get recipeMeta {
+    assert(_recipeMeta != null, 'FirebaseDb.init must be called first!');
+    return _recipeMeta!;
+  }
+
+  FirebaseClient<RecipeIteration> get recipeIteration {
+    assert(_recipeIteration != null, 'FirebaseDb.init must be called first!');
+    return _recipeIteration!;
+  }
+
+  FirebaseClient<RecipeReview> get recipeReview {
+    assert(_recipeReview != null, 'FirebaseDb.init must be called first!');
+    return _recipeReview!;
+  }
 }

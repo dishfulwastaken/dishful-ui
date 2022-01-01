@@ -1,7 +1,5 @@
 part of db;
 
-// typedef T FromMapFunction<T extends Serializable>(Map map);
-
 abstract class Serializable {
   String get id;
 }
@@ -27,8 +25,6 @@ abstract class Db {
   Future<void> close();
   Client<RecipeMeta> get recipeMeta;
   Client<RecipeIteration> get recipeIteration;
-  Client<RecipeIngredient> get recipeIngredient;
-  Client<RecipeStep> get recipeStep;
   Client<RecipeReview> get recipeReview;
 }
 
