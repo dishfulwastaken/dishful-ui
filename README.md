@@ -5,12 +5,12 @@ A recipe development app.
 Development day 1: 25th July, 2021
 
 ### TODO
-- DbClient.watch; standardize; what should this do + fix the watch implementations
 - Error handling everywhere! e.g. sign in, init flutterfire, etc, using Result<T>
   (see bookmarks)
 - Make Firebase DB initialization lazy - do not call init until either:
     - the user enters a page which is meant for shared data or
     - a request is made to PublicDb 
+- Enable Firebase caching to avoid making as many requests (via FlutterFire -> enablePersistence)
 - Create base editable widget! Extending children have the behaviour:
     - If not editable, on long press, do a little shake left and right.
     - Else, on long press:

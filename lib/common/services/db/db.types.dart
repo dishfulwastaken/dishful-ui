@@ -11,6 +11,10 @@ abstract class Serializer<T extends Serializable>
   T fromJson(Map<String, dynamic> json);
 }
 
+typedef SubscriptionCancel = Future<void> Function();
+typedef SubscriptionOnData<T> = void Function(T);
+typedef SubscriptionOnError<T> = void Function(T);
+
 abstract class Client<T extends Serializable> {
   /// Get all documents in the collection.
   Future<List<T>> getAll();
@@ -31,8 +35,22 @@ abstract class Client<T extends Serializable> {
   /// Delete a document with ID = [id].
   Future<void> delete(String id);
 
-  /// TODO: define this!
-  Stream<T?> watch({String? id});
+  /// Subscribe to changes to the entire collection.
+  /// Returns a function that *must* be called that will
+  /// cancel the subscription.
+  SubscriptionCancel watchAll(
+    SubscriptionOnData<List<T>> onData,
+    SubscriptionOnError onError,
+  );
+
+  /// Subscribe to change to a document with ID = [id].
+  /// Returns a function that *must* be called that will
+  /// cancel the subscription.
+  SubscriptionCancel watch(
+    String id,
+    SubscriptionOnData<T> onData,
+    SubscriptionOnError onError,
+  );
 }
 
 abstract class Db {

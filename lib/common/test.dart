@@ -33,13 +33,14 @@ RecipeMeta get randomRecipeMeta => RecipeMeta(
       createdAt: f.date.dateTime(),
     );
 
-RecipeIteration get randomRecipeIteration => RecipeIteration(
+RecipeIteration randomRecipeIteration(String parentId) => RecipeIteration(
       id: f.guid.guid(),
       cookTime: randomDuration,
       prepTime: randomDuration,
       ingredients: generateAtMost(5, () => randomRecipeIngredient),
       steps: generateAtMost(8, () => randomRecipeStep),
       createdAt: f.date.dateTime(),
+      parentId: parentId,
     );
 
 RecipeIngredient get randomRecipeIngredient => RecipeIngredient(

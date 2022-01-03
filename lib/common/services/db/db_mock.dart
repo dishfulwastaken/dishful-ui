@@ -34,11 +34,21 @@ class MockClient<T extends Serializable> extends Client<T> {
     return Future.delayed(mockDelay, () {});
   }
 
-  Stream<T> watch({String? id}) {
-    final data = db[id];
-    if (data == null) throw Exception('Cannot watch non-existent data');
+  SubscriptionCancel watchAll(
+    SubscriptionOnData<List<T>> onData,
+    SubscriptionOnError onError,
+  ) {
+    // TODO: implement watchAll
+    throw UnimplementedError();
+  }
 
-    return Stream.value(data);
+  SubscriptionCancel watch(
+    String id,
+    SubscriptionOnData<T> onData,
+    SubscriptionOnError onError,
+  ) {
+    // TODO: implement watch
+    throw UnimplementedError();
   }
 }
 

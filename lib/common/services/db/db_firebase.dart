@@ -27,6 +27,14 @@ class FirebaseClient<T extends Serializable> extends Client<T> {
     );
   }
 
+  List<T> filterNullDocs<T>(List<QueryDocumentSnapshot<T?>> docs) {
+    return docs.fold([], (previousValue, element) {
+      if (element.exists) previousValue.add(element.data()!);
+
+      return previousValue;
+    });
+  }
+
   Future<void> create(T data) async {
     await _collection.doc(data.id).set(data);
   }
@@ -42,12 +50,7 @@ class FirebaseClient<T extends Serializable> extends Client<T> {
 
   Future<List<T>> getAll() async {
     final docs = (await _collection.get()).docs;
-    final data = docs.fold<List<T>>([], (previousValue, element) {
-      if (!element.exists) return previousValue;
-      previousValue.add(element.data()!);
-
-      return previousValue;
-    });
+    final data = filterNullDocs(docs);
     return data.toList();
   }
 
@@ -55,11 +58,36 @@ class FirebaseClient<T extends Serializable> extends Client<T> {
     await _collection.doc(data.id).set(data);
   }
 
-  Stream<T?> watch({String? id}) {
-    final queryStream = _collection.snapshots();
-    final docStream = queryStream.map((query) => query.docs.first);
-    final dataStream = docStream.map((doc) => doc.data());
-    return dataStream;
+  SubscriptionCancel watchAll(
+    SubscriptionOnData<List<T>> onData,
+    SubscriptionOnError onError,
+  ) {
+    final subscription = _collection.snapshots().listen(
+      (querySnapshot) {
+        final data = filterNullDocs(querySnapshot.docs);
+        onData(data.toList());
+      },
+      onError: onError,
+    );
+
+    return subscription.cancel;
+  }
+
+  SubscriptionCancel watch(
+    String id,
+    SubscriptionOnData<T> onData,
+    SubscriptionOnError onError,
+  ) {
+    final subscription = _collection.doc(id).snapshots().listen(
+      (documentSnapshot) {
+        if (!documentSnapshot.exists) return;
+        final data = documentSnapshot.data()!;
+        onData(data);
+      },
+      onError: onError,
+    );
+
+    return subscription.cancel;
   }
 }
 
@@ -85,7 +113,7 @@ class FirebaseDb extends Db {
 
   FirebaseClient<RecipeIteration> recipeIteration(String recipeId) {
     final collectionPath = _FirebaseCollectionName.recipeMeta +
-        recipeId +
+        '/$recipeId/' +
         _FirebaseCollectionName.recipeIteration;
     return FirebaseClient<RecipeIteration>(
       collectionPath,

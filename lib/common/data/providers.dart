@@ -1,45 +1,86 @@
+import 'package:async/async.dart';
 import 'package:dishful/common/services/db.service.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// FutureProvider<List<T>> getAllProvider<T extends Serializable>(
-//   Client<T> client,
-// ) =>
-//     FutureProvider<List<T>>((ref) async {
-//       return await client.getAll();
-//     });
+extension MyWidgetRef on WidgetRef {
+  void set<T>(StateProvider<T> of, T to) {
+    read(of.notifier).state = to;
+  }
+}
 
-// FutureProvider<T?> getProvider<T extends Serializable>(
-//   Client<T> client,
-//   String id,
-// ) =>
-//     FutureProvider<T?>((ref) async => await client.get(id));
+typedef MyProvider<T> = AutoDisposeStateProvider<Result<T>>;
+typedef LoadingWidgetBuilder = Widget Function();
+typedef ErrorWidgetBuilder = Widget Function(
+  Object error,
+  StackTrace? stackTrace,
+);
+typedef DataWidgetBuilder<T> = Widget Function(T data);
 
-AutoDisposeStreamProvider<List<T?>> getAllProvider<T extends Serializable>(
+extension MyProviderExtension<T> on MyProvider<T> {
+  Widget when(
+    WidgetRef ref, {
+    required LoadingWidgetBuilder loading,
+    required ErrorWidgetBuilder error,
+    required DataWidgetBuilder<T> data,
+  }) {
+    final result = ref.watch(this);
+
+    final isError = result.isError;
+    if (isError)
+      return error(
+        result.asError!.error,
+        result.asError?.stackTrace,
+      );
+
+    final value = result.asValue!.value;
+    final isLoadingSingle = value == null;
+    final isLoadingMultiple = !isLoadingSingle &&
+        value is List &&
+        value.isNotEmpty &&
+        value.first == null;
+    if (isLoadingSingle || isLoadingMultiple) return loading();
+
+    return data(value);
+  }
+}
+
+MyProvider<List<T?>> getAllProvider<T extends Serializable>(
   Client<T> client,
 ) {
-  return StreamProvider.autoDispose<List<T?>>((ref) async* {
-    /// We yield a list with null here because Riverpod needs
-    /// a value so that it knows that the data has loaded but in
-    /// this case there is none.
-    final initialValues = await client.getAll();
-    yield initialValues.isEmpty ? [null] : initialValues;
+  return StateProvider.autoDispose((ref) {
+    final cancel = client.watchAll(
+      (data) {
+        ref.controller.update((state) => Result.value(data));
+      },
+      (error) {
+        ref.controller.update((state) => Result.error(error));
+      },
+    );
 
-    await for (final _ in client.watch()) {
-      final latestValues = await client.getAll();
-      yield latestValues.isEmpty ? [null] : latestValues;
-    }
+    ref.onDispose(cancel);
+
+    return Result.value([null]);
   });
 }
 
-AutoDisposeStreamProvider<T?> getProvider<T extends Serializable>(
+MyProvider<T?> getProvider<T extends Serializable>(
   Client<T> client,
   String id,
 ) {
-  return StreamProvider.autoDispose<T?>((ref) async* {
-    yield await client.get(id);
+  return StateProvider.autoDispose((ref) {
+    final cancel = client.watch(
+      id,
+      (data) {
+        ref.controller.update((state) => Result.value(data));
+      },
+      (error) {
+        ref.controller.update((state) => Result.error(error));
+      },
+    );
 
-    await for (final _ in client.watch(id: id)) {
-      yield await client.get(id);
-    }
+    ref.onDispose(cancel);
+
+    return Result.value(null);
   });
 }
