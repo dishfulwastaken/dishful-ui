@@ -17,8 +17,9 @@ class RecipePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return recipeProvider.when(
-      ref,
+    final recipeResult = ref.watch(recipeProvider);
+
+    return recipeResult.toWidget(
       loading: asyncLoading,
       error: asyncError,
       data: (recipe) {

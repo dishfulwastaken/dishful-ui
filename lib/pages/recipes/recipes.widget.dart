@@ -17,6 +17,8 @@ class RecipesPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final recipesResult = ref.watch(recipesProvider);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Recipes')),
       floatingActionButton: FloatingActionButton(
@@ -25,8 +27,7 @@ class RecipesPage extends ConsumerWidget {
         },
         child: const Icon(Icons.plus_one_rounded),
       ),
-      body: recipesProvider.when(
-        ref,
+      body: recipesResult.toWidget(
         loading: asyncLoading,
         error: asyncError,
         data: (recipes) {

@@ -17,31 +17,30 @@ typedef ErrorWidgetBuilder = Widget Function(
 );
 typedef DataWidgetBuilder<T> = Widget Function(T data);
 
-extension MyProviderExtension<T> on MyProvider<T> {
-  Widget when(
-    WidgetRef ref, {
+extension ResultExtension<T> on Result<T> {
+  Widget toWidget({
     required LoadingWidgetBuilder loading,
     required ErrorWidgetBuilder error,
     required DataWidgetBuilder<T> data,
   }) {
-    final result = ref.watch(this);
+    if (isError) {
+      final errorResult = asError!;
 
-    final isError = result.isError;
-    if (isError)
       return error(
-        result.asError!.error,
-        result.asError?.stackTrace,
+        errorResult.error,
+        errorResult.stackTrace,
       );
+    }
 
-    final value = result.asValue!.value;
-    final isLoadingSingle = value == null;
-    final isLoadingMultiple = !isLoadingSingle &&
+    final value = asValue!.value;
+
+    final isLoadingOne = value == null;
+    final isLoadingAll = !isLoadingOne &&
         value is List &&
         value.isNotEmpty &&
         value.first == null;
-    if (isLoadingSingle || isLoadingMultiple) return loading();
 
-    return data(value);
+    return isLoadingOne || isLoadingAll ? loading() : data(value);
   }
 }
 
