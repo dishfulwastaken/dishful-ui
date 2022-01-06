@@ -1,4 +1,4 @@
-# dishful
+# dishful-ui
 
 A recipe development app.
 
