@@ -9,21 +9,24 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  cupertino_icons: ^1.0.2
   
   flutter_riverpod: ^1.0.3
   fluro: ^2.0.3
+
   hive: ^2.0.4
   hive_flutter: ^1.1.0
+
+  firebase_core: ^1.10.6
+  firebase_auth: ^3.3.4
+  cloud_firestore: ^3.1.5
+
+  json_annotation: ^4.4.0
+  async: ^2.8.2
   nanoid: ^1.0.0
   faker: ^2.0.0
-  json_annotation: ^4.4.0
-
-  cupertino_icons: ^1.0.2
-  firebase_core: ^1.10.6
-  cloud_firestore: ^3.1.5
-  firebase_auth: ^3.3.4
-  async: ^2.8.2
-  tuple: ^2.0.0
+  html: ^0.15.0
+  http: ^0.13.4
 
 dev_dependencies:
   flutter_test:
