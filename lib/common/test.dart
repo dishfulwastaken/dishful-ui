@@ -5,7 +5,6 @@ import 'package:dishful/common/domain/recipe_iteration.dart';
 import 'package:dishful/common/domain/recipe_meta.dart';
 import 'package:dishful/common/domain/recipe_step.dart';
 import 'package:dishful/common/services/db.service.dart';
-import 'package:dishful/common/services/ingress.service.dart';
 import 'package:faker/faker.dart';
 
 final r = Random();
@@ -57,7 +56,4 @@ RecipeStep get randomRecipeStep => RecipeStep(
       description: f.lorem.sentence(),
     );
 
-void main() {
-  final a = IngressService.fromUrl(testUrlA);
-  a.init();
-}
+void main() async {}

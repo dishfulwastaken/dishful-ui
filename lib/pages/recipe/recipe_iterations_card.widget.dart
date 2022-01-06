@@ -1,5 +1,7 @@
 import 'package:dishful/common/domain/recipe_iteration.dart';
 import 'package:dishful/common/services/db.service.dart';
+import 'package:dishful/common/services/functions.service.dart';
+import 'package:dishful/common/services/ingress.service.dart';
 import 'package:flutter/material.dart';
 
 class RecipeIterationsCard extends StatelessWidget {
@@ -26,6 +28,14 @@ class RecipeIterationsCard extends StatelessWidget {
           ),
           Text("# of Steps: ${_recipeIteration.steps.length}"),
           Text("# of Ingredients: ${_recipeIteration.ingredients.length}"),
+          IconButton(
+            onPressed: () async {
+              final f = FunctionsService();
+              final r = await f.fetchHtml(testUrlA);
+              print(r);
+            },
+            icon: Icon(Icons.cloud),
+          ),
         ],
       ),
     );
