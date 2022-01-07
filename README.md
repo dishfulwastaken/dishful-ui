@@ -5,7 +5,7 @@ A recipe development app.
 Development day 1: 25th July, 2021
 
 ### TODO
-- setup mock running configuration so we useFunctionsEmulator and more
+- move to next phase of recipe ingress progress
 - Error handling everywhere! e.g. sign in, init flutterfire, etc, using Result<T>
   (see bookmarks)
 - Make Firebase DB initialization lazy - do not call init until either:

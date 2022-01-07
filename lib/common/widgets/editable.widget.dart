@@ -1,38 +1,59 @@
-import 'package:dishful/common/data/providers.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final isMutatingProvider = StateProvider((ref) => false);
+extension MyWidgetRef on WidgetRef {
+  void set<T>(StateProvider<T> of, T to) {
+    read(of.notifier).state = to;
+  }
+}
 
-typedef MutableChildBuilder = Widget Function(FocusNode);
+final isEditingProvider = StateProvider((ref) => false);
 
-class MutableWidget extends ConsumerWidget {
-  final Widget immutableChild;
-  final MutableChildBuilder mutableChildBuilder;
-  final FocusNode focusNode = FocusNode();
+typedef DefaultChildBuilder = Widget Function();
+typedef EditableChildBuilder = Widget Function(FocusNode);
 
-  MutableWidget({
-    required this.immutableChild,
-    required this.mutableChildBuilder,
-  });
+abstract class EditableWidget<T> extends ConsumerWidget {
+  abstract final DefaultChildBuilder defaultChildBuilder;
+  abstract final EditableChildBuilder editableChildBuilder;
+  abstract final T? editableChildController;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isMutating = ref.watch(isMutatingProvider);
+    final isMutating = ref.watch(isEditingProvider);
+    final FocusNode focusNode = FocusNode();
 
     final onFocusChange = () {
       if (!focusNode.hasFocus) {
-        // focusNode.removeListener(onFocusChange);
+        ref.set(isEditingProvider, false);
       }
     };
 
-    if (isMutating) focusNode.addListener(onFocusChange);
+    if (isMutating) {
+      focusNode.requestFocus();
+      focusNode.addListener(onFocusChange);
+    }
 
     return isMutating
-        ? mutableChildBuilder(focusNode)
+        ? editableChildBuilder(focusNode)
         : GestureDetector(
-            child: immutableChild,
-            onLongPress: () => ref.set(isMutatingProvider, true),
+            child: defaultChildBuilder(),
+            onLongPress: () => ref.set(isEditingProvider, true),
           );
   }
+}
+
+class EditableTextField extends EditableWidget<TextEditingController> {
+  final controller = TextEditingController(text: "Recipes");
+
+  @override
+  DefaultChildBuilder get defaultChildBuilder => () => Text(controller.text);
+
+  @override
+  EditableChildBuilder get editableChildBuilder => (focusNode) => TextField(
+        focusNode: focusNode,
+        controller: controller,
+      );
+
+  @override
+  TextEditingController get editableChildController => controller;
 }

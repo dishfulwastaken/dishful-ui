@@ -3,6 +3,7 @@ import 'package:dishful/common/domain/recipe_meta.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/test.dart';
 import 'package:dishful/common/widgets/async_loading.widget.dart';
+import 'package:dishful/common/widgets/editable.widget.dart';
 import 'package:dishful/pages/recipes/recipes_card.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,7 +21,7 @@ class RecipesPage extends ConsumerWidget {
     final recipesResult = ref.watch(recipesProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Recipes')),
+      appBar: AppBar(title: EditableTextField()),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           await DbService.publicDb.recipeMeta.create(randomRecipeMeta);

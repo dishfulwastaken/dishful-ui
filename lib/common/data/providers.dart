@@ -3,12 +3,6 @@ import 'package:dishful/common/services/db.service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-extension MyWidgetRef on WidgetRef {
-  void set<T>(StateProvider<T> of, T to) {
-    read(of.notifier).state = to;
-  }
-}
-
 typedef MyProvider<T> = AutoDisposeStateProvider<Result<T>>;
 typedef LoadingWidgetBuilder = Widget Function();
 typedef ErrorWidgetBuilder = Widget Function(
