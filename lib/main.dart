@@ -1,4 +1,6 @@
+import 'package:dishful/common/services/cloud.service.dart';
 import 'package:dishful/common/services/db.service.dart';
+import 'package:dishful/common/services/functions.service.dart';
 import 'package:dishful/common/services/route.service.dart';
 import 'package:dishful/theme/theme_data.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +9,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   RouteService.setUp();
+  await CloudService.init();
   await DbService.initPrivateDb();
   await DbService.initPublicDb();
+  await FunctionsService.init();
   runApp(
     ProviderScope(
       child: Dishful(),

@@ -6,6 +6,11 @@ environment:
   sdk: ">=2.14.0 <3.0.0"
   flutter: ">=1.17.0"
 
+scripts:
+  start: flutter run -d chrome
+  start_mock: derry start -- --dart-define isMock=true
+  start_debug: derry start -- --dart-define isMock=false
+
 dependencies:
   flutter:
     sdk: flutter

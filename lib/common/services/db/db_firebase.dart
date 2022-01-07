@@ -93,13 +93,7 @@ class FirebaseClient<T extends Serializable> extends Client<T> {
 
 class FirebaseDb extends Db {
   Future<void> init() async {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-
-    /// Current user can be accessed via singleton:
-    /// [FirebaseAuth.instance.currentUser].
-    await FirebaseAuth.instance.signInAnonymously();
+    assert(CloudService.ready, "CloudService.init must be called first!");
   }
 
   Future<void> close() async {}

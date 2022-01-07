@@ -30,8 +30,7 @@ class RecipeIterationsCard extends StatelessWidget {
           Text("# of Ingredients: ${_recipeIteration.ingredients.length}"),
           IconButton(
             onPressed: () async {
-              final f = FunctionsService();
-              final r = await f.fetchHtml(testUrlA);
+              final r = await FunctionsService.fetchHtml(testUrlA);
               print(r);
             },
             icon: Icon(Icons.cloud),

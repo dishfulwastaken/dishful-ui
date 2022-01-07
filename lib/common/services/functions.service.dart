@@ -1,8 +1,7 @@
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:dishful/common/data/env.dart';
 
-import 'db/firebase_options.dart';
+import 'cloud.service.dart';
 
 class _FunctionName {
   static const _base = 'dishful_function';
@@ -10,24 +9,17 @@ class _FunctionName {
 }
 
 class FunctionsService {
-  final FirebaseFunctions _functions = FirebaseFunctions.instance;
+  static final FirebaseFunctions _functions = FirebaseFunctions.instance;
 
-  Future<void> init() async {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+  static Future<void> init() async {
+    assert(CloudService.ready, "CloudService.init must be called first!");
 
-    /// Current user can be accessed via singleton:
-    /// [FirebaseAuth.instance.currentUser].
-    await FirebaseAuth.instance.signInAnonymously();
+    if (Env.isMock) _functions.useFunctionsEmulator("localhost", 5001);
   }
 
-  Future<String> fetchHtml(String url) async {
-    _functions.useFunctionsEmulator("localhost", 5001);
+  static Future<String> fetchHtml(String url) async {
     HttpsCallable callable = _functions.httpsCallable(_FunctionName.fetch);
     final results = await callable(url);
-    print('RESULT: ');
-    print(results);
     String html = results.data;
 
     return html;
