@@ -2,8 +2,11 @@ import 'package:dishful/common/domain/recipe_ingredient.dart';
 import 'package:dishful/common/domain/recipe_step.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:uuid/uuid.dart';
 
 part 'generated/recipe_iteration.g.dart';
+
+final uuid = Uuid();
 
 @JsonSerializable()
 class RecipeIteration extends Serializable {
@@ -36,6 +39,20 @@ class RecipeIteration extends Serializable {
     required this.createdAt,
     this.updatedAt,
   });
+
+  RecipeIteration.create({
+    this.parentId,
+    this.reviewId,
+    this.serves,
+    this.spiceLevel,
+    required this.cookTime,
+    required this.prepTime,
+    required this.ingredients,
+    required this.steps,
+    this.diets,
+    this.updatedAt,
+  })  : id = uuid.v1(),
+        createdAt = DateTime.now();
 }
 
 class RecipeIterationSerializer extends Serializer<RecipeIteration> {

@@ -1,10 +1,10 @@
 library ingress;
 
+import 'package:dishful/common/domain/recipe_meta.dart';
+import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
-import 'package:html/dom_parsing.dart';
-import 'package:html/parser.dart';
 
-import 'package:http/http.dart';
+import 'functions.service.dart';
 
 part 'ingress/ingress_allrecipes.dart';
 part 'ingress/ingress_foodnetwork.dart';
@@ -12,9 +12,15 @@ part 'ingress/ingress_foodnetwork.dart';
 class IngressService {
   final String url;
   late final Document document;
-  final client = Client();
 
-  IngressService.fromUrl(this.url);
+  IngressService.forUrl(this.url);
 
-  void init() async {}
+  Future<void> init() async {
+    final html = await FunctionsService.fetchHtml(testUrlA);
+    document = parse(html);
+  }
+
+  RecipeMeta get recipeMeta {
+    return RecipeMeta.create(name: 'name', description: 'description');
+  }
 }

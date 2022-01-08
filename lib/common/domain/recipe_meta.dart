@@ -1,7 +1,10 @@
 import 'package:dishful/common/services/db.service.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:uuid/uuid.dart';
 
 part 'generated/recipe_meta.g.dart';
+
+final uuid = Uuid();
 
 @JsonSerializable()
 class RecipeMeta extends Serializable {
@@ -20,6 +23,14 @@ class RecipeMeta extends Serializable {
     required this.status,
     required this.createdAt,
   });
+
+  RecipeMeta.create({
+    required this.name,
+    required this.description,
+    this.inspiration,
+  })  : id = uuid.v1(),
+        createdAt = DateTime.now(),
+        status = RecipeStatus.iterating;
 }
 
 class RecipeMetaSerializer extends Serializer<RecipeMeta> {

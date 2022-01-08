@@ -12,6 +12,7 @@ Development day 1: 25th July, 2021
     - the user enters a page which is meant for shared data or
     - a request is made to PublicDb 
 - Enable Firebase caching to avoid making as many requests (via FlutterFire -> enablePersistence)
+- Unify imports of my own dart files to either all use package: or none
 - Create base editable widget! Extending children have the behaviour:
     - If not editable, on long press, do a little shake left and right.
     - Else, on long press:

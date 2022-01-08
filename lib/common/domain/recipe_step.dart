@@ -1,7 +1,10 @@
 import 'package:dishful/common/services/db.service.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:uuid/uuid.dart';
 
 part 'generated/recipe_step.g.dart';
+
+final uuid = Uuid();
 
 @JsonSerializable()
 class RecipeStep extends Serializable {
@@ -18,6 +21,13 @@ class RecipeStep extends Serializable {
     required this.description,
     this.timer,
   });
+
+  RecipeStep.create({
+    required this.position,
+    this.title,
+    required this.description,
+    this.timer,
+  }) : id = uuid.v1();
 }
 
 class RecipeStepSerializer extends Serializer<RecipeStep> {

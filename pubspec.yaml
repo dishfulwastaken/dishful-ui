@@ -10,6 +10,7 @@ scripts:
   start: flutter run -d chrome
   start_mock: derry start -- --dart-define isMock=true
   start_debug: derry start -- --dart-define isMock=false
+  generate: flutter pub run build_runner build
 
 dependencies:
   flutter:
@@ -29,10 +30,10 @@ dependencies:
 
   json_annotation: ^4.4.0
   async: ^2.8.2
+  uuid: ^3.0.5
   nanoid: ^1.0.0
   faker: ^2.0.0
   html: ^0.15.0
-  http: ^0.13.4
 
 dev_dependencies:
   flutter_test:
