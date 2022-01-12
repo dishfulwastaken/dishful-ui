@@ -12,6 +12,7 @@ class RecipeMeta extends Serializable {
   final String name;
   final String description;
   final String? inspiration;
+  final int iterationCount;
   final RecipeStatus status;
   final DateTime createdAt;
 
@@ -20,6 +21,7 @@ class RecipeMeta extends Serializable {
     required this.name,
     required this.description,
     this.inspiration,
+    required this.iterationCount,
     required this.status,
     required this.createdAt,
   });
@@ -29,6 +31,7 @@ class RecipeMeta extends Serializable {
     required this.description,
     this.inspiration,
   })  : id = uuid.v1(),
+        iterationCount = 0,
         createdAt = DateTime.now(),
         status = RecipeStatus.iterating;
 }

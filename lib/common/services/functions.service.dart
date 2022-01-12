@@ -5,7 +5,7 @@ import 'cloud.service.dart';
 
 class _FunctionName {
   static const _base = 'dishful_function';
-  static const fetch = '${_base}_fetch_html';
+  static const fetchHtml = '${_base}_fetch_html';
 }
 
 class FunctionsService {
@@ -18,7 +18,7 @@ class FunctionsService {
   }
 
   static Future<String> fetchHtml(String url) async {
-    HttpsCallable callable = _functions.httpsCallable(_FunctionName.fetch);
+    HttpsCallable callable = _functions.httpsCallable(_FunctionName.fetchHtml);
     final results = await callable(url);
     String html = results.data;
 

@@ -30,6 +30,7 @@ RecipeMeta get randomRecipeMeta => RecipeMeta(
       name: f.food.dish(),
       description: f.lorem.sentence(),
       inspiration: f.lorem.sentence(),
+      iterationCount: 0,
       status: f.randomGenerator.element(RecipeStatus.values),
       createdAt: f.date.dateTime(),
     );
