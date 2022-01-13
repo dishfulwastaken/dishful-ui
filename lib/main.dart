@@ -1,3 +1,4 @@
+import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/cloud.service.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/services/functions.service.dart';
@@ -8,8 +9,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  RouteService.setUp();
+  RouteService.init();
   await CloudService.init();
+  await AuthService.init();
   await DbService.initPrivateDb();
   await DbService.initPublicDb();
   await FunctionsService.init();

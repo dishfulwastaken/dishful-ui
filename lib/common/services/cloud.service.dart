@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'cloud/firebase_options.dart';
@@ -14,7 +13,6 @@ class CloudService {
 
   static Future<void> init() async {
     await _initApp();
-    await _initAuth();
 
     _ready = true;
   }
@@ -22,7 +20,4 @@ class CloudService {
   static Future<FirebaseApp> _initApp() => Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
-
-  static Future<UserCredential> _initAuth() =>
-      FirebaseAuth.instance.signInAnonymously();
 }

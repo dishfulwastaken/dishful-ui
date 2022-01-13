@@ -12,7 +12,7 @@ class RecipePage extends ConsumerWidget {
   late final MyProvider<RecipeMeta?> recipeProvider;
 
   RecipePage(String id) {
-    recipeProvider = getProvider(DbService.publicDb.recipeMeta, id);
+    recipeProvider = getProvider(DbService.publicDb.recipeMeta(), id);
   }
 
   @override

@@ -67,19 +67,20 @@ class MockDb extends Db {
   Future<void> init() async {}
   Future<void> close() async {}
 
-  MockClient<RecipeMeta> get recipeMeta => _build(
+  MockClient<UserMeta> get userMeta => _build(
+        UserMetaSerializer(),
+      );
+  MockClient<RecipeMeta> recipeMeta({String? userId}) => _build(
         RecipeMetaSerializer(),
       );
-  MockClient<RecipeIteration> recipeIteration(String recipeId) => _build(
+  MockClient<RecipeIteration> recipeIteration(
+    String recipeId, {
+    String? userId,
+  }) =>
+      _build(
         RecipeIterationSerializer(),
       );
-  MockClient<RecipeIngredient> get recipeIngredient => _build(
-        RecipeIngredientSerializer(),
-      );
-  MockClient<RecipeStep> get recipeStep => _build(
-        RecipeStepSerializer(),
-      );
-  MockClient<RecipeReview> get recipeReview => _build(
+  MockClient<RecipeReview> recipeReview({String? userId}) => _build(
         RecipeReviewSerializer(),
       );
 }

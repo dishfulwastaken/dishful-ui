@@ -4,11 +4,11 @@ import 'dart:async';
 
 import 'package:dishful/common/data/env.dart';
 import 'package:dishful/common/data/json.dart';
-import 'package:dishful/common/domain/recipe_ingredient.dart';
 import 'package:dishful/common/domain/recipe_iteration.dart';
 import 'package:dishful/common/domain/recipe_meta.dart';
 import 'package:dishful/common/domain/recipe_review.dart';
-import 'package:dishful/common/domain/recipe_step.dart';
+import 'package:dishful/common/domain/user_meta.dart';
+import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/cloud.service.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';

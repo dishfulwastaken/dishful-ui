@@ -61,9 +61,10 @@ abstract class Client<T extends Serializable> {
 abstract class Db {
   Future<void> init();
   Future<void> close();
-  Client<RecipeMeta> get recipeMeta;
-  Client<RecipeIteration> recipeIteration(String recipeId);
-  Client<RecipeReview> get recipeReview;
+  Client<UserMeta> get userMeta;
+  Client<RecipeMeta> recipeMeta({String userId});
+  Client<RecipeIteration> recipeIteration(String recipeId, {String userId});
+  Client<RecipeReview> recipeReview({String userId});
 }
 
 enum DbProvider { hive, firebase, mock }

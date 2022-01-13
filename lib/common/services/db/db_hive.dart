@@ -2,6 +2,7 @@ part of db;
 
 class _HiveBoxName {
   static const _base = 'dishful_hive_storage';
+  static const userMeta = '${_base}_user_meta';
   static const recipeMeta = '${_base}_recipe_meta';
   static const recipeIteration = '${_base}_recipe_iteration';
   static const recipeReview = '${_base}_recipe_review';
@@ -107,6 +108,7 @@ class HiveDb extends Db {
     return client;
   }
 
+  HiveClient<UserMeta>? _userMeta;
   HiveClient<RecipeMeta>? _recipeMeta;
   HiveClient<RecipeIteration>? _recipeIteration;
   HiveClient<RecipeReview>? _recipeReview;
@@ -114,6 +116,10 @@ class HiveDb extends Db {
   Future<void> init() async {
     await Hive.initFlutter();
 
+    _userMeta = await _buildClient(
+      _HiveBoxName.userMeta,
+      UserMetaSerializer(),
+    );
     _recipeMeta = await _buildClient(
       _HiveBoxName.recipeMeta,
       RecipeMetaSerializer(),
@@ -132,8 +138,12 @@ class HiveDb extends Db {
     await Hive.close();
   }
 
-  HiveClient<RecipeMeta> get recipeMeta => _recipeMeta!;
-  HiveClient<RecipeIteration> recipeIteration(String recipeId) =>
+  HiveClient<UserMeta> get userMeta => _userMeta!;
+  HiveClient<RecipeMeta> recipeMeta({String? userId}) => _recipeMeta!;
+  HiveClient<RecipeIteration> recipeIteration(
+    String recipeId, {
+    String? userId,
+  }) =>
       _recipeIteration!;
-  HiveClient<RecipeReview> get recipeReview => _recipeReview!;
+  HiveClient<RecipeReview> recipeReview({String? userId}) => _recipeReview!;
 }

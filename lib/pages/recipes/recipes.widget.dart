@@ -13,7 +13,7 @@ class RecipesPage extends ConsumerWidget {
   late final MyProvider<List<RecipeMeta?>> recipesProvider;
 
   RecipesPage() {
-    recipesProvider = getAllProvider(DbService.publicDb.recipeMeta);
+    recipesProvider = getAllProvider(DbService.publicDb.recipeMeta());
   }
 
   @override
@@ -24,7 +24,7 @@ class RecipesPage extends ConsumerWidget {
       appBar: AppBar(title: EditableTextField()),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          await DbService.publicDb.recipeMeta.create(randomRecipeMeta);
+          await DbService.publicDb.recipeMeta().create(randomRecipeMeta);
         },
         child: const Icon(Icons.plus_one_rounded),
       ),

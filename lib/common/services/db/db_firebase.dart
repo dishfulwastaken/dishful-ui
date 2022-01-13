@@ -2,7 +2,7 @@ part of db;
 
 class _FirebaseCollectionName {
   static const _base = 'dishful_firebase_storage';
-  static const user = '${_base}_user';
+  static const userMeta = '${_base}_user_meta';
   static const recipeMeta = '${_base}_recipe_meta';
   static const recipeIteration = '${_base}_recipe_iteration';
   static const recipeReview = '${_base}_recipe_review';
@@ -121,29 +121,58 @@ class FirebaseDb extends Db {
 
   Future<void> close() async {}
 
-  FirebaseClient<RecipeMeta> get recipeMeta {
-    return FirebaseClient<RecipeMeta>(
-      _FirebaseCollectionName.recipeMeta,
-      RecipeMetaSerializer(),
+  FirebaseClient<UserMeta> get userMeta {
+    final collectionPath = _FirebaseCollectionName.userMeta;
+
+    return FirebaseClient<UserMeta>(
+      collectionPath,
+      UserMetaSerializer(),
       subcollectionDeleter: ({arg}) async {
-        await recipeIteration(arg).deleteAll();
+        await recipeMeta(userId: arg).deleteAll();
       },
     );
   }
 
-  FirebaseClient<RecipeIteration> recipeIteration(String recipeId) {
-    final collectionPath = _FirebaseCollectionName.recipeMeta +
-        '/$recipeId/' +
+  FirebaseClient<RecipeMeta> recipeMeta({String? userId}) {
+    userId ??= AuthService.currentUser?.uid;
+    final collectionPath = _FirebaseCollectionName.userMeta +
+        "/$userId/" +
+        _FirebaseCollectionName.recipeMeta;
+
+    return FirebaseClient<RecipeMeta>(
+      collectionPath,
+      RecipeMetaSerializer(),
+      subcollectionDeleter: ({arg}) async {
+        await recipeIteration(arg, userId: userId).deleteAll();
+      },
+    );
+  }
+
+  FirebaseClient<RecipeIteration> recipeIteration(
+    String recipeId, {
+    String? userId,
+  }) {
+    userId ??= AuthService.currentUser?.uid;
+    final collectionPath = _FirebaseCollectionName.userMeta +
+        "/$userId/" +
+        _FirebaseCollectionName.recipeMeta +
+        "/$recipeId/" +
         _FirebaseCollectionName.recipeIteration;
+
     return FirebaseClient<RecipeIteration>(
       collectionPath,
       RecipeIterationSerializer(),
     );
   }
 
-  FirebaseClient<RecipeReview> get recipeReview {
+  FirebaseClient<RecipeReview> recipeReview({String? userId}) {
+    userId ??= AuthService.currentUser?.uid;
+    final collectionPath = _FirebaseCollectionName.userMeta +
+        "/$userId/" +
+        _FirebaseCollectionName.recipeReview;
+
     return FirebaseClient<RecipeReview>(
-      _FirebaseCollectionName.recipeReview,
+      collectionPath,
       RecipeReviewSerializer(),
     );
   }
