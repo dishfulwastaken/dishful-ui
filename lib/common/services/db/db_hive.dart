@@ -38,7 +38,7 @@ class HiveClient<T extends Serializable> extends Client<T> {
   Future<void> create(T data) async {
     assert(box != null, 'HiveClient.init must be called first!');
     final dataAsMap = serializer.toJson(data).cast<dynamic, dynamic>();
-    box!.put(data.id, dataAsMap);
+    await box!.put(data.id, dataAsMap);
   }
 
   Future<void> update(T data) async {
@@ -46,9 +46,14 @@ class HiveClient<T extends Serializable> extends Client<T> {
     await box!.put(data.id, serializer.toJson(data));
   }
 
+  Future<void> deleteAll() async {
+    assert(box != null, 'HiveClient.init must be called first!');
+    await box!.clear();
+  }
+
   Future<void> delete(String id) async {
     assert(box != null, 'HiveClient.init must be called first!');
-    box!.delete(id);
+    await box!.delete(id);
   }
 
   SubscriptionCancel watchAll(

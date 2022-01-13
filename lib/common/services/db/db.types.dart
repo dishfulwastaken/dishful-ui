@@ -15,6 +15,8 @@ typedef SubscriptionCancel = Future<void> Function();
 typedef SubscriptionOnData<T> = void Function(T);
 typedef SubscriptionOnError<T> = void Function(T);
 
+typedef SubcollectionDeleter = Future<void> Function({dynamic arg});
+
 abstract class Client<T extends Serializable> {
   /// Get all documents in the collection.
   Future<List<T>> getAll();
@@ -31,6 +33,9 @@ abstract class Client<T extends Serializable> {
   /// will create a collection if it does not
   /// exist.
   Future<void> create(T data);
+
+  /// Delete all documents in the collection.
+  Future<void> deleteAll();
 
   /// Delete a document with ID = [id].
   Future<void> delete(String id);

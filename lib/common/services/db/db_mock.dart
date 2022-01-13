@@ -14,6 +14,11 @@ class MockClient<T extends Serializable> extends Client<T> {
     return Future.delayed(mockDelay);
   }
 
+  Future<void> deleteAll() async {
+    db.clear();
+    return Future.delayed(mockDelay);
+  }
+
   Future<void> delete(String id) {
     db.removeWhere((key, _) => key == id);
     return Future.delayed(mockDelay);

@@ -8,8 +8,8 @@ environment:
 
 scripts:
   start: flutter run -d chrome
-  start_mock: derry start -- --dart-define isMock=true
-  start_debug: derry start -- --dart-define isMock=false
+  start_mock: $start --dart-define isMock=true
+  start_debug: $start --dart-define isMock=false
   generate: flutter pub run build_runner build
 
 dependencies:

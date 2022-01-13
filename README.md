@@ -5,9 +5,8 @@ A recipe development app.
 Development day 1: 25th July, 2021
 
 ### TODO
-- Make the new recipe iterations listeners work; solution would be to use cloud firestore emulator;
-  Would be best to start making scripts (maybe in another repo) for running the whole thang
 - Create users, add user ID to some domain models
+- USER DATA SEGREGATION - nest in another document?
 - Login page & ability to create a user, look into how we comply with GDPR,
   I think it will just involve giving users the ability to see all the data we store 
   on them. 
