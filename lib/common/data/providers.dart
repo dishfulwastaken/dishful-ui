@@ -1,5 +1,7 @@
 import 'package:async/async.dart';
+import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/db.service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -64,6 +66,23 @@ MyProvider<T?> getProvider<T extends Serializable>(
   return StateProvider.autoDispose((ref) {
     final cancel = client.watch(
       id,
+      (data) {
+        ref.controller.update((state) => Result.value(data));
+      },
+      (error) {
+        ref.controller.update((state) => Result.error(error));
+      },
+    );
+
+    ref.onDispose(cancel);
+
+    return Result.value(null);
+  });
+}
+
+MyProvider<User?> currentUserProvider() {
+  return StateProvider.autoDispose((ref) {
+    final cancel = AuthService.watchCurrentUser(
       (data) {
         ref.controller.update((state) => Result.value(data));
       },

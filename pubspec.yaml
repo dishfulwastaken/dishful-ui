@@ -28,6 +28,7 @@ dependencies:
   cloud_firestore: ^3.1.5
   cloud_functions: ^3.2.4
 
+  flutter_svg: ^1.0.1
   json_annotation: ^4.4.0
   async: ^2.8.2
   uuid: ^3.0.5
@@ -43,3 +44,11 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts: 
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/Montserrat-Regular.ttf
+          weight: 500
+    - family: SweetApricot
+      fonts:
+        - asset: assets/fonts/SweetApricot.ttf

@@ -1,6 +1,6 @@
 import 'package:dishful/pages/recipes/recipes.widget.dart';
 import 'package:dishful/pages/recipe/recipe.widget.dart';
-import 'package:dishful/pages/login/login.widget.dart';
+import 'package:dishful/pages/auth/auth.widget.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/widgets.dart';
 
@@ -37,15 +37,15 @@ class _AppRoute<A> {
   }
 }
 
-final _login = _AppRoute(
+final _auth = _AppRoute(
   path: "",
   handlerFunc: (context, params, args) {
-    return LoginPage();
+    return AuthPage();
   },
 );
 
 final _recipes = _AppRoute(
-  parent: _login,
+  parent: _auth,
   path: "recipes",
   handlerFunc: (context, params, args) {
     return RecipesPage();
@@ -61,7 +61,7 @@ final _recipe = _AppRoute(
   },
 );
 
-List<_AppRoute> appRoutes = [_login, _recipes, _recipe];
+List<_AppRoute> appRoutes = [_auth, _recipes, _recipe];
 
 class RouteService {
   static void goToRecipes(BuildContext context) {
