@@ -6,7 +6,8 @@ class AuthTextField extends StatelessWidget {
   final IconData icon;
   final bool isSecret;
   final bool isEmail;
-  final TextEditingController _controller = TextEditingController();
+  final _controller = TextEditingController();
+  final _focusNode = FocusNode();
 
   String get text => _controller.text;
   void clear() => _controller.clear();
@@ -21,41 +22,44 @@ class AuthTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      constraints: BoxConstraints(maxWidth: 320),
-      decoration: BoxDecoration(
-        color: HexColor.fromHex("#fda1bf"),
-        borderRadius: BorderRadius.circular(100),
-      ),
-      padding: EdgeInsets.all(18),
-      child: Row(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(right: 12),
-            child: Icon(
-              icon,
-              color: Colors.white,
-            ),
-          ),
-          Expanded(
-            child: TextField(
-              controller: _controller,
-              keyboardType: isEmail ? TextInputType.emailAddress : null,
-              obscureText: isSecret,
-              style: TextStyle(
-                fontSize: 13,
+    return GestureDetector(
+      onTap: () => _focusNode.requestFocus(),
+      child: Container(
+        decoration: BoxDecoration(
+          color: HexColor.fromHex("#fda1bf"),
+          borderRadius: BorderRadius.circular(100),
+        ),
+        padding: EdgeInsets.all(17),
+        child: Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(right: 12),
+              child: Icon(
+                icon,
                 color: Colors.white,
               ),
-              decoration: InputDecoration.collapsed(
-                hintText: hintText,
-                hintStyle: TextStyle(
+            ),
+            Expanded(
+              child: TextField(
+                controller: _controller,
+                focusNode: _focusNode,
+                keyboardType: isEmail ? TextInputType.emailAddress : null,
+                obscureText: isSecret,
+                style: TextStyle(
                   fontSize: 13,
                   color: Colors.white,
                 ),
+                decoration: InputDecoration.collapsed(
+                  hintText: hintText,
+                  hintStyle: TextStyle(
+                    fontSize: 13,
+                    color: Colors.white,
+                  ),
+                ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }
