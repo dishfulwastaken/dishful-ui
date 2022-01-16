@@ -6,6 +6,7 @@ import 'package:dishful/common/services/route.service.dart';
 import 'package:dishful/theme/theme_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +30,7 @@ class Dishful extends StatelessWidget {
       title: 'Dishful',
       theme: themeData,
       onGenerateRoute: RouteService.onGenerateRoute,
+      localizationsDelegates: [FormBuilderLocalizations.delegate],
     );
   }
 }

@@ -1,11 +1,6 @@
+import 'package:dishful/common/data/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-extension MyWidgetRef on WidgetRef {
-  void set<T>(StateProvider<T> of, T to) {
-    read(of.notifier).state = to;
-  }
-}
 
 final isEditingProvider = StateProvider((ref) => false);
 

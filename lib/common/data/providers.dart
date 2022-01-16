@@ -13,6 +13,12 @@ typedef ErrorWidgetBuilder = Widget Function(
 );
 typedef DataWidgetBuilder<T> = Widget Function(T data);
 
+extension WidgetRefExtension on WidgetRef {
+  void set<T>(StateProvider<T> of, T to) {
+    read(of.notifier).state = to;
+  }
+}
+
 extension ResultExtension<T> on Result<T> {
   Widget toWidget({
     required LoadingWidgetBuilder loading,

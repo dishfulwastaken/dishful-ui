@@ -5,16 +5,14 @@ class AuthTextButton extends StatelessWidget {
   final void Function() onPressed;
   final IconData? leftIcon;
   final IconData? rightIcon;
-  final bool? rightAligned;
-  final bool? leftAligned;
+  final AlignmentGeometry alignment;
 
   AuthTextButton({
     required this.text,
     required this.onPressed,
     this.leftIcon,
     this.rightIcon,
-    this.leftAligned,
-    this.rightAligned,
+    this.alignment = Alignment.center,
     Key? key,
   }) : super(key: key);
 
@@ -29,25 +27,26 @@ class AuthTextButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: onPressed,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (rightAligned == true) Spacer(),
-          if (rightIcon != null) Container(width: 24),
-          if (leftIcon != null) buildIcon(leftIcon!),
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: 13,
-              color: Colors.white,
+    return Align(
+      alignment: alignment,
+      child: TextButton(
+        onPressed: onPressed,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (rightIcon != null) Container(width: 24),
+            if (leftIcon != null) buildIcon(leftIcon!),
+            Text(
+              text,
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.white,
+              ),
             ),
-          ),
-          if (leftIcon != null) Container(width: 24),
-          if (rightIcon != null) buildIcon(rightIcon!),
-          if (leftAligned == true) Spacer(),
-        ],
+            if (leftIcon != null) Container(width: 24),
+            if (rightIcon != null) buildIcon(rightIcon!),
+          ],
+        ),
       ),
     );
   }
