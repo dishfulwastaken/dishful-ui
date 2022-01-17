@@ -9,13 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
   RouteService.init();
-  await CloudService.init();
-  await AuthService.init();
-  await DbService.initPrivateDb();
-  await DbService.initPublicDb();
-  await FunctionsService.init();
   runApp(
     ProviderScope(
       child: Dishful(),

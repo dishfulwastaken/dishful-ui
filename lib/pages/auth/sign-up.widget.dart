@@ -43,7 +43,7 @@ class SignUp extends ConsumerWidget {
               email: formState.value["email"],
               password: formState.value["password"],
             );
-            RouteService.goToRecipes(context);
+            RouteService.goToRecipes(context, clearStack: true);
           } on AuthException<SignUpAuthExceptionCode> catch (error) {
             switch (error.code) {
               case SignUpAuthExceptionCode.passwordWeak:

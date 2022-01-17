@@ -5,14 +5,11 @@ A recipe development app.
 Development day 1: 25th July, 2021
 
 ### TODO
-- SignIn/signup page, proper auth flow. 
 - Give keys to widgets!!!
-- Look into storing user creds on android and ios platforms so the user logs in once
 - Look into how we comply with GDPR,
   I think it will just involve giving users the ability to see all the data we store 
   on them. 
-  BOTH TIERS of the app will involve user creation & signIn
-- Email verification (less important in short term)
+- Email verification before upgrading account
 - Error handling everywhere! e.g. sign in, init flutterfire, etc, using Result<T>
   (see bookmarks)
 - Web support: premium users only so it will

@@ -1,3 +1,4 @@
+import 'package:dishful/pages/landing/landing.widget.dart';
 import 'package:dishful/pages/recipes/recipes.widget.dart';
 import 'package:dishful/pages/recipe/recipe.widget.dart';
 import 'package:dishful/pages/auth/auth.widget.dart';
@@ -37,15 +38,23 @@ class _AppRoute<A> {
   }
 }
 
-final _auth = _AppRoute(
+final _landing = _AppRoute(
   path: "",
+  handlerFunc: (context, params, args) {
+    return LandingPage();
+  },
+);
+
+final _auth = _AppRoute(
+  parent: _landing,
+  path: "auth",
   handlerFunc: (context, params, args) {
     return AuthPage();
   },
 );
 
 final _recipes = _AppRoute(
-  parent: _auth,
+  parent: _landing,
   path: "recipes",
   handlerFunc: (context, params, args) {
     return RecipesPage();
@@ -61,11 +70,15 @@ final _recipe = _AppRoute(
   },
 );
 
-List<_AppRoute> appRoutes = [_auth, _recipes, _recipe];
+List<_AppRoute> appRoutes = [_landing, _auth, _recipes, _recipe];
 
 class RouteService {
-  static void goToRecipes(BuildContext context) {
-    _goTo(context, _recipes.fullPath);
+  static void goToAuth(BuildContext context) {
+    _goTo(context, _auth.fullPath, clearStack: true);
+  }
+
+  static void goToRecipes(BuildContext context, {bool? clearStack}) {
+    _goTo(context, _recipes.fullPath, clearStack: clearStack);
   }
 
   static void goToRecipe(BuildContext context, String recipeId) {
@@ -77,10 +90,12 @@ class RouteService {
     BuildContext context,
     String destination, {
     Map<String, dynamic>? arguments,
+    bool? clearStack,
   }) {
     FluroRouter.appRouter.navigateTo(
       context,
       destination,
+      clearStack: clearStack ?? false,
       routeSettings: RouteSettings(arguments: arguments),
     );
   }
