@@ -2,6 +2,7 @@ import 'package:dishful/common/data/color.dart';
 import 'package:dishful/pages/auth/logo.widget.dart';
 import 'package:dishful/pages/auth/sign-in.widget.dart';
 import 'package:dishful/pages/auth/sign-up.widget.dart';
+import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,7 +18,7 @@ class AuthPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      backgroundColor: HexColor.fromHex("#ff80aa"),
+      backgroundColor: Palette.primary,
       body: Container(
         alignment: Alignment.center,
         padding: EdgeInsets.symmetric(vertical: 38, horizontal: 64),

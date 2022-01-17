@@ -1,6 +1,6 @@
-import 'package:dishful/common/data/color.dart';
 import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/pages/landing/progress-bar.widget.dart';
+import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
 
 import 'package:dishful/common/services/auth.service.dart';
@@ -43,7 +43,7 @@ class LandingPage extends ConsumerWidget {
     });
 
     return Scaffold(
-      backgroundColor: HexColor.fromHex("#ff80aa"),
+      backgroundColor: Palette.primary,
       body: Center(
         child: Consumer(
           builder: (context, ref, _) {

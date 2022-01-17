@@ -1,3 +1,4 @@
+import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:dishful/common/data/color.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -62,7 +63,7 @@ class AuthTextField extends ConsumerWidget {
       decoration: InputDecoration(
         contentPadding: EdgeInsets.symmetric(vertical: 17, horizontal: 22),
         filled: true,
-        fillColor: HexColor.fromHex("#fda1bf"),
+        fillColor: Palette.primaryLight,
         errorMaxLines: 2,
         hintText: hintText,
         hintStyle: TextStyle(

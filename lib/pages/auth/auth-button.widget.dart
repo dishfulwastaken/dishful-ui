@@ -1,5 +1,7 @@
 import 'package:dishful/common/data/color.dart';
 import 'package:dishful/common/data/providers.dart';
+import 'package:dishful/theme/font.dart';
+import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -38,13 +40,11 @@ class AuthButton extends ConsumerWidget {
         ),
         backgroundColor: MaterialStateProperty.resolveWith(
           (states) => states.contains(MaterialState.disabled)
-              ? Colors.black
-              : HexColor.fromHex("#8fbfaf"),
+              ? Palette.disabled
+              : Palette.secondary,
         ),
-        textStyle: MaterialStateProperty.resolveWith(
-          (states) => states.contains(MaterialState.disabled)
-              ? TextStyle(fontFamily: "Montserrat", color: Colors.grey)
-              : TextStyle(fontFamily: "Montserrat", color: Colors.white),
+        textStyle: MaterialStateProperty.all(
+          TextStyle(fontFamily: Fonts.text, color: Colors.white),
         ),
       ),
       child: Row(

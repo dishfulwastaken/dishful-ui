@@ -1,4 +1,6 @@
 import 'package:dishful/common/data/color.dart';
+import 'package:dishful/theme/font.dart';
+import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -24,7 +26,7 @@ class Logo extends StatelessWidget {
               height: 125,
               child: Container(
                 decoration: BoxDecoration(
-                  color: HexColor.fromHex("#ff4d88"),
+                  color: Palette.primaryDark,
                   borderRadius: BorderRadius.circular(22),
                 ),
               ),
@@ -38,7 +40,7 @@ class Logo extends StatelessWidget {
             style: TextStyle(
               color: Colors.white,
               fontSize: 76,
-              fontFamily: "SweetApricot",
+              fontFamily: Fonts.logo,
             ),
           ),
         ),

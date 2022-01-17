@@ -1,3 +1,5 @@
+import 'package:dishful/common/data/color.dart';
+import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
 
 class ProgressBar extends StatelessWidget {
@@ -16,8 +18,8 @@ class ProgressBar extends StatelessWidget {
     this.height = 20.0,
     this.radius = 50.0,
     this.duration = const Duration(milliseconds: 35),
-    this.color = Colors.red,
-    this.backgroundColor = Colors.redAccent,
+    this.color = Palette.primaryDark,
+    this.backgroundColor = Palette.primaryLight,
   }) : super(key: key);
 
   @override
