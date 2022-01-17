@@ -28,7 +28,7 @@ class Dishful extends StatelessWidget {
         breakpoints: [
           ResponsiveBreakpoint.autoScale(480, name: MOBILE, scaleFactor: 0.5),
           ResponsiveBreakpoint.resize(800, name: TABLET),
-          ResponsiveBreakpoint.resize(1000, name: DESKTOP, scaleFactor: 0.7),
+          ResponsiveBreakpoint.resize(1000, name: DESKTOP, scaleFactor: 0.85),
           ResponsiveBreakpoint.autoScale(2460, name: '4K'),
         ],
       ),
