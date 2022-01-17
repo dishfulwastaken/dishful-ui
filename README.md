@@ -5,6 +5,7 @@ A recipe development app.
 Development day 1: 25th July, 2021
 
 ### TODO
+- Use AsyncValue instead of Result so we dont need any magic values for loading states!
 - Try to eagerly load the logo svg while we are in the landing page!
 - Give keys to widgets!!!
 - Look into how we comply with GDPR,
