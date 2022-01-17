@@ -3,6 +3,7 @@ import 'package:dishful/theme/theme_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:responsive_framework/responsive_wrapper.dart';
 
 void main() {
   RouteService.init();
@@ -21,6 +22,16 @@ class Dishful extends StatelessWidget {
       theme: themeData,
       onGenerateRoute: RouteService.onGenerateRoute,
       localizationsDelegates: [FormBuilderLocalizations.delegate],
+      builder: (context, child) => ResponsiveWrapper.builder(
+        child,
+        defaultScale: true,
+        breakpoints: [
+          ResponsiveBreakpoint.autoScale(480, name: MOBILE, scaleFactor: 0.5),
+          ResponsiveBreakpoint.resize(800, name: TABLET),
+          ResponsiveBreakpoint.resize(1000, name: DESKTOP, scaleFactor: 0.7),
+          ResponsiveBreakpoint.autoScale(2460, name: '4K'),
+        ],
+      ),
     );
   }
 }
