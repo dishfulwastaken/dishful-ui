@@ -12,14 +12,18 @@ typedef _RouteHandler<A> = Widget? Function(
 );
 
 class _AppRoute<A> {
-  final _AppRoute? parent;
   final String path;
   final _RouteHandler<A> handlerFunc;
+  final _AppRoute? parent;
+  final TransitionType transitionType;
+  final Duration transitionDuration;
 
   _AppRoute({
-    this.parent,
     required this.path,
     required this.handlerFunc,
+    this.parent,
+    this.transitionType = TransitionType.native,
+    this.transitionDuration = const Duration(milliseconds: 300),
   });
 
   String get fullPath {
@@ -51,6 +55,8 @@ final _auth = _AppRoute(
   handlerFunc: (context, params, args) {
     return AuthPage();
   },
+  transitionType: TransitionType.fadeIn,
+  transitionDuration: Duration(seconds: 2),
 );
 
 final _recipes = _AppRoute(
@@ -109,6 +115,8 @@ class RouteService {
       FluroRouter.appRouter.define(
         appRoute.fullPath,
         handler: appRoute.handler,
+        transitionType: appRoute.transitionType,
+        transitionDuration: appRoute.transitionDuration,
       );
     }
   }
