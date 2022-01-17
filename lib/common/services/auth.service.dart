@@ -44,8 +44,7 @@ class AuthService {
   static Future<void> init() async {
     assert(CloudService.ready, "CloudService.init must be called first!");
 
-    // TODO: configure mock port setup
-    // if (Env.isMock) _auth.useAuthEmulator("localhost", 5001);
+    if (Env.isMock) _auth.useAuthEmulator("localhost", 9099);
   }
 
   static Future<void> signUp({

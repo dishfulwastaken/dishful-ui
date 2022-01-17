@@ -1,14 +1,10 @@
-import 'package:dishful/common/services/auth.service.dart';
-import 'package:dishful/common/services/cloud.service.dart';
-import 'package:dishful/common/services/db.service.dart';
-import 'package:dishful/common/services/functions.service.dart';
 import 'package:dishful/common/services/route.service.dart';
 import 'package:dishful/theme/theme_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 
-void main() async {
+void main() {
   RouteService.init();
   runApp(
     ProviderScope(

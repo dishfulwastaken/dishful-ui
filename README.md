@@ -5,6 +5,7 @@ A recipe development app.
 Development day 1: 25th July, 2021
 
 ### TODO
+- Try to eagerly load the logo svg while we are in the landing page!
 - Give keys to widgets!!!
 - Look into how we comply with GDPR,
   I think it will just involve giving users the ability to see all the data we store 
