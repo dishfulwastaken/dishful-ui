@@ -1,8 +1,6 @@
 import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/domain/recipe_iteration.dart';
 import 'package:dishful/common/services/db.service.dart';
-import 'package:dishful/common/widgets/async_error.widget.dart';
-import 'package:dishful/common/widgets/async_loading.widget.dart';
 import 'package:dishful/pages/recipe/recipe_iterations_card.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,9 +19,7 @@ class RecipeIterations extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final recipeIterationsValue = ref.watch(recipeIterationsProvider);
 
-    return recipeIterationsValue.when(
-      loading: asyncLoading,
-      error: asyncError,
+    return recipeIterationsValue.toWidget(
       data: (recipeIterations) {
         return recipeIterations.isEmpty
             ? Text('No iterations')

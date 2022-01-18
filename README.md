@@ -12,7 +12,6 @@ Development day 1: 25th July, 2021
 - Start planning swooshes
 - Enable offline usage?? I know there is some option in firebase, but should we consider
   doing something like using privateDb while no connection? 
-- Use AsyncValue instead of Result so we dont need any magic values for loading states!
 - Give keys to widgets!!!
 - Look into how we comply with GDPR,
   I think it will just involve giving users the ability to see all the data we store 

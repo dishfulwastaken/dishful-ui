@@ -2,8 +2,6 @@ import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/domain/recipe_meta.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/test.dart';
-import 'package:dishful/common/widgets/async_error.widget.dart';
-import 'package:dishful/common/widgets/async_loading.widget.dart';
 import 'package:dishful/pages/recipe/recipe_iterations.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,9 +17,7 @@ class RecipePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final recipeValue = ref.watch(recipeProvider);
 
-    return recipeValue.when(
-      loading: asyncLoading,
-      error: asyncError,
+    return recipeValue.toWidget(
       data: (recipe) {
         final noRecipe = recipe == null;
         return noRecipe

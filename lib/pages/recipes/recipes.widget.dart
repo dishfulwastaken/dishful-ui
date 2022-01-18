@@ -28,9 +28,7 @@ class RecipesPage extends ConsumerWidget {
         },
         child: const Icon(Icons.plus_one_rounded),
       ),
-      body: recipesValue.when(
-        loading: asyncLoading,
-        error: asyncError,
+      body: recipesValue.toWidget(
         data: (recipes) {
           return recipes.isEmpty
               ? Text('No recipes')
