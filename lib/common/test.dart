@@ -28,7 +28,9 @@ Duration get randomDuration => Duration(
 RecipeMeta get randomRecipeMeta => RecipeMeta(
       id: f.guid.guid(),
       name: f.food.dish(),
-      description: f.lorem.sentence(),
+      description: f.lorem
+          .sentences(f.randomGenerator.integer(3, min: 1))
+          .reduce((acc, cur) => "$acc $cur"),
       inspiration: f.lorem.sentence(),
       iterationCount: 0,
       status: f.randomGenerator.element(RecipeStatus.values),
