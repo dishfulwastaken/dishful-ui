@@ -5,8 +5,10 @@ A recipe development app.
 Development day 1: 25th July, 2021
 
 ### TODO
+- Handle firestore error that is raised when trying to restart emulator on hot restart
+- See if we can use StadiumBorder EVERYWHERE that we use an overly large
+  border radius.
 - Start recipes page
-  - use solomon bar for tabs
   - start using parallax animation, blobs, staggered grid views all in one ;D
   - maybe just show the avatar and onclick go to a profile page which has settings in it...
 - Start planning swooshes

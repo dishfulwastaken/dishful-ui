@@ -35,6 +35,11 @@ dependencies:
 
   responsive_framework: ^0.1.5
 
+  salomon_bottom_bar: ^3.2.0
+  parallax_animation: ^0.0.3
+  blobs: ^2.0.0
+  flutter_staggered_grid_view: ^0.6.0
+
   json_annotation: ^4.4.0
   uuid: ^3.0.5
   faker: ^2.0.0
@@ -56,3 +61,9 @@ flutter:
     - family: SweetApricot
       fonts:
         - asset: assets/fonts/SweetApricot.ttf
+    - family: Baloo
+      fonts:
+        - asset: assets/fonts/Baloo-Regular.ttf
+    - family: CustomIcons
+      fonts:
+        - asset: assets/fonts/CustomIcons.ttf

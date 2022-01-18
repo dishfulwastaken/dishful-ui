@@ -29,6 +29,7 @@ class RecipesCard extends StatelessWidget {
             ),
             Text("ID: ${_recipe.id}"),
             Text("# Iterations: ${_recipe.iterationCount}"),
+            Text("Description: ${_recipe.description}"),
           ],
         ),
       ),

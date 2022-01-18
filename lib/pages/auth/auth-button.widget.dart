@@ -1,4 +1,3 @@
-import 'package:dishful/common/data/color.dart';
 import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/theme/font.dart';
 import 'package:dishful/theme/palette.dart';
