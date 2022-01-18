@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RecipeIterations extends ConsumerWidget {
-  late final MyProvider<List<RecipeIteration?>> recipeIterationsProvider;
+  late final AsyncValueProvider<List<RecipeIteration?>>
+      recipeIterationsProvider;
 
   RecipeIterations(String id) {
     recipeIterationsProvider = getAllProvider(
@@ -18,9 +19,9 @@ class RecipeIterations extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final recipeIterationsResult = ref.watch(recipeIterationsProvider);
+    final recipeIterationsValue = ref.watch(recipeIterationsProvider);
 
-    return recipeIterationsResult.toWidget(
+    return recipeIterationsValue.when(
       loading: asyncLoading,
       error: asyncError,
       data: (recipeIterations) {

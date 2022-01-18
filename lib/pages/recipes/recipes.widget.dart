@@ -10,7 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dishful/common/widgets/async_error.widget.dart';
 
 class RecipesPage extends ConsumerWidget {
-  late final MyProvider<List<RecipeMeta?>> recipesProvider;
+  late final AsyncValueProvider<List<RecipeMeta?>> recipesProvider;
 
   RecipesPage() {
     recipesProvider = getAllProvider(DbService.publicDb.recipeMeta());
@@ -18,7 +18,7 @@ class RecipesPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final recipesResult = ref.watch(recipesProvider);
+    final recipesValue = ref.watch(recipesProvider);
 
     return Scaffold(
       appBar: AppBar(title: EditableTextField()),
@@ -28,7 +28,7 @@ class RecipesPage extends ConsumerWidget {
         },
         child: const Icon(Icons.plus_one_rounded),
       ),
-      body: recipesResult.toWidget(
+      body: recipesValue.when(
         loading: asyncLoading,
         error: asyncError,
         data: (recipes) {

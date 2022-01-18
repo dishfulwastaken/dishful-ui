@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RecipePage extends ConsumerWidget {
-  late final MyProvider<RecipeMeta?> recipeProvider;
+  late final AsyncValueProvider<RecipeMeta?> recipeProvider;
 
   RecipePage(String id) {
     recipeProvider = getProvider(DbService.publicDb.recipeMeta(), id);
@@ -17,9 +17,9 @@ class RecipePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final recipeResult = ref.watch(recipeProvider);
+    final recipeValue = ref.watch(recipeProvider);
 
-    return recipeResult.toWidget(
+    return recipeValue.when(
       loading: asyncLoading,
       error: asyncError,
       data: (recipe) {
