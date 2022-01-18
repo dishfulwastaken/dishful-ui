@@ -1,4 +1,3 @@
-import 'package:dishful/common/data/color.dart';
 import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
 
