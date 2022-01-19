@@ -1,4 +1,5 @@
 import 'package:dishful/pages/landing/landing.widget.dart';
+import 'package:dishful/pages/profile/profile.widget.dart';
 import 'package:dishful/pages/recipes/recipes.widget.dart';
 import 'package:dishful/pages/recipe/recipe.widget.dart';
 import 'package:dishful/pages/auth/auth.widget.dart';
@@ -59,6 +60,14 @@ final _auth = _AppRoute(
   transitionDuration: Duration(seconds: 2),
 );
 
+final _profile = _AppRoute(
+  parent: _landing,
+  path: "profile",
+  handlerFunc: (context, params, args) {
+    return ProfilePage();
+  },
+);
+
 final _recipes = _AppRoute(
   parent: _landing,
   path: "recipes",
@@ -76,11 +85,15 @@ final _recipe = _AppRoute(
   },
 );
 
-List<_AppRoute> appRoutes = [_landing, _auth, _recipes, _recipe];
+List<_AppRoute> appRoutes = [_landing, _auth, _profile, _recipes, _recipe];
 
 class RouteService {
   static void goToAuth(BuildContext context) {
     _goTo(context, _auth.fullPath, clearStack: true);
+  }
+
+  static void goToProfile(BuildContext context) {
+    _goTo(context, _profile.fullPath);
   }
 
   static void goToRecipes(BuildContext context, {bool? clearStack}) {

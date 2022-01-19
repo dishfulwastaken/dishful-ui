@@ -2,12 +2,16 @@ import 'package:dishful/common/data/icons.dart';
 import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/domain/recipe_meta.dart';
 import 'package:dishful/common/services/db.service.dart';
+import 'package:dishful/common/services/route.service.dart';
 import 'package:dishful/common/test.dart';
+import 'package:dishful/common/widgets/avatar.widget.dart';
 import 'package:dishful/pages/recipes/recipes_card.widget.dart';
 import 'package:dishful/theme/font.dart';
+import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:parallax_animation/parallax_animation.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 final currentIndexProvider = StateProvider((_) => 0);
@@ -28,16 +32,22 @@ class RecipesPage extends ConsumerWidget {
     final t = recipesValue.toWidget(
       data: (recipes) => recipes.isEmpty
           ? Text('No recipes')
-          : MasonryGridView.count(
-              shrinkWrap: true,
-              crossAxisCount: 2,
-              mainAxisSpacing: 4,
-              crossAxisSpacing: 4,
-              itemCount: recipes.length,
-              itemBuilder: (context, index) {
-                final recipe = recipes[index]!;
-                return RecipesCard(recipe);
-              },
+          : ParallaxArea(
+              child: MasonryGridView.count(
+                shrinkWrap: true,
+                crossAxisCount: 2,
+                mainAxisSpacing: 4,
+                crossAxisSpacing: 4,
+                itemCount: recipes.length,
+                itemBuilder: (context, index) {
+                  final recipe = recipes[index]!;
+                  return ParallaxWidget(
+                    overflowHeightFactor: 10,
+                    child: RecipesCard(recipe),
+                    background: Container(color: Colors.redAccent),
+                  );
+                },
+              ),
             ),
     );
 
@@ -49,6 +59,9 @@ class RecipesPage extends ConsumerWidget {
           style: TextStyle(
             fontFamily: Fonts.heading,
           ),
+        ),
+        leading: Avatar(
+          onPressed: () => RouteService.goToProfile(context),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -64,7 +77,8 @@ class RecipesPage extends ConsumerWidget {
             child: SalomonBottomBar(
               currentIndex: currentIndex,
               onTap: (index) => ref.set(currentIndexProvider, index),
-              unselectedItemColor: Colors.red,
+              selectedItemColor: Palette.primaryDark,
+              unselectedItemColor: Palette.primaryLight,
               items: [
                 SalomonBottomBarItem(
                   icon: Icon(CustomIcons.iterating_bowl),
