@@ -5,12 +5,12 @@ A recipe development app.
 Development day 1: 25th July, 2021
 
 ### TODO
+- Make recipes list a sliver list so the header moves up on scroll
 - Handle firestore error that is raised when trying to restart emulator on hot restart
 - See if we can use StadiumBorder EVERYWHERE that we use an overly large
   border radius.
 - Start recipes page
   - start using parallax animation, blobs, staggered grid views all in one ;D
-  - maybe just show the avatar and onclick go to a profile page which has settings in it...
 - Start planning swooshes
 - Enable offline usage?? I know there is some option in firebase, but should we consider
   doing something like using privateDb while no connection? 

@@ -27,7 +27,10 @@ class Avatar extends StatelessWidget {
             backgroundColor: Palette.primaryDark,
             child: Padding(
               padding: EdgeInsets.all(2.0),
-              child: Text(initials, style: TextStyle(color: Colors.white)),
+              child: Text(
+                initials,
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ),
         ),

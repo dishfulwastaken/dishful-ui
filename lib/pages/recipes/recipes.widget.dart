@@ -57,7 +57,7 @@ class RecipesPage extends ConsumerWidget {
         title: Text(
           "Recipes",
           style: TextStyle(
-            fontFamily: Fonts.heading,
+            fontFamily: Fonts.headline,
           ),
         ),
         leading: Avatar(
