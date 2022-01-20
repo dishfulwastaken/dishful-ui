@@ -47,15 +47,17 @@ class AuthService {
     if (Env.isMock) _auth.useAuthEmulator("localhost", 9099);
   }
 
-  static Future<void> signUp({
+  static Future<String> signUp({
     required String email,
     required String password,
   }) async {
     try {
-      await _auth.createUserWithEmailAndPassword(
+      final userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+
+      return userCredential.user!.uid;
     } on FirebaseAuthException catch (error) {
       switch (error.code) {
         case "email-already-in-use":

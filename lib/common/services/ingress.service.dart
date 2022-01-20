@@ -27,7 +27,7 @@ class IngressService {
     if (_allRecipesAdapter.canParse(url)) _adapter = _allRecipesAdapter;
     if (_foodNetworkAdapter.canParse(url)) _adapter = _foodNetworkAdapter;
 
-    throw Exception("No adapter can parse the given url: $url");
+    throw "No adapter can parse the given url: $url";
   }
 
   Future<void> init() async {

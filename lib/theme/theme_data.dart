@@ -31,7 +31,7 @@ final themeData = ThemeData(
     disabledColor: Palette.disabled,
   ),
   appBarTheme: AppBarTheme(
-    backgroundColor: Colors.transparent,
+    backgroundColor: Palette.primaryDark,
     elevation: 0,
   ),
 );
@@ -45,5 +45,5 @@ final subtitleTextStyle = TextStyle(
 final bodyTextStyle = TextStyle(
   fontFamily: Fonts.text,
   fontSize: 13,
-  color: Colors.white,
+  // color: Colors.white,
 );

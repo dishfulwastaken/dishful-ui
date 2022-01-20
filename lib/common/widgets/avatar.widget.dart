@@ -24,7 +24,7 @@ class Avatar extends StatelessWidget {
         child: Container(
           margin: EdgeInsets.all(2.0),
           child: CircleAvatar(
-            backgroundColor: Palette.primaryDark,
+            backgroundColor: Palette.primary,
             child: Padding(
               padding: EdgeInsets.all(2.0),
               child: Text(

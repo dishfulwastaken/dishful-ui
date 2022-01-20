@@ -1,3 +1,4 @@
+import 'package:dishful/common/data/datetime.dart';
 import 'package:dishful/common/domain/user_shared_recipe.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -14,6 +15,12 @@ class UserMeta extends Serializable {
   @UserSharedRecipeSerializer()
   final List<UserSharedRecipe> sharedWithMe;
 
+  bool get isPro {
+    if (subscribedUntil == null) return false;
+
+    return subscribedUntil!.isAfterNow;
+  }
+
   UserMeta({
     required this.id,
     required this.sharedWithMe,
@@ -21,8 +28,9 @@ class UserMeta extends Serializable {
   });
 
   UserMeta.create({
+    String? id,
     this.subscribedUntil,
-  })  : id = uuid.v1(),
+  })  : id = id ?? uuid.v1(),
         sharedWithMe = [];
 }
 

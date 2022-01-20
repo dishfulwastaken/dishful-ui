@@ -44,6 +44,7 @@ dependencies:
   uuid: ^3.0.5
   faker: ^2.0.0
   html: ^0.15.0
+  tuple: ^2.0.0
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,6 @@
+import 'package:dishful/common/domain/user_meta.dart';
 import 'package:dishful/common/services/auth.service.dart';
+import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/services/route.service.dart';
 import 'package:dishful/pages/auth/auth-button.widget.dart';
 import 'package:dishful/pages/auth/auth-text-button.widget.dart';
@@ -39,10 +41,16 @@ class SignUp extends ConsumerWidget {
 
         if (formState.validate()) {
           try {
-            await AuthService.signUp(
-              email: formState.value["email"],
-              password: formState.value["password"],
+            final email = formState.value["email"];
+            final password = formState.value["password"];
+            final userId = await AuthService.signUp(
+              email: email,
+              password: password,
             );
+
+            final user = UserMeta.create(id: userId);
+            await DbService.publicDb.userMeta.create(user);
+
             RouteService.goToRecipes(context, clearStack: true);
           } on AuthException<SignUpAuthExceptionCode> catch (error) {
             switch (error.code) {
@@ -62,6 +70,9 @@ class SignUp extends ConsumerWidget {
                 );
                 break;
             }
+          } on Exception {
+            // TODO: some other exception was thrown, show a snackbar
+            // that says this to the user
           }
         }
       },
