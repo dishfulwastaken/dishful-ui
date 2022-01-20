@@ -5,6 +5,8 @@ A recipe development app.
 Development day 1: 25th July, 2021
 
 ### TODO
+- Pro feature widget wrapper
+- Make masonry grid responsive? e.g. increase column count with larger widths
 - Make recipes list a sliver list so the header moves up on scroll
 - Handle firestore error that is raised when trying to restart emulator on hot restart
 - See if we can use StadiumBorder EVERYWHERE that we use an overly large
@@ -19,9 +21,8 @@ Development day 1: 25th July, 2021
   I think it will just involve giving users the ability to see all the data we store 
   on them. 
 - Email verification before upgrading account
-- Error handling everywhere! e.g. sign in, init flutterfire, etc, using Result<T>
-  (see bookmarks)
-- Web support: premium users only so it will
+- Error handling everywhere! (see bookmarks)
+- Web support: pro users only so it will
   - ask for signIn
   - once logged in, check if user has an active subscription
   - if not, display message like this is a pro users only feature,
@@ -36,3 +37,4 @@ Development day 1: 25th July, 2021
 - Enable Firebase caching to avoid making as many requests (via FlutterFire -> enablePersistence)
 - Unify imports of my own dart files to either all use package: or none
 - Base editable: on save callbacks
+- Use selects to watch only the parts that we need
