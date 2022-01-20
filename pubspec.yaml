@@ -34,6 +34,7 @@ dependencies:
   form_builder_validators: ^7.3.0
 
   responsive_framework: ^0.1.5
+  flash: ^2.0.3+2
 
   salomon_bottom_bar: ^3.2.0
   parallax_animation: ^0.0.3
