@@ -5,6 +5,7 @@ A recipe development app.
 Development day 1: 25th July, 2021
 
 ### TODO
+- editable widget indicate loading on save somehow
 - Pro feature widget wrapper
 - Make masonry grid responsive? e.g. increase column count with larger widths
 - Make recipes list a sliver list so the header moves up on scroll
@@ -36,5 +37,4 @@ Development day 1: 25th July, 2021
   the cached data is still valid, so we use that instead of using FunctionsService.fetchHtml
 - Enable Firebase caching to avoid making as many requests (via FlutterFire -> enablePersistence)
 - Unify imports of my own dart files to either all use package: or none
-- Base editable: on save callbacks
 - Use selects to watch only the parts that we need

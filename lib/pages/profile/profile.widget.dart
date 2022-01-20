@@ -3,6 +3,7 @@ import 'package:dishful/common/domain/user_meta.dart';
 import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/widgets/avatar.widget.dart';
+import 'package:dishful/common/widgets/editable.widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -46,7 +47,14 @@ class ProfilePage extends ConsumerWidget {
                   children: [
                     avatar,
                     Container(height: 12),
-                    Text("Display name: ${user.displayName}"),
+                    EditableTextField(
+                      prefix: "Display name:",
+                      initialValue: user.displayName,
+                      style: TextStyle(color: Colors.black, fontSize: 13),
+                      onSave: (displayName) async {
+                        await user.updateDisplayName(displayName);
+                      },
+                    ),
                     Text("Email: ${user.email}"),
                     Text("Is pro user: ${userMeta.isPro}")
                   ],
