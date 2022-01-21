@@ -22,7 +22,7 @@ class Avatar extends StatelessWidget {
       child: GestureDetector(
         onTap: onPressed,
         child: Container(
-          margin: EdgeInsets.all(2.0),
+          margin: EdgeInsets.all(4.0),
           child: CircleAvatar(
             backgroundColor: Palette.primary,
             child: Padding(

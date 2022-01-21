@@ -5,15 +5,12 @@ A recipe development app.
 Development day 1: 25th July, 2021
 
 ### TODO
+- Recipes card
+- BUG: in iterating tab, click on dropped, observe
 - editable widget indicate loading on save somehow
-- Pro feature widget wrapper
-- Make masonry grid responsive? e.g. increase column count with larger widths
-- Make recipes list a sliver list so the header moves up on scroll
 - Handle firestore error that is raised when trying to restart emulator on hot restart
 - See if we can use StadiumBorder EVERYWHERE that we use an overly large
   border radius.
-- Start recipes page
-  - start using parallax animation, blobs, staggered grid views all in one ;D
 - Start planning swooshes
 - Enable offline usage?? I know there is some option in firebase, but should we consider
   doing something like using privateDb while no connection? 

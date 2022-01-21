@@ -6,8 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RecipeIterations extends ConsumerWidget {
-  late final AsyncValueProvider<List<RecipeIteration?>>
-      recipeIterationsProvider;
+  late final AsyncValueProvider<List<RecipeIteration>> recipeIterationsProvider;
 
   RecipeIterations(String id) {
     recipeIterationsProvider = getAllProvider(
@@ -22,11 +21,11 @@ class RecipeIterations extends ConsumerWidget {
     return recipeIterationsValue.toWidget(
       data: (recipeIterations) {
         return recipeIterations.isEmpty
-            ? Text('No iterations')
+            ? Text("No iterations")
             : ListView.builder(
                 itemCount: recipeIterations.length,
                 itemBuilder: (context, index) {
-                  final recipeIteration = recipeIterations[index]!;
+                  final recipeIteration = recipeIterations[index];
                   return RecipeIterationsCard(recipeIteration);
                 },
                 scrollDirection: Axis.vertical,

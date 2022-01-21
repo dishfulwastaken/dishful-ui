@@ -9,7 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flash/flash.dart';
 
 class ProFeature extends ConsumerWidget {
-  late final AsyncValueProvider<UserMeta?> userMetaProvider;
+  late final AsyncValueProvider<UserMeta> userMetaProvider;
   final String why;
   final Widget child;
 
@@ -27,7 +27,7 @@ class ProFeature extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isPro = ref.watch(
-      userMetaProvider.select((value) => value.asData?.value?.isPro ?? false),
+      userMetaProvider.select((value) => value.asData?.value.isPro ?? false),
     );
 
     return isPro

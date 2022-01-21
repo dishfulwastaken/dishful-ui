@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RecipePage extends ConsumerWidget {
-  late final AsyncValueProvider<RecipeMeta?> recipeProvider;
+  late final AsyncValueProvider<RecipeMeta> recipeProvider;
 
   RecipePage(String id) {
     recipeProvider = getProvider(DbService.publicDb.recipeMeta(), id);
@@ -19,26 +19,23 @@ class RecipePage extends ConsumerWidget {
 
     return recipeValue.toWidget(
       data: (recipe) {
-        final noRecipe = recipe == null;
-        return noRecipe
-            ? Text('No recipe')
-            : Scaffold(
-                appBar: AppBar(title: Text(recipe!.name)),
-                floatingActionButton: FloatingActionButton(
-                  onPressed: () async {
-                    await DbService.publicDb
-                        .recipeIteration(recipe.id)
-                        .create(randomRecipeIteration(recipe.id));
-                  },
-                  child: const Icon(Icons.plus_one_rounded),
-                ),
-                body: Column(
-                  children: [
-                    Text('Your iterations:'),
-                    RecipeIterations(recipe.id),
-                  ],
-                ),
-              );
+        return Scaffold(
+          appBar: AppBar(title: Text(recipe.name)),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () async {
+              await DbService.publicDb
+                  .recipeIteration(recipe.id)
+                  .create(randomRecipeIteration(recipe.id));
+            },
+            child: const Icon(Icons.plus_one_rounded),
+          ),
+          body: Column(
+            children: [
+              Text('Your iterations:'),
+              RecipeIterations(recipe.id),
+            ],
+          ),
+        );
       },
     );
   }

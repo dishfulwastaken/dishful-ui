@@ -343,12 +343,10 @@ packages:
   flutter_staggered_grid_view:
     dependency: "direct main"
     description:
-      path: "."
-      ref: "feature/renaissance"
-      resolved-ref: "32da34736acc3f2ec31cff517fac67aa90ec94e2"
-      url: "https://github.com/letsar/flutter_staggered_grid_view.git"
-    source: git
-    version: "0.5.0-dev.1"
+      name: flutter_staggered_grid_view
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.6.0"
   flutter_svg:
     dependency: "direct main"
     description:
@@ -665,13 +663,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.99"
-  sliver_tools:
-    dependency: "direct main"
-    description:
-      name: sliver_tools
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.5"
   source_gen:
     dependency: transitive
     description:

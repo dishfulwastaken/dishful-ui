@@ -44,7 +44,7 @@ extension AsyncValueExtension<T> on AsyncValue<T> {
 
 typedef AsyncValueProvider<T> = AutoDisposeStateProvider<AsyncValue<T>>;
 
-AsyncValueProvider<List<T?>> getAllProvider<T extends Serializable>(
+AsyncValueProvider<List<T>> getAllProvider<T extends Serializable>(
   Client<T> client,
 ) {
   return StateProvider.autoDispose((ref) {
@@ -63,7 +63,7 @@ AsyncValueProvider<List<T?>> getAllProvider<T extends Serializable>(
   });
 }
 
-AsyncValueProvider<T?> getProvider<T extends Serializable>(
+AsyncValueProvider<T> getProvider<T extends Serializable>(
   Client<T> client,
   String id,
 ) {
@@ -84,7 +84,7 @@ AsyncValueProvider<T?> getProvider<T extends Serializable>(
   });
 }
 
-AsyncValueProvider<User?> currentUserProvider() {
+AsyncValueProvider<User> currentUserProvider() {
   return StateProvider.autoDispose((ref) {
     final cancel = AuthService.watchCurrentUser(
       (data) {

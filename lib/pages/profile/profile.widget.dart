@@ -9,8 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ProfilePage extends ConsumerWidget {
-  late final AsyncValueProvider<User?> userProvider;
-  late final AsyncValueProvider<UserMeta?> userMetaProvider;
+  late final AsyncValueProvider<User> userProvider;
+  late final AsyncValueProvider<UserMeta> userMetaProvider;
 
   ProfilePage({Key? key}) : super(key: key) {
     final id = AuthService.currentUser?.uid;
@@ -40,25 +40,23 @@ class ProfilePage extends ConsumerWidget {
           final user = userTuple.item1;
           final userMeta = userTuple.item2;
 
-          return user == null || userMeta == null
-              ? Text("No user")
-              : ListView(
-                  padding: EdgeInsets.all(12),
-                  children: [
-                    avatar,
-                    Container(height: 12),
-                    EditableTextField(
-                      prefix: "Display name:",
-                      initialValue: user.displayName,
-                      style: TextStyle(color: Colors.black, fontSize: 13),
-                      onSave: (displayName) async {
-                        await user.updateDisplayName(displayName);
-                      },
-                    ),
-                    Text("Email: ${user.email}"),
-                    Text("Is pro user: ${userMeta.isPro}")
-                  ],
-                );
+          return ListView(
+            padding: EdgeInsets.all(12),
+            children: [
+              avatar,
+              Container(height: 12),
+              EditableTextField(
+                prefix: "Display name:",
+                initialValue: user.displayName,
+                style: TextStyle(color: Colors.black, fontSize: 13),
+                onSave: (displayName) async {
+                  await user.updateDisplayName(displayName);
+                },
+              ),
+              Text("Email: ${user.email}"),
+              Text("Is pro user: ${userMeta.isPro}")
+            ],
+          );
         },
       ),
     );

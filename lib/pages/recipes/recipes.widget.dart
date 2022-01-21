@@ -4,7 +4,6 @@ import 'package:dishful/common/domain/recipe_meta.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/services/route.service.dart';
 import 'package:dishful/common/test.dart';
-import 'package:dishful/common/widgets/async_loading.widget.dart';
 import 'package:dishful/common/widgets/avatar.widget.dart';
 import 'package:dishful/pages/recipes/recipes_card.widget.dart';
 import 'package:dishful/theme/font.dart';
@@ -14,40 +13,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:parallax_animation/parallax_animation.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
-import 'package:sliver_tools/sliver_tools.dart';
-
-class PersistentHeader extends SliverPersistentHeaderDelegate {
-  final double height = 56;
-  final double width = 100;
-  final Widget widget;
-
-  PersistentHeader({required this.widget});
-
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      width: width,
-      constraints: BoxConstraints(maxWidth: width),
-      height: height,
-      decoration: ShapeDecoration(
-        color: Colors.white,
-        shape: StadiumBorder(),
-      ),
-      child: widget,
-    );
-  }
-
-  double get maxExtent => height;
-  double get minExtent => height;
-  bool shouldRebuild(_) => true;
-}
 
 final currentIndexProvider = StateProvider((_) => 0);
 
 class RecipesPage extends ConsumerWidget {
   final _controller = PageController();
-  late final AsyncValueProvider<List<RecipeMeta?>> recipesProvider;
+  late final AsyncValueProvider<List<RecipeMeta>> recipesProvider;
 
   RecipesPage() {
     recipesProvider = getAllProvider(DbService.publicDb.recipeMeta());
@@ -65,30 +36,48 @@ class RecipesPage extends ConsumerWidget {
         },
         child: const Icon(Icons.plus_one_rounded),
       ),
-      body: CustomScrollView(
-        slivers: [
+      body: NestedScrollView(
+        headerSliverBuilder: (context, _) => [
           SliverAppBar(
-            centerTitle: true,
-            title: Text(
-              "Recipes",
-              style: TextStyle(fontFamily: Fonts.headline),
+            title: Align(
+              alignment: Alignment.center,
+              child: Text(
+                "Recipes",
+                style: TextStyle(
+                  fontSize: 26,
+                  fontFamily: Fonts.headline,
+                  color: Colors.black54,
+                ),
+              ),
             ),
+            actions: [Container(width: 38)],
+            leadingWidth: 38,
             leading: Avatar(
               onPressed: () => RouteService.goToProfile(context),
             ),
+            backgroundColor: Colors.transparent,
+            centerTitle: true,
             floating: true,
-          ),
-          SliverCrossAxisConstrained(
-            maxCrossAxisExtent: 276,
-            child: SliverPinnedHeader(
+            pinned: true,
+            snap: false,
+            bottom: PreferredSize(
+              preferredSize: Size.fromHeight(60),
               child: Container(
+                width: 276,
                 decoration: ShapeDecoration(
                   color: Colors.white,
                   shape: StadiumBorder(),
                 ),
                 child: SalomonBottomBar(
                   currentIndex: currentIndex,
-                  onTap: (index) => ref.set(currentIndexProvider, index),
+                  onTap: (index) {
+                    ref.set(currentIndexProvider, index);
+                    _controller.animateToPage(
+                      index,
+                      duration: Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  },
                   selectedItemColor: Palette.primaryDark,
                   unselectedItemColor: Palette.primaryLight,
                   items: [
@@ -117,89 +106,36 @@ class RecipesPage extends ConsumerWidget {
                 ),
               ),
             ),
-          ),
-          recipesValue.toWidget(
-            loading: () => SliverToBoxAdapter(child: Text("Loading")),
-            data: (recipes) => recipes.isEmpty
-                ? SliverToBoxAdapter(child: Text("No recipes"))
-                : SliverMasonryGrid.extent(
-                    maxCrossAxisExtent: 250,
-                    mainAxisSpacing: 4,
-                    crossAxisSpacing: 4,
-                    childCount: recipes.length,
-                    itemBuilder: (context, index) {
-                      final recipe = recipes[index]!;
-                      return RecipesCard(recipe);
-                    },
-                  ),
           )
         ],
+        body: PageView(
+          controller: _controller,
+          onPageChanged: (index) => ref.set(currentIndexProvider, index),
+          children: RecipeStatus.values
+              .map(
+                (status) => recipesValue.toWidget(
+                  data: (allRecipes) {
+                    final recipes = allRecipes
+                        .where((recipe) => recipe.status == status)
+                        .toList();
+                    return recipes.isEmpty
+                        ? Text("No recipes")
+                        : MasonryGridView.extent(
+                            maxCrossAxisExtent: 250,
+                            mainAxisSpacing: 4,
+                            crossAxisSpacing: 4,
+                            itemCount: recipes.length,
+                            itemBuilder: (context, index) {
+                              final recipe = recipes[index];
+                              return RecipesCard(recipe);
+                            },
+                          );
+                  },
+                ),
+              )
+              .toList(),
+        ),
       ),
-      // appBar: AppBar(
-      //   centerTitle: true,
-      //   title: Text(
-      //     "Recipes",
-      //     style: TextStyle(
-      //       fontFamily: Fonts.headline,
-      //     ),
-      //   ),
-      //   leading: Avatar(
-      //     onPressed: () => RouteService.goToProfile(context),
-      //   ),
-      // ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () async {
-      //     await DbService.publicDb.recipeMeta().create(randomRecipeMeta);
-      //   },
-      //   child: const Icon(Icons.plus_one_rounded),
-      // ),
-      // body: Column(
-      //   children: [
-      //     SizedBox(
-      //       width: 276,
-      //       child: SalomonBottomBar(
-      //         currentIndex: currentIndex,
-      //         onTap: (index) => ref.set(currentIndexProvider, index),
-      //         selectedItemColor: Palette.primaryDark,
-      //         unselectedItemColor: Palette.primaryLight,
-      //         items: [
-      //           SalomonBottomBarItem(
-      //             icon: Icon(CustomIcons.iterating_bowl),
-      //             title: Text(
-      //               "Iterating",
-      //               style: TextStyle(fontFamily: Fonts.text),
-      //             ),
-      //           ),
-      //           SalomonBottomBarItem(
-      //             icon: Icon(CustomIcons.perfected_bowl),
-      //             title: Text(
-      //               "Perfected",
-      //               style: TextStyle(fontFamily: Fonts.text),
-      //             ),
-      //           ),
-      //           SalomonBottomBarItem(
-      //             icon: Icon(CustomIcons.dropped_bowl),
-      //             title: Text(
-      //               "Dropped",
-      //               style: TextStyle(fontFamily: Fonts.text),
-      //             ),
-      //           ),
-      //         ],
-      //       ),
-      //     ),
-      //     Expanded(
-      //       child: PageView(
-      //         controller: _controller,
-      //         onPageChanged: (index) => ref.set(currentIndexProvider, index),
-      //         children: [
-      //           t,
-      //           t,
-      //           t,
-      //         ],
-      //       ),
-      //     )
-      //   ],
-      // ),
     );
   }
 }
