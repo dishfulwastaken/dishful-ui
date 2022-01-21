@@ -32,11 +32,13 @@ extension AsyncValueExtension<T> on AsyncValue<T> {
 
   Widget toWidget({
     required Widget Function(T) data,
+    Widget Function() loading = asyncLoading,
+    Widget Function(Object, StackTrace?) error = asyncError,
   }) =>
       when(
         data: data,
-        loading: asyncLoading,
-        error: asyncError,
+        loading: loading,
+        error: error,
       );
 }
 
