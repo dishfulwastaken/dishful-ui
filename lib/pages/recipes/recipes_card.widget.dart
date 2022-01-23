@@ -12,9 +12,7 @@ class RecipesCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: InkWell(
-        onTap: () {
-          RouteService.goToRecipe(context, _recipe.id);
-        },
+        onTap: () => RouteService.goToRecipe(context, _recipe.id),
         child: Column(
           children: [
             Text(

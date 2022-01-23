@@ -145,5 +145,10 @@ class HiveDb extends Db {
     String? userId,
   }) =>
       _recipeIteration!;
-  HiveClient<RecipeReview> recipeReview({String? userId}) => _recipeReview!;
+  HiveClient<RecipeReview> recipeReview(
+    String recipeId,
+    String iterationId, {
+    String? userId,
+  }) =>
+      _recipeReview!;
 }

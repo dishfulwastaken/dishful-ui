@@ -64,7 +64,11 @@ abstract class Db {
   Client<UserMeta> get userMeta;
   Client<RecipeMeta> recipeMeta({String userId});
   Client<RecipeIteration> recipeIteration(String recipeId, {String userId});
-  Client<RecipeReview> recipeReview({String userId});
+  Client<RecipeReview> recipeReview(
+    String recipeId,
+    String iterationId, {
+    String? userId,
+  });
 }
 
 enum DbProvider { hive, firebase, mock }

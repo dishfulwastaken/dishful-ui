@@ -165,10 +165,18 @@ class FirebaseDb extends Db {
     );
   }
 
-  FirebaseClient<RecipeReview> recipeReview({String? userId}) {
+  FirebaseClient<RecipeReview> recipeReview(
+    String recipeId,
+    String iterationId, {
+    String? userId,
+  }) {
     userId ??= AuthService.currentUser?.uid;
     final collectionPath = _FirebaseCollectionName.userMeta +
         "/$userId/" +
+        _FirebaseCollectionName.recipeMeta +
+        "/$recipeId/" +
+        _FirebaseCollectionName.recipeIteration +
+        "/$iterationId/" +
         _FirebaseCollectionName.recipeReview;
 
     return FirebaseClient<RecipeReview>(

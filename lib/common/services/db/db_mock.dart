@@ -80,7 +80,12 @@ class MockDb extends Db {
       _build(
         RecipeIterationSerializer(),
       );
-  MockClient<RecipeReview> recipeReview({String? userId}) => _build(
+  MockClient<RecipeReview> recipeReview(
+    String recipeId,
+    String iterationId, {
+    String? userId,
+  }) =>
+      _build(
         RecipeReviewSerializer(),
       );
 }

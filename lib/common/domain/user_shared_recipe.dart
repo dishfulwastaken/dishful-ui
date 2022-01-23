@@ -11,23 +11,23 @@ class UserSharedRecipe extends Serializable {
   final String id;
   final String ownerId;
   final String recipeId;
+  final List<String>? iterationIds;
   final UserRole role;
-  final DateTime? sharedUntil;
 
   UserSharedRecipe({
     required this.id,
     required this.ownerId,
     required this.recipeId,
+    this.iterationIds,
     required this.role,
-    this.sharedUntil,
   });
 
   UserSharedRecipe.create({
     required this.ownerId,
     required this.recipeId,
     required this.role,
-    this.sharedUntil,
-  }) : id = uuid.v1();
+  })  : id = uuid.v1(),
+        iterationIds = [];
 }
 
 class UserSharedRecipeSerializer extends Serializer<UserSharedRecipe> {
@@ -38,4 +38,4 @@ class UserSharedRecipeSerializer extends Serializer<UserSharedRecipe> {
       _$UserSharedRecipeToJson(data);
 }
 
-enum UserRole { owner, editor, reader }
+enum UserRole { editor, reader, reviewer }
