@@ -162,6 +162,9 @@ class FirebaseDb extends Db {
     return FirebaseClient<RecipeIteration>(
       collectionPath,
       RecipeIterationSerializer(),
+      subcollectionDeleter: ({arg}) async {
+        await recipeReview(recipeId, arg, userId: userId).deleteAll();
+      },
     );
   }
 

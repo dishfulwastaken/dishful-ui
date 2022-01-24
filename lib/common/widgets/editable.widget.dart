@@ -1,6 +1,7 @@
 import 'package:blurhash_dart/blurhash_dart.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cross_file_image/cross_file_image.dart';
+import 'package:dishful/common/data/image.dart';
 import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/domain/recipe_image.dart';
 import 'package:dishful/common/services/db.service.dart';
@@ -8,7 +9,6 @@ import 'package:dishful/common/services/storage.service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flash/flash.dart';
-import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 import 'package:octo_image/octo_image.dart';
 
@@ -126,12 +126,10 @@ class EditableImage extends ConsumerWidget {
           : OctoImage.fromSet(
               image: recipeImage.isLocal
                   ? XFileImage(XFile(recipeImage.path)) as ImageProvider
-                  : CachedNetworkImageProvider(
-                      recipeImage.path,
-                    ),
+                  : CachedNetworkImageProvider(recipeImage.path),
               octoSet: OctoSet.blurHash(recipeImage.blurHash),
-              width: 200,
-              height: 120,
+              width: recipeImage.width.toDouble(),
+              height: recipeImage.height.toDouble(),
             ),
       editableChildBuilder: (focusNode) => TextButton(
         focusNode: focusNode,
@@ -140,21 +138,20 @@ class EditableImage extends ConsumerWidget {
           final file = await _picker.pickImage(source: ImageSource.gallery);
 
           final data = await file!.readAsBytes();
-          final image = img.decodeImage(data.toList())!;
+          final image = bytesToImage(data);
 
-          final blurComponentX = image.width > image.height ? 4 : 3;
-          final blurComponentY = image.height > image.width ? 4 : 3;
+          final resizedImage = normalizeImage(image);
 
           final blurHash = BlurHash.encode(
-            image,
-            numCompX: blurComponentX,
-            numCompY: blurComponentY,
+            resizedImage,
+            numCompX: blurImageComponents(resizedImage).item1,
+            numCompY: blurImageComponents(resizedImage).item2,
           );
 
           final blurImage = RecipeImage.create(
             blurHash: blurHash.hash,
-            blurComponentX: blurComponentX,
-            blurComponentY: blurComponentY,
+            width: resizedImage.width,
+            height: resizedImage.height,
           );
 
           final path = await StorageService.upload(

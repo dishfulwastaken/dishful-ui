@@ -1,10 +1,7 @@
-import 'dart:typed_data';
-
 import 'package:cross_file/cross_file.dart';
 import 'package:dishful/common/data/env.dart';
 import 'package:dishful/common/services/auth.service.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:image/image.dart' as img;
 
 import 'cloud.service.dart';
 
@@ -16,9 +13,6 @@ class StorageService {
 
     if (Env.isMock) _storage.useStorageEmulator("localhost", 9199);
   }
-
-  static img.Image bytesToImage(Uint8List bytes) =>
-      img.decodeImage(bytes.toList())!;
 
   static Future<String> upload(
     XFile file,

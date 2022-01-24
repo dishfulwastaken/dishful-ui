@@ -41,7 +41,7 @@ class RecipePage extends ConsumerWidget {
           body: Column(
             children: [
               EditableImage(
-                initialValue: recipe.image.first,
+                initialValue: recipe.image.isEmpty ? null : recipe.image.first,
                 onSave: (recipeImage) async {
                   final updatedRecipe = recipe.copyWithImage(recipeImage);
 

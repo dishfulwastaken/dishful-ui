@@ -15,21 +15,21 @@ class RecipeImage extends Serializable {
   final bool isLocal;
   late final String path;
   final String blurHash;
-  final int blurComponentX;
-  final int blurComponentY;
+  final int width;
+  final int height;
 
   RecipeImage({
     required this.id,
     required this.isLocal,
     required this.blurHash,
-    required this.blurComponentX,
-    required this.blurComponentY,
+    required this.width,
+    required this.height,
   });
 
   RecipeImage.create({
     required this.blurHash,
-    required this.blurComponentX,
-    required this.blurComponentY,
+    required this.width,
+    required this.height,
     this.isLocal = false,
   }) : id = uuid.v1();
 
