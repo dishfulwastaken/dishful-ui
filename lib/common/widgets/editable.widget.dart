@@ -164,14 +164,7 @@ class EditableImage extends ConsumerWidget {
           final recipeImage = blurImage.copyWithPath(path);
 
           ref.set(recipeImageProvider, recipeImage);
-
-          // final updatedRecipe = recipe.copyWith.image(
-          //   [recipeImage],
-          // );
-
-          // await DbService.publicDb
-          //     .recipeMeta()
-          //     .update(updatedRecipe);
+          focusNode.unfocus();
         },
         child: Text("Add image"),
       ),
