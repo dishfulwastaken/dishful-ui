@@ -14,17 +14,29 @@ class StorageService {
     if (Env.isMock) _storage.useStorageEmulator("localhost", 9199);
   }
 
+  static String _getFilePath(String imageId, {String? userId}) {
+    userId ??= AuthService.currentUser?.uid;
+    return "$userId/${imageId}";
+  }
+
   static Future<String> upload(
     XFile file,
     String imageId, {
     String? userId,
   }) async {
-    userId ??= AuthService.currentUser?.uid;
     final data = await file.readAsBytes();
-    final path = "$userId/${imageId}";
+    final path = _getFilePath(imageId, userId: userId);
 
     await _storage.ref(path).putData(data);
 
     return await _storage.ref(path).getDownloadURL();
+  }
+
+  static Future<void> delete(
+    String imageId, {
+    String? userId,
+  }) async {
+    final path = _getFilePath(imageId, userId: userId);
+    await _storage.ref(path).delete();
   }
 }
