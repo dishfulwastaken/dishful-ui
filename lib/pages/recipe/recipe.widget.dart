@@ -4,6 +4,7 @@ import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/domain/recipe_image.dart';
 import 'package:dishful/common/domain/recipe_meta.dart';
 import 'package:dishful/common/services/db.service.dart';
+import 'package:dishful/common/services/storage.service.dart';
 import 'package:dishful/common/test.dart';
 import 'package:dishful/pages/recipe/recipe_iterations.widget.dart';
 import 'package:flutter/material.dart';
@@ -46,39 +47,51 @@ class RecipePage extends ConsumerWidget {
                             source: ImageSource.gallery);
 
                         final data = await file!.readAsBytes();
-                        final image = img.decodeImage(data.toList());
-                        final blurHash =
-                            BlurHash.encode(image!, numCompX: 4, numCompY: 3);
+                        final image = img.decodeImage(data.toList())!;
 
-                        ;
+                        final blurComponentX =
+                            image.width > image.height ? 4 : 3;
+                        final blurComponentY =
+                            image.height > image.width ? 4 : 3;
 
-                        final rImage = RecipeImage.create(
-                          path: file.path,
-                          blurHash: blurHash.hash,
+                        final blurHash = BlurHash.encode(
+                          image,
+                          numCompX: blurComponentX,
+                          numCompY: blurComponentY,
                         );
 
-                        final updatedRecipe = recipe.copyWith.image([rImage]);
+                        final blurImage = RecipeImage.create(
+                          blurHash: blurHash.hash,
+                          blurComponentX: blurComponentX,
+                          blurComponentY: blurComponentY,
+                        );
+
+                        final path = await StorageService.upload(
+                          file,
+                          blurImage.id,
+                        );
+                        final recipeImage = blurImage.copyWithPath(path);
+
+                        final updatedRecipe = recipe.copyWith.image(
+                          [recipeImage],
+                        );
 
                         await DbService.publicDb
                             .recipeMeta()
                             .update(updatedRecipe);
                       },
                       child: Text("Add image"))
-                  : recipe.image.first.isLocal
-                      ? Image(
-                          image: XFileImage(XFile(recipe.image.first.path)),
-                          width: 200,
-                          height: 120,
-                        )
-                      : OctoImage.fromSet(
-                          image: CachedNetworkImageProvider(
-                            recipe.image.first.path,
-                          ),
-                          octoSet:
-                              OctoSet.blurHash(recipe.image.first.blurHash),
-                          width: 200,
-                          height: 120,
-                        ),
+                  : OctoImage.fromSet(
+                      image: recipe.image.first.isLocal
+                          ? XFileImage(XFile(recipe.image.first.path))
+                              as ImageProvider
+                          : CachedNetworkImageProvider(
+                              recipe.image.first.path,
+                            ),
+                      octoSet: OctoSet.blurHash(recipe.image.first.blurHash),
+                      width: 200,
+                      height: 120,
+                    ),
               Text('Your iterations:'),
               RecipeIterations(recipe.id),
             ],

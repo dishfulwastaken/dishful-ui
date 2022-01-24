@@ -41,6 +41,8 @@ class RecipeMeta extends Serializable {
         createdAt = DateTime.now(),
         status = RecipeStatus.iterating,
         image = [];
+
+  RecipeMeta copyWithImage(RecipeImage image) => copyWith.image([image]);
 }
 
 class RecipeMetaSerializer extends Serializer<RecipeMeta> {

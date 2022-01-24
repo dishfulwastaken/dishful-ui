@@ -1,4 +1,5 @@
 import 'package:dishful/common/data/providers.dart';
+import 'package:dishful/common/services/storage.service.dart';
 import 'package:dishful/pages/landing/progress-bar.widget.dart';
 import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,7 @@ class LandingPage extends ConsumerWidget {
 
       await DbService.initPublicDb();
       await FunctionsService.init();
+      await StorageService.init();
       ref.set(progressProvider, 1.0);
 
       /// Tiny delay for the loading animation to look a *little* nicer.

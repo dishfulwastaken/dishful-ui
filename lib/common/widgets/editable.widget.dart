@@ -1,7 +1,16 @@
+import 'package:blurhash_dart/blurhash_dart.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cross_file_image/cross_file_image.dart';
 import 'package:dishful/common/data/providers.dart';
+import 'package:dishful/common/domain/recipe_image.dart';
+import 'package:dishful/common/services/db.service.dart';
+import 'package:dishful/common/services/storage.service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flash/flash.dart';
+import 'package:image/image.dart' as img;
+import 'package:image_picker/image_picker.dart';
+import 'package:octo_image/octo_image.dart';
 
 final isEditingProvider = StateProvider((_) => false);
 
@@ -58,11 +67,11 @@ class EditableTextField extends StatelessWidget {
   final Future Function(String) onSave;
 
   EditableTextField({
+    Key? key,
     required this.onSave,
     this.prefix,
     this.style,
     String? initialValue,
-    Key? key,
   }) : super(key: key) {
     controller = TextEditingController(text: initialValue);
   }
@@ -91,6 +100,82 @@ class EditableTextField extends StatelessWidget {
         ],
       ),
       onSave: () async => await onSave(controller.text),
+    );
+  }
+}
+
+class EditableImage extends ConsumerWidget {
+  final Future Function(RecipeImage?) onSave;
+  late final StateProvider<RecipeImage?> recipeImageProvider;
+
+  EditableImage({
+    Key? key,
+    RecipeImage? initialValue,
+    required this.onSave,
+  }) : super(key: key) {
+    recipeImageProvider = StateProvider((_) => initialValue);
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final recipeImage = ref.watch(recipeImageProvider);
+
+    return EditableWidget(
+      defaultChildBuilder: () => recipeImage == null
+          ? Text("No image")
+          : OctoImage.fromSet(
+              image: recipeImage.isLocal
+                  ? XFileImage(XFile(recipeImage.path)) as ImageProvider
+                  : CachedNetworkImageProvider(
+                      recipeImage.path,
+                    ),
+              octoSet: OctoSet.blurHash(recipeImage.blurHash),
+              width: 200,
+              height: 120,
+            ),
+      editableChildBuilder: (focusNode) => TextButton(
+        focusNode: focusNode,
+        onPressed: () async {
+          final _picker = ImagePicker();
+          final file = await _picker.pickImage(source: ImageSource.gallery);
+
+          final data = await file!.readAsBytes();
+          final image = img.decodeImage(data.toList())!;
+
+          final blurComponentX = image.width > image.height ? 4 : 3;
+          final blurComponentY = image.height > image.width ? 4 : 3;
+
+          final blurHash = BlurHash.encode(
+            image,
+            numCompX: blurComponentX,
+            numCompY: blurComponentY,
+          );
+
+          final blurImage = RecipeImage.create(
+            blurHash: blurHash.hash,
+            blurComponentX: blurComponentX,
+            blurComponentY: blurComponentY,
+          );
+
+          final path = await StorageService.upload(
+            file,
+            blurImage.id,
+          );
+          final recipeImage = blurImage.copyWithPath(path);
+
+          ref.set(recipeImageProvider, recipeImage);
+
+          // final updatedRecipe = recipe.copyWith.image(
+          //   [recipeImage],
+          // );
+
+          // await DbService.publicDb
+          //     .recipeMeta()
+          //     .update(updatedRecipe);
+        },
+        child: Text("Add image"),
+      ),
+      onSave: () async => await onSave(recipeImage),
     );
   }
 }

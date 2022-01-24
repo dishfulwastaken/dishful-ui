@@ -8,7 +8,7 @@ final themeData = ThemeData(
   primaryColorDark: Palette.primaryDark,
   primaryColorLight: Palette.primaryLight,
   secondaryHeaderColor: Palette.secondary,
-  scaffoldBackgroundColor: Colors.transparent,
+  scaffoldBackgroundColor: Colors.white,
   textTheme: TextTheme(
     headline1: headlineTextStyle,
     headline2: headlineTextStyle,

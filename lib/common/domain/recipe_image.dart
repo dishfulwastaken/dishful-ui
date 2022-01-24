@@ -13,7 +13,7 @@ final uuid = Uuid();
 class RecipeImage extends Serializable {
   final String id;
   final bool isLocal;
-  final String path;
+  late final String path;
   final String blurHash;
   final int blurComponentX;
   final int blurComponentY;
@@ -21,19 +21,19 @@ class RecipeImage extends Serializable {
   RecipeImage({
     required this.id,
     required this.isLocal,
-    required this.path,
     required this.blurHash,
     required this.blurComponentX,
     required this.blurComponentY,
   });
 
   RecipeImage.create({
-    required this.path,
     required this.blurHash,
-  })  : id = uuid.v1(),
-        isLocal = true,
-        blurComponentX = 4,
-        blurComponentY = 3;
+    required this.blurComponentX,
+    required this.blurComponentY,
+    this.isLocal = false,
+  }) : id = uuid.v1();
+
+  RecipeImage copyWithPath(String path) => copyWith()..path = path;
 }
 
 class RecipeImageSerializer extends Serializer<RecipeImage> {

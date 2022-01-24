@@ -1,12 +1,36 @@
+import 'dart:typed_data';
+
+import 'package:cross_file/cross_file.dart';
 import 'package:dishful/common/data/env.dart';
+import 'package:dishful/common/services/auth.service.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image/image.dart' as img;
 
 import 'cloud.service.dart';
 
 class StorageService {
+  static final FirebaseStorage _storage = FirebaseStorage.instance;
+
   static Future<void> init() async {
     assert(CloudService.ready, "CloudService.init must be called first!");
 
-    // TODO: configure emulator
-    // if (Env.isMock) _functions.useFunctionsEmulator("localhost", 5001);
+    if (Env.isMock) _storage.useStorageEmulator("localhost", 9199);
+  }
+
+  static img.Image bytesToImage(Uint8List bytes) =>
+      img.decodeImage(bytes.toList())!;
+
+  static Future<String> upload(
+    XFile file,
+    String imageId, {
+    String? userId,
+  }) async {
+    userId ??= AuthService.currentUser?.uid;
+    final data = await file.readAsBytes();
+    final path = "$userId/${imageId}";
+
+    await _storage.ref(path).putData(data);
+
+    return await _storage.ref(path).getDownloadURL();
   }
 }
