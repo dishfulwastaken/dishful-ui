@@ -1,11 +1,13 @@
 import 'package:dishful/common/services/db.service.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:uuid/uuid.dart';
 
 part 'generated/recipe_step.g.dart';
 
 final uuid = Uuid();
 
+@CopyWith()
 @JsonSerializable()
 class RecipeStep extends Serializable {
   final String id;
@@ -32,6 +34,6 @@ class RecipeStep extends Serializable {
 
 class RecipeStepSerializer extends Serializer<RecipeStep> {
   const RecipeStepSerializer();
-  RecipeStep fromJson(Map<String, dynamic> json) => _$RecipeStepFromJson(json);
-  Map<String, dynamic> toJson(RecipeStep data) => _$RecipeStepToJson(data);
+  RecipeStep fromJson(Json json) => _$RecipeStepFromJson(json);
+  Json toJson(RecipeStep data) => _$RecipeStepToJson(data);
 }

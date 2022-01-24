@@ -1,14 +1,16 @@
 part of db;
 
+typedef Json = Map<String, dynamic>;
+
 abstract class Serializable {
   String get id;
 }
 
 abstract class Serializer<T extends Serializable>
-    extends JsonConverter<T, Map<String, dynamic>> {
+    extends JsonConverter<T, Json> {
   const Serializer();
-  Map<String, dynamic> toJson(T data);
-  T fromJson(Map<String, dynamic> json);
+  Json toJson(T data);
+  T fromJson(Json json);
 }
 
 typedef SubscriptionCancel = Future<void> Function();

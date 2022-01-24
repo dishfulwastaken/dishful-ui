@@ -1,12 +1,14 @@
 import 'package:dishful/common/domain/recipe_image.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:uuid/uuid.dart';
 
 part 'generated/recipe_review.g.dart';
 
 final uuid = Uuid();
 
+@CopyWith()
 @JsonSerializable()
 class RecipeReview extends Serializable {
   final String id;
@@ -34,7 +36,6 @@ class RecipeReview extends Serializable {
 
 class RecipeReviewSerializer extends Serializer<RecipeReview> {
   const RecipeReviewSerializer();
-  RecipeReview fromJson(Map<String, dynamic> json) =>
-      _$RecipeReviewFromJson(json);
-  Map<String, dynamic> toJson(RecipeReview data) => _$RecipeReviewToJson(data);
+  RecipeReview fromJson(Json json) => _$RecipeReviewFromJson(json);
+  Json toJson(RecipeReview data) => _$RecipeReviewToJson(data);
 }

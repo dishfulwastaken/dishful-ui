@@ -1,11 +1,13 @@
 import 'package:dishful/common/services/db.service.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:uuid/uuid.dart';
 
 part 'generated/user_shared_recipe.g.dart';
 
 final uuid = Uuid();
 
+@CopyWith()
 @JsonSerializable()
 class UserSharedRecipe extends Serializable {
   final String id;
@@ -32,10 +34,8 @@ class UserSharedRecipe extends Serializable {
 
 class UserSharedRecipeSerializer extends Serializer<UserSharedRecipe> {
   const UserSharedRecipeSerializer();
-  UserSharedRecipe fromJson(Map<String, dynamic> json) =>
-      _$UserSharedRecipeFromJson(json);
-  Map<String, dynamic> toJson(UserSharedRecipe data) =>
-      _$UserSharedRecipeToJson(data);
+  UserSharedRecipe fromJson(Json json) => _$UserSharedRecipeFromJson(json);
+  Json toJson(UserSharedRecipe data) => _$UserSharedRecipeToJson(data);
 }
 
 enum UserRole { editor, reader, reviewer }

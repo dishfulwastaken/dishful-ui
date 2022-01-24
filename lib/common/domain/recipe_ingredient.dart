@@ -1,11 +1,13 @@
 import 'package:dishful/common/services/db.service.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:uuid/uuid.dart';
 
 part 'generated/recipe_ingredient.g.dart';
 
 final uuid = Uuid();
 
+@CopyWith()
 @JsonSerializable()
 class RecipeIngredient extends Serializable {
   final String id;
@@ -36,10 +38,8 @@ class RecipeIngredient extends Serializable {
 
 class RecipeIngredientSerializer extends Serializer<RecipeIngredient> {
   const RecipeIngredientSerializer();
-  RecipeIngredient fromJson(Map<String, dynamic> json) =>
-      _$RecipeIngredientFromJson(json);
-  Map<String, dynamic> toJson(RecipeIngredient data) =>
-      _$RecipeIngredientToJson(data);
+  RecipeIngredient fromJson(Json json) => _$RecipeIngredientFromJson(json);
+  Json toJson(RecipeIngredient data) => _$RecipeIngredientToJson(data);
 }
 
 enum RecipeIngredientUnit { l, ml, kg, g, tsp, tbsp, cup, ounce }

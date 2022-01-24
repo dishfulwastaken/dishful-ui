@@ -35,6 +35,7 @@ RecipeMeta get randomRecipeMeta => RecipeMeta(
       iterationCount: 0,
       status: f.randomGenerator.element(RecipeStatus.values),
       createdAt: f.date.dateTime(),
+      image: [],
     );
 
 RecipeIteration randomRecipeIteration(String parentId) => RecipeIteration(

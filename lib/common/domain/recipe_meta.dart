@@ -1,12 +1,14 @@
 import 'package:dishful/common/domain/recipe_image.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:uuid/uuid.dart';
 
 part 'generated/recipe_meta.g.dart';
 
 final uuid = Uuid();
 
+@CopyWith()
 @JsonSerializable()
 class RecipeMeta extends Serializable {
   final String id;
@@ -17,7 +19,7 @@ class RecipeMeta extends Serializable {
   final RecipeStatus status;
   final DateTime createdAt;
   @RecipeImageSerializer()
-  final RecipeImage? image;
+  final List<RecipeImage> image;
 
   RecipeMeta({
     required this.id,
@@ -27,24 +29,24 @@ class RecipeMeta extends Serializable {
     required this.iterationCount,
     required this.status,
     required this.createdAt,
-    this.image,
+    required this.image,
   });
 
   RecipeMeta.create({
     required this.name,
     required this.description,
     this.inspiration,
-    this.image,
   })  : id = uuid.v1(),
         iterationCount = 0,
         createdAt = DateTime.now(),
-        status = RecipeStatus.iterating;
+        status = RecipeStatus.iterating,
+        image = [];
 }
 
 class RecipeMetaSerializer extends Serializer<RecipeMeta> {
   const RecipeMetaSerializer();
-  RecipeMeta fromJson(Map<String, dynamic> json) => _$RecipeMetaFromJson(json);
-  Map<String, dynamic> toJson(RecipeMeta data) => _$RecipeMetaToJson(data);
+  RecipeMeta fromJson(Json json) => _$RecipeMetaFromJson(json);
+  Json toJson(RecipeMeta data) => _$RecipeMetaToJson(data);
 }
 
 enum RecipeStatus { perfected, iterating, dropped }
