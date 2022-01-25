@@ -17,13 +17,13 @@ final isEditingProvider = StateProvider((_) => false);
 class EditableWidget extends ConsumerWidget {
   final Widget Function() defaultChildBuilder;
   final Widget Function(FocusNode) editableChildBuilder;
-  final Future Function() onSave;
+  final Future Function()? onSave;
   final Future Function()? onEdit;
 
   EditableWidget({
     required this.defaultChildBuilder,
     required this.editableChildBuilder,
-    required this.onSave,
+    this.onSave,
     this.onEdit,
   });
 
@@ -35,11 +35,13 @@ class EditableWidget extends ConsumerWidget {
     final onFocusChange = () async {
       if (!focusNode.hasFocus) {
         ref.set(isEditingProvider, false);
-        try {
-          await onSave();
-          await context.showSuccessBar(content: Text("Successfully updated."));
-        } on Exception {
-          await context.showErrorBar(content: Text("Failed to save..."));
+        if (onSave != null) {
+          try {
+            await onSave!();
+            await context.showSuccessBar(content: Text("Successfully saved."));
+          } on Exception {
+            await context.showErrorBar(content: Text("Failed to save..."));
+          }
         }
       } else if (onEdit != null) {
         await onEdit!();
@@ -105,12 +107,13 @@ class EditableTextField extends StatelessWidget {
 }
 
 class EditableImage extends ConsumerWidget {
+  final RecipeImage? initialValue;
   final Future Function(RecipeImage?) onSave;
   late final StateProvider<RecipeImage?> recipeImageProvider;
 
   EditableImage({
     Key? key,
-    RecipeImage? initialValue,
+    this.initialValue,
     required this.onSave,
   }) : super(key: key) {
     recipeImageProvider = StateProvider((_) => initialValue);
@@ -149,6 +152,7 @@ class EditableImage extends ConsumerWidget {
           );
 
           final blurImage = RecipeImage.create(
+            id: initialValue?.id,
             blurHash: blurHash.hash,
             width: resizedImage.width,
             height: resizedImage.height,
@@ -159,13 +163,18 @@ class EditableImage extends ConsumerWidget {
             blurImage.id,
           );
           final recipeImage = blurImage.copyWithPath(path);
+          print(recipeImage);
 
           ref.set(recipeImageProvider, recipeImage);
+          await onSave(recipeImage);
+
+          // TODO: fix- when finished uploading, it should return to readonly
+          // widget
           focusNode.unfocus();
         },
         child: Text("Add image"),
       ),
-      onSave: () async => await onSave(recipeImage),
+      onSave: () async {},
     );
   }
 }

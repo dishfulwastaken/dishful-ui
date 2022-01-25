@@ -44,6 +44,7 @@ class RecipePage extends ConsumerWidget {
                 initialValue: recipe.image.isEmpty ? null : recipe.image.first,
                 onSave: (recipeImage) async {
                   final updatedRecipe = recipe.copyWithImage(recipeImage);
+                  print(recipeImage);
 
                   await DbService.publicDb.recipeMeta().update(updatedRecipe);
                 },

@@ -27,11 +27,12 @@ class RecipeImage extends Serializable {
   });
 
   RecipeImage.create({
+    String? id,
     required this.blurHash,
     required this.width,
     required this.height,
     this.isLocal = false,
-  }) : id = uuid.v1();
+  }) : id = id ?? uuid.v1();
 
   RecipeImage copyWithPath(String path) => copyWith()..path = path;
 }
