@@ -31,7 +31,7 @@ class ProfilePage extends ConsumerWidget {
       },
     );
 
-    return Scaffold(
+    return EditableScaffold(
       appBar: AppBar(
         title: Text("Profile"),
       ),
@@ -49,7 +49,7 @@ class ProfilePage extends ConsumerWidget {
                 prefix: "Display name:",
                 initialValue: user.displayName,
                 style: TextStyle(color: Colors.black, fontSize: 13),
-                onSave: (displayName) async {
+                saveValue: (displayName) async {
                   await user.updateDisplayName(displayName);
                 },
               ),

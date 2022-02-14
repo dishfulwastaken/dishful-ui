@@ -28,7 +28,7 @@ class RecipePage extends ConsumerWidget {
 
     return recipeValue.toWidget(
       data: (recipe) {
-        return Scaffold(
+        return EditableScaffold(
           appBar: AppBar(title: Text(recipe.name)),
           floatingActionButton: FloatingActionButton(
             onPressed: () async {
@@ -42,7 +42,7 @@ class RecipePage extends ConsumerWidget {
             children: [
               EditableImage(
                 initialValue: recipe.image.isEmpty ? null : recipe.image.first,
-                onSave: (recipeImage) async {
+                saveValue: (recipeImage) async {
                   final updatedRecipe = recipe.copyWithImage(recipeImage);
                   print(recipeImage);
 
