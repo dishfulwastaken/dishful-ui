@@ -44,3 +44,9 @@ Image normalizeImage(
 /// Flutter cannot use raw bytes, so this function must be used
 /// to create fully encoded images with their correct headers.
 Image bytesToImage(Uint8List bytes) => decodeImage(bytes.toList())!;
+
+/// Convert the given [Image] into [bytes].
+///
+/// Similar to above, flutter needs the image to have all of
+/// the correct headers.
+Uint8List imageToBytes(Image image) => Uint8List.fromList(encodePng(image));

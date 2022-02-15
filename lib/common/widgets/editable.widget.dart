@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:blurhash_dart/blurhash_dart.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cross_file_image/cross_file_image.dart';
@@ -219,7 +221,7 @@ class EditableImage extends ConsumerWidget {
     final recipeImage = ref.watch(recipeImageProvider);
 
     return EditableWidget<RecipeImage?>(
-      getValue: () => recipeImage,
+      getValue: () => ref.read(recipeImageProvider),
       setValue: (value) => ref.set(recipeImageProvider, value),
       saveValue: saveValue,
       defaultChildBuilder: () => recipeImage == null
@@ -232,41 +234,68 @@ class EditableImage extends ConsumerWidget {
               width: recipeImage.width.toDouble(),
               height: recipeImage.height.toDouble(),
             ),
-      editableChildBuilder: (focusNode) => Column(
+      editableChildBuilder: (focusNode) => Stack(
         children: [
-          TextButton(
-            focusNode: focusNode,
-            onPressed: () async {
-              final _picker = ImagePicker();
-              final file = await _picker.pickImage(source: ImageSource.gallery);
+          if (recipeImage != null)
+            Align(
+              alignment: Alignment.center,
+              child: Image(
+                image: XFileImage(
+                  XFile.fromData(
+                    imageToBytes(
+                      BlurHash.decode(recipeImage.blurHash)
+                          .toImage(recipeImage.width, recipeImage.height),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          Column(
+            children: [
+              if (initialValue != null && recipeImage != null)
+                TextButton(
+                  onPressed: () async {
+                    await StorageService.delete(initialValue!.id);
+                    ref.set(recipeImageProvider, null);
+                  },
+                  child: Text("Remove Image"),
+                ),
+              TextButton(
+                focusNode: focusNode,
+                onPressed: () async {
+                  final _picker = ImagePicker();
+                  final file =
+                      await _picker.pickImage(source: ImageSource.gallery);
 
-              final data = await file!.readAsBytes();
-              final image = bytesToImage(data);
+                  final data = await file!.readAsBytes();
+                  final image = bytesToImage(data);
 
-              final resizedImage = normalizeImage(image);
+                  final resizedImage = normalizeImage(image);
 
-              final blurHash = BlurHash.encode(
-                resizedImage,
-                numCompX: blurImageComponents(resizedImage).item1,
-                numCompY: blurImageComponents(resizedImage).item2,
-              );
+                  final blurHash = BlurHash.encode(
+                    resizedImage,
+                    numCompX: blurImageComponents(resizedImage).item1,
+                    numCompY: blurImageComponents(resizedImage).item2,
+                  );
 
-              final blurImage = RecipeImage.create(
-                id: initialValue?.id,
-                blurHash: blurHash.hash,
-                width: resizedImage.width,
-                height: resizedImage.height,
-              );
+                  final blurImage = RecipeImage.create(
+                    id: initialValue?.id,
+                    blurHash: blurHash.hash,
+                    width: resizedImage.width,
+                    height: resizedImage.height,
+                  );
 
-              final path = await StorageService.upload(
-                file,
-                blurImage.id,
-              );
-              final recipeImage = blurImage.copyWithPath(path);
+                  final path = await StorageService.upload(
+                    file,
+                    blurImage.id,
+                  );
+                  final recipeImage = blurImage.copyWithPath(path);
 
-              ref.set(recipeImageProvider, recipeImage);
-            },
-            child: Text("Add image"),
+                  ref.set(recipeImageProvider, recipeImage);
+                },
+                child: Text("Upload image"),
+              ),
+            ],
           ),
         ],
       ),
