@@ -1,3 +1,6 @@
+import 'dart:typed_data';
+
+import 'package:dishful/common/data/converters.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
@@ -17,6 +20,8 @@ class RecipeImage extends Serializable {
   final String blurHash;
   final int width;
   final int height;
+  @Uint8ListConverter()
+  final Uint8List? bytes;
 
   RecipeImage({
     required this.id,
@@ -24,6 +29,7 @@ class RecipeImage extends Serializable {
     required this.blurHash,
     required this.width,
     required this.height,
+    this.bytes,
   });
 
   RecipeImage.create({
@@ -32,6 +38,7 @@ class RecipeImage extends Serializable {
     required this.width,
     required this.height,
     this.isLocal = false,
+    this.bytes,
   }) : id = id ?? uuid.v1();
 
   RecipeImage copyWithPath(String path) => copyWith()..path = path;

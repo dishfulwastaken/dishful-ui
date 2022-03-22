@@ -1,4 +1,5 @@
-import 'package:cross_file/cross_file.dart';
+import 'dart:typed_data';
+
 import 'package:dishful/common/data/env.dart';
 import 'package:dishful/common/services/auth.service.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -20,14 +21,13 @@ class StorageService {
   }
 
   static Future<String> upload(
-    XFile file,
+    Uint8List bytes,
     String imageId, {
     String? userId,
   }) async {
-    final data = await file.readAsBytes();
     final path = _getFilePath(imageId, userId: userId);
 
-    await _storage.ref(path).putData(data);
+    await _storage.ref(path).putData(bytes);
 
     return await _storage.ref(path).getDownloadURL();
   }

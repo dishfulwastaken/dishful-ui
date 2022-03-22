@@ -54,6 +54,13 @@ class EditableScaffold extends ConsumerWidget {
   }
 }
 
+/// TODO:
+/// EditableWidget takes ValueNotifier parameter
+/// doesnt need get/set value - uses value notifier
+///
+/// EditableImage is going to take after EditableText (stdlib):
+/// ImageEditingController, ImageEditingValue (path, blurHash, ...)
+
 class EditableWidget<T> extends ConsumerWidget {
   final T Function() getValue;
   final void Function(T) setValue;
@@ -157,13 +164,13 @@ class EditableWidget<T> extends ConsumerWidget {
   }
 }
 
-class EditableTextField extends StatelessWidget {
+class EditableString extends StatelessWidget {
   late final TextEditingController controller;
   final String? prefix;
   final TextStyle? style;
   final Future Function(String) saveValue;
 
-  EditableTextField({
+  EditableString({
     Key? key,
     required this.saveValue,
     this.prefix,
@@ -203,10 +210,127 @@ class EditableTextField extends StatelessWidget {
   }
 }
 
+class ImageEditingValue {
+  final String? path;
+  final String? blurHash;
+  final int? width;
+  final int? height;
+
+  ImageEditingValue({
+    this.path,
+    this.blurHash,
+    this.width,
+    this.height,
+  });
+}
+
+class ImageEditingController extends StateNotifier<ImageEditingValue> {
+  ImageEditingController({String? path})
+      : super(
+          ImageEditingValue(path: path),
+        );
+  ImageEditingController.fromValue(ImageEditingValue value) : super(value);
+
+  String? get path => state.path;
+
+  void reset() {
+    state = ImageEditingValue();
+  }
+
+  void update({
+    String? newPath,
+    String? newBlurHash,
+    int? newWidth,
+    int? newHeight,
+  }) {
+    state = ImageEditingValue(
+      path: newPath ?? state.path,
+      blurHash: newBlurHash ?? state.blurHash,
+      width: newWidth ?? state.width,
+      height: newHeight ?? state.height,
+    );
+  }
+}
+
+class ImageField extends ConsumerWidget {
+  late final StateNotifierProvider<ImageEditingController, ImageEditingValue>
+      controllerProvider;
+  final FocusNode? focusNode;
+
+  ImageField({
+    ImageEditingController? controller,
+    this.focusNode,
+  }) {
+    controllerProvider = StateNotifierProvider((ref) {
+      return controller ?? ImageEditingController();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final imageEditingValue = ref.watch(controllerProvider);
+    return Center(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TextButton(
+            focusNode: focusNode,
+            onPressed: () async {
+              final _picker = ImagePicker();
+              final file = await _picker.pickImage(source: ImageSource.gallery);
+
+              final data = await file!.readAsBytes();
+              final image = bytesToImage(data);
+
+              final resizedImage = normalizeImage(image);
+
+              final blurHash = BlurHash.encode(
+                resizedImage,
+                numCompX: blurImageComponents(resizedImage).item1,
+                numCompY: blurImageComponents(resizedImage).item2,
+              );
+
+              ref.read(controllerProvider.notifier).update(
+                    newPath: file.path,
+                    newBlurHash: blurHash.hash,
+                    newWidth: resizedImage.width,
+                    newHeight: resizedImage.height,
+                  );
+            },
+            child: Text(
+              imageEditingValue.path == null ? "Pick Image" : "Change Image",
+            ),
+          ),
+          if (imageEditingValue.path != null)
+            TextButton(
+              onPressed: () {
+                ref.read(controllerProvider.notifier).reset();
+              },
+              child: Text("Clear Image"),
+            ),
+          if (imageEditingValue.path != null)
+            OctoImage.fromSet(
+              image: XFileImage(XFile(imageEditingValue.path!)),
+              octoSet: imageEditingValue.blurHash != null
+                  ? OctoSet.blurHash(imageEditingValue.blurHash!)
+                  : OctoSet.circularIndicatorAndIcon(),
+              width: imageEditingValue.width?.toDouble(),
+              height: imageEditingValue.height?.toDouble(),
+            )
+          else
+            Text("No image")
+        ],
+      ),
+    );
+  }
+}
+
 class EditableImage extends ConsumerWidget {
   final RecipeImage? initialValue;
   final Future Function(RecipeImage?) saveValue;
   late final StateProvider<RecipeImage?> recipeImageProvider;
+  final imageField = ImageField();
 
   EditableImage({
     Key? key,
@@ -218,87 +342,88 @@ class EditableImage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final recipeImage = ref.watch(recipeImageProvider);
+    // final recipeImage = ref.watch(recipeImageProvider);
+    final imageEditingValue = ref.watch(imageField.controllerProvider);
+    final imageProvider = (() {
+      try {
+        return XFileImage(XFile(imageEditingValue.path!));
+      } catch (e) {
+        return CachedNetworkImageProvider(imageEditingValue.path!);
+      }
+    })() as ImageProvider;
 
     return EditableWidget<RecipeImage?>(
       getValue: () => ref.read(recipeImageProvider),
       setValue: (value) => ref.set(recipeImageProvider, value),
       saveValue: saveValue,
-      defaultChildBuilder: () => recipeImage == null
+      defaultChildBuilder: () => imageEditingValue.path == null
           ? Text("No image")
           : OctoImage.fromSet(
-              image: recipeImage.isLocal
-                  ? XFileImage(XFile(recipeImage.path)) as ImageProvider
-                  : CachedNetworkImageProvider(recipeImage.path),
-              octoSet: OctoSet.blurHash(recipeImage.blurHash),
-              width: recipeImage.width.toDouble(),
-              height: recipeImage.height.toDouble(),
+              image: imageProvider,
+              octoSet: imageEditingValue.blurHash != null
+                  ? OctoSet.blurHash(imageEditingValue.blurHash!)
+                  : OctoSet.circularIndicatorAndIcon(),
+              width: imageEditingValue.width?.toDouble(),
+              height: imageEditingValue.height?.toDouble(),
             ),
-      editableChildBuilder: (focusNode) => Stack(
-        children: [
-          if (recipeImage != null)
-            Align(
-              alignment: Alignment.center,
-              child: Image(
-                image: XFileImage(
-                  XFile.fromData(
-                    imageToBytes(
-                      BlurHash.decode(recipeImage.blurHash)
-                          .toImage(recipeImage.width, recipeImage.height),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          Column(
-            children: [
-              if (initialValue != null && recipeImage != null)
-                TextButton(
-                  onPressed: () async {
-                    await StorageService.delete(initialValue!.id);
-                    ref.set(recipeImageProvider, null);
-                  },
-                  child: Text("Remove Image"),
-                ),
-              TextButton(
-                focusNode: focusNode,
-                onPressed: () async {
-                  final _picker = ImagePicker();
-                  final file =
-                      await _picker.pickImage(source: ImageSource.gallery);
+      editableChildBuilder: (_) {
+        return imageField;
+      },
+      // editableChildBuilder: (focusNode) => Stack(
+      //   children: [
+      //     if (recipeImage != null)
+      //       Align(
+      //         alignment: Alignment.center,
+      //         child: Image.memory(
+      //           imageToBytes(
+      //             BlurHash.decode(recipeImage.blurHash)
+      //                 .toImage(recipeImage.width, recipeImage.height),
+      //           ),
+      //         ),
+      //       ),
+      //     Column(
+      //       children: [
+      //         if (initialValue != null && recipeImage != null)
+      //           TextButton(
+      //             onPressed: () {
+      //               ref.set(recipeImageProvider, null);
+      //             },
+      //             child: Text("Remove Image"),
+      //           ),
+      //         TextButton(
+      //           focusNode: focusNode,
+      //           onPressed: () async {
+      //             final _picker = ImagePicker();
+      //             final file =
+      //                 await _picker.pickImage(source: ImageSource.gallery);
 
-                  final data = await file!.readAsBytes();
-                  final image = bytesToImage(data);
+      //             final data = await file!.readAsBytes();
+      //             final image = bytesToImage(data);
 
-                  final resizedImage = normalizeImage(image);
+      //             final resizedImage = normalizeImage(image);
 
-                  final blurHash = BlurHash.encode(
-                    resizedImage,
-                    numCompX: blurImageComponents(resizedImage).item1,
-                    numCompY: blurImageComponents(resizedImage).item2,
-                  );
+      //             final blurHash = BlurHash.encode(
+      //               resizedImage,
+      //               numCompX: blurImageComponents(resizedImage).item1,
+      //               numCompY: blurImageComponents(resizedImage).item2,
+      //             );
 
-                  final blurImage = RecipeImage.create(
-                    id: initialValue?.id,
-                    blurHash: blurHash.hash,
-                    width: resizedImage.width,
-                    height: resizedImage.height,
-                  );
+      //             final blurImage = RecipeImage.create(
+      //               id: initialValue?.id,
+      //               blurHash: blurHash.hash,
+      //               width: resizedImage.width,
+      //               height: resizedImage.height,
+      //               bytes: resizedImage.getBytes(),
+      //             );
 
-                  final path = await StorageService.upload(
-                    file,
-                    blurImage.id,
-                  );
-                  final recipeImage = blurImage.copyWithPath(path);
-
-                  ref.set(recipeImageProvider, recipeImage);
-                },
-                child: Text("Upload image"),
-              ),
-            ],
-          ),
-        ],
-      ),
+      //             ref.set(recipeImageProvider, blurImage);
+      //           },
+      //           child: Text("Upload image"),
+      //         ),
+      //       ],
+      //     ),
+      //   ],
+      // ),
     );
   }
 }

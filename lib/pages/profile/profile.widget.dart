@@ -45,7 +45,7 @@ class ProfilePage extends ConsumerWidget {
             children: [
               avatar,
               Container(height: 12),
-              EditableTextField(
+              EditableString(
                 prefix: "Display name:",
                 initialValue: user.displayName,
                 style: TextStyle(color: Colors.black, fontSize: 13),

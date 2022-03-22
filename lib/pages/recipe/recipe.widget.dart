@@ -17,6 +17,7 @@ import 'package:image/image.dart' as img;
 
 class RecipePage extends ConsumerWidget {
   late final AsyncValueProvider<RecipeMeta> recipeProvider;
+  final imageField = ImageField();
 
   RecipePage(String id) {
     recipeProvider = getProvider(DbService.publicDb.recipeMeta(), id);
@@ -25,6 +26,7 @@ class RecipePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final recipeValue = ref.watch(recipeProvider);
+    final imageEditingValue = ref.watch(imageField.controllerProvider);
 
     return recipeValue.toWidget(
       data: (recipe) {
@@ -40,15 +42,28 @@ class RecipePage extends ConsumerWidget {
           ),
           body: Column(
             children: [
-              EditableImage(
-                initialValue: recipe.image.isEmpty ? null : recipe.image.first,
-                saveValue: (recipeImage) async {
-                  final updatedRecipe = recipe.copyWithImage(recipeImage);
-                  print(recipeImage);
+              imageField,
+              Text(imageEditingValue.path ?? "None"),
+              // EditableImage(
+              //   initialValue: recipe.image.isEmpty ? null : recipe.image.first,
+              //   saveValue: (blurImage) async {
+              //     final recipeImage = await () async {
+              //       if (blurImage == null) {
+              //         await StorageService.delete(recipe.image.first.id);
+              //         return null;
+              //       }
 
-                  await DbService.publicDb.recipeMeta().update(updatedRecipe);
-                },
-              ),
+              //       final path = await StorageService.upload(
+              //         blurImage.bytes!,
+              //         blurImage.id,
+              //       );
+              //       return blurImage.copyWithPath(path).copyWith(bytes: null);
+              //     }();
+
+              //     final updatedRecipe = recipe.copyWithImage(recipeImage);
+              //     await DbService.publicDb.recipeMeta().update(updatedRecipe);
+              //   },
+              // ),
               Text('Your iterations:'),
               RecipeIterations(recipe.id),
             ],
