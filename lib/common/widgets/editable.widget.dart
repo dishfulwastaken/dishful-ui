@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:blurhash_dart/blurhash_dart.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cross_file_image/cross_file_image.dart';
@@ -7,7 +5,6 @@ import 'package:dishful/common/data/image.dart';
 import 'package:dishful/common/data/intersperse.dart';
 import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/domain/recipe_image.dart';
-import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/services/storage.service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -235,17 +232,15 @@ class EditableImage extends ConsumerWidget {
               height: recipeImage.height.toDouble(),
             ),
       editableChildBuilder: (focusNode) => Stack(
+        alignment: Alignment.center,
         children: [
           if (recipeImage != null)
-            Align(
-              alignment: Alignment.center,
-              child: Image(
-                image: XFileImage(
-                  XFile.fromData(
-                    imageToBytes(
-                      BlurHash.decode(recipeImage.blurHash)
-                          .toImage(recipeImage.width, recipeImage.height),
-                    ),
+            Image(
+              image: XFileImage(
+                XFile.fromData(
+                  imageToBytes(
+                    BlurHash.decode(recipeImage.blurHash)
+                        .toImage(recipeImage.width, recipeImage.height),
                   ),
                 ),
               ),

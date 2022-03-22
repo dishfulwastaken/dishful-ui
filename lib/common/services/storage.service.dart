@@ -39,4 +39,8 @@ class StorageService {
     final path = _getFilePath(imageId, userId: userId);
     await _storage.ref(path).delete();
   }
+
+  static Future<void> deleteFromPath(String path) async {
+    await _storage.ref(path).delete();
+  }
 }

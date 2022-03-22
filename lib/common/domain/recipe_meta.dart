@@ -53,3 +53,7 @@ class RecipeMetaSerializer extends Serializer<RecipeMeta> {
 }
 
 enum RecipeStatus { perfected, iterating, dropped }
+
+extension RecipeImageList on List<RecipeImage> {
+  RecipeImage? get get => isEmpty ? null : first;
+}

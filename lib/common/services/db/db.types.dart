@@ -17,7 +17,7 @@ typedef SubscriptionCancel = Future<void> Function();
 typedef SubscriptionOnData<T> = void Function(T);
 typedef SubscriptionOnError<T> = void Function(T);
 
-typedef SubcollectionDeleter = Future<void> Function({dynamic arg});
+typedef OnDeleteCallback = Future<void> Function(String id);
 
 abstract class Client<T extends Serializable> {
   /// Get all documents in the collection.

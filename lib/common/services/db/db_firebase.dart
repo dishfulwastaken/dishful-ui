@@ -9,13 +9,13 @@ class _FirebaseCollectionName {
 }
 
 class FirebaseClient<T extends Serializable> extends Client<T> {
-  final SubcollectionDeleter? subcollectionDeleter;
+  final OnDeleteCallback? onDelete;
   late final CollectionReference<T?> _collection;
 
   FirebaseClient(
     String collectionPath,
     Serializer<T> serializer, {
-    this.subcollectionDeleter,
+    this.onDelete,
   }) {
     _collection =
         FirebaseFirestore.instance.collection(collectionPath).withConverter(
@@ -48,14 +48,14 @@ class FirebaseClient<T extends Serializable> extends Client<T> {
   }
 
   Future<void> delete(String id) async {
-    await subcollectionDeleter?.call(arg: id);
+    await onDelete?.call(id);
     await _collection.doc(id).delete();
   }
 
   Future<void> deleteAll() async {
     final docs = (await _collection.get()).docs;
     docs.forEach((element) async {
-      await subcollectionDeleter?.call(arg: element.id);
+      await onDelete?.call(element.id);
       element.reference.delete();
     });
   }
@@ -127,8 +127,8 @@ class FirebaseDb extends Db {
     return FirebaseClient<UserMeta>(
       collectionPath,
       UserMetaSerializer(),
-      subcollectionDeleter: ({arg}) async {
-        await recipeMeta(userId: arg).deleteAll();
+      onDelete: (userId) async {
+        await recipeMeta(userId: userId).deleteAll();
       },
     );
   }
@@ -142,8 +142,13 @@ class FirebaseDb extends Db {
     return FirebaseClient<RecipeMeta>(
       collectionPath,
       RecipeMetaSerializer(),
-      subcollectionDeleter: ({arg}) async {
-        await recipeIteration(arg, userId: userId).deleteAll();
+      onDelete: (recipeId) async {
+        final images = (await recipeMeta().get(recipeId))?.image ?? [];
+        images
+            .where((image) => !image.isLocal)
+            .forEach((image) => StorageService.deleteFromPath(image.path));
+
+        await recipeIteration(recipeId, userId: userId).deleteAll();
       },
     );
   }
@@ -162,8 +167,8 @@ class FirebaseDb extends Db {
     return FirebaseClient<RecipeIteration>(
       collectionPath,
       RecipeIterationSerializer(),
-      subcollectionDeleter: ({arg}) async {
-        await recipeReview(recipeId, arg, userId: userId).deleteAll();
+      onDelete: (iterationId) async {
+        await recipeReview(recipeId, iterationId, userId: userId).deleteAll();
       },
     );
   }
