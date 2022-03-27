@@ -1,3 +1,4 @@
+import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/services/storage.service.dart';
 import 'package:dishful/pages/landing/progress-bar.widget.dart';
@@ -20,28 +21,35 @@ class LandingPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     WidgetsBinding.instance?.scheduleFrameCallback((_) async {
       WidgetsFlutterBinding.ensureInitialized();
-      ref.set(progressProvider, 0.1);
 
-      await CloudService.init();
-      ref.set(progressProvider, 0.8);
+      try {
+        ref.set(progressProvider, 0.1);
 
-      await AuthService.init();
-      await DbService.initPrivateDb();
-      ref.set(progressProvider, 0.95);
+        await CloudService.init();
+        ref.set(progressProvider, 0.8);
 
-      await DbService.initPublicDb();
-      await FunctionsService.init();
-      await StorageService.init();
-      ref.set(progressProvider, 1.0);
+        await AuthService.init();
+        await DbService.initPrivateDb();
+        ref.set(progressProvider, 0.95);
+
+        await DbService.initPublicDb();
+        await FunctionsService.init();
+        await StorageService.init();
+        ref.set(progressProvider, 1.0);
+      } catch (_) {
+        print("Warning: init may have already been called!");
+      }
 
       /// Tiny delay for the loading animation to look a *little* nicer.
       ///
       /// With a normal/fast internet speed, everything will initialize
       /// before the animation finishes, so this will give the animation an
       /// additional 40 ms to finish.
-      await Future.delayed(Duration(milliseconds: 40));
+      await Future.delayed(40.milliseconds);
 
-      RouteService.goToAuth(context);
+      /// TODO: remove this! this is temporary so we dont have to login
+      // RouteService.goToAuth(context);
+      RouteService.goToRecipes(context);
     });
 
     return Scaffold(

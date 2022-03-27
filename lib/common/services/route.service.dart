@@ -1,3 +1,4 @@
+import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:dishful/pages/landing/landing.widget.dart';
 import 'package:dishful/pages/profile/profile.widget.dart';
 import 'package:dishful/pages/recipes/recipes.widget.dart';
@@ -66,6 +67,7 @@ final _profile = _AppRoute(
   handlerFunc: (context, params, args) {
     return ProfilePage();
   },
+  transitionType: TransitionType.fadeIn,
 );
 
 final _recipes = _AppRoute(
@@ -74,6 +76,7 @@ final _recipes = _AppRoute(
   handlerFunc: (context, params, args) {
     return RecipesPage();
   },
+  transitionType: TransitionType.fadeIn,
 );
 
 final _recipe = _AppRoute(

@@ -16,11 +16,19 @@ class EditableScaffold extends ConsumerWidget {
   final isEditingProvider = StateProvider((_) => false);
   final menuItemsProvider = StateProvider((_) => <Widget>[]);
 
+  final Color? backgroundColor;
   final Widget? floatingActionButton;
   final Widget? body;
+  final Widget? bottomNavigationBar;
   final PreferredSizeWidget? appBar;
 
-  EditableScaffold({this.body, this.appBar, this.floatingActionButton});
+  EditableScaffold({
+    this.body,
+    this.appBar,
+    this.floatingActionButton,
+    this.bottomNavigationBar,
+    this.backgroundColor,
+  });
 
   static EditableScaffold? maybeOf(BuildContext context) {
     return context.findAncestorWidgetOfExactType<EditableScaffold>();
@@ -39,7 +47,9 @@ class EditableScaffold extends ConsumerWidget {
     final isEditing = ref.watch(isEditingProvider);
 
     return Scaffold(
+      backgroundColor: backgroundColor,
       body: body,
+      bottomNavigationBar: bottomNavigationBar,
       appBar: appBar,
       floatingActionButton: isEditing
           ? Column(

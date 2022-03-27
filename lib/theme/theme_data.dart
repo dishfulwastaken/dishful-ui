@@ -8,7 +8,16 @@ final themeData = ThemeData(
   primaryColorDark: Palette.primaryDark,
   primaryColorLight: Palette.primaryLight,
   secondaryHeaderColor: Palette.secondary,
-  scaffoldBackgroundColor: Colors.white,
+  scaffoldBackgroundColor: Colors.grey.shade50,
+  bottomNavigationBarTheme: BottomNavigationBarThemeData(
+    type: BottomNavigationBarType.fixed,
+    elevation: 0,
+    backgroundColor: Colors.white,
+    showSelectedLabels: false,
+    showUnselectedLabels: false,
+    selectedItemColor: Colors.black87,
+    unselectedItemColor: Colors.grey.shade400,
+  ),
   textTheme: TextTheme(
     headline1: headlineTextStyle,
     headline2: headlineTextStyle,
@@ -23,7 +32,7 @@ final themeData = ThemeData(
     caption: bodyTextStyle,
     button: bodyTextStyle,
   ),
-  iconTheme: IconThemeData(color: Colors.white),
+  iconTheme: IconThemeData(color: Colors.grey.shade50),
   scrollbarTheme: ScrollbarThemeData(),
   buttonTheme: ButtonThemeData(
     shape: StadiumBorder(),
@@ -31,12 +40,17 @@ final themeData = ThemeData(
     disabledColor: Palette.disabled,
   ),
   appBarTheme: AppBarTheme(
-    backgroundColor: Palette.primaryDark,
+    backgroundColor: Colors.grey.shade50,
     elevation: 0,
   ),
 );
 
-final headlineTextStyle = TextStyle(fontFamily: Fonts.headline);
+final headlineTextStyle = TextStyle(
+  fontFamily: Fonts.headline,
+  fontSize: 38,
+  height: 1.15,
+  color: Colors.black87,
+);
 final subtitleTextStyle = TextStyle(
   fontFamily: Fonts.text,
   fontWeight: FontWeight.bold,

@@ -1,23 +1,23 @@
-import 'package:dishful/common/data/icons.dart';
+import 'package:dishful/common/data/strings.dart';
 import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/domain/recipe_meta.dart';
 import 'package:dishful/common/services/db.service.dart';
-import 'package:dishful/common/services/route.service.dart';
 import 'package:dishful/common/test.dart';
-import 'package:dishful/common/widgets/avatar.widget.dart';
+import 'package:dishful/common/widgets/dishful_bottom_navigation_bar.widget.dart';
+import 'package:dishful/common/widgets/editable.widget.dart';
+import 'package:dishful/common/widgets/replacements/form_builder_choice_chips.dart';
 import 'package:dishful/pages/recipes/recipes_card.widget.dart';
-import 'package:dishful/theme/font.dart';
 import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart'
+    hide FormBuilderChoiceChip;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:parallax_animation/parallax_animation.dart';
-import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
+import 'package:awesome_extensions/awesome_extensions.dart';
 
-final currentIndexProvider = StateProvider((_) => 0);
+final filterStatusProvider = StateProvider<RecipeStatus?>((_) => null);
 
 class RecipesPage extends ConsumerWidget {
-  final _controller = PageController();
   late final AsyncValueProvider<List<RecipeMeta>> recipesProvider;
 
   RecipesPage() {
@@ -27,114 +27,98 @@ class RecipesPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final recipesValue = ref.watch(recipesProvider);
-    final currentIndex = ref.watch(currentIndexProvider);
+    final filterStatus = ref.watch(filterStatusProvider);
 
-    return Scaffold(
+    final title = Align(
+      alignment: Alignment.topLeft,
+      child: Text(
+        "Let's make some\ndishes!",
+        style: context.headlineSmall,
+      ),
+    );
+    final recipesList = ParallaxArea(
+      child: recipesValue.toWidget(
+        data: (recipes) {
+          final filteredRecipes = filterStatus == null
+              ? recipes
+              : recipes
+                  .where((recipe) => recipe.status == filterStatus)
+                  .toList();
+
+          return filteredRecipes.isEmpty
+              ? Text("No recipes")
+              : Flexible(
+                  child: AnimatedSwitcher(
+                    duration: 400.milliseconds,
+                    child: ListView.builder(
+                      key: ValueKey(filteredRecipes.length),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: filteredRecipes.length,
+                      itemBuilder: (context, index) {
+                        final isFirst = index == 0;
+                        final recipe = filteredRecipes[index];
+                        return RecipesCard(recipe).paddingOnly(
+                          right: 16,
+                          left: isFirst ? context.width * 0.10 : 0,
+                        );
+                      },
+                    ),
+                  ),
+                );
+        },
+      ),
+    );
+    final filtersList = FormBuilder(
+      child: FormBuilderChoiceChip<RecipeStatus?>(
+        name: 'choice_chip',
+        onChanged: (status) => ref.set(filterStatusProvider, status),
+        pressElevation: 0,
+        spacing: 14,
+        runSpacing: 10,
+        backgroundColor: Colors.white,
+        selectedColor: Palette.primary,
+        decoration: InputDecoration(border: InputBorder.none),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        labelPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 18),
+        labelStyle: TextStyle(
+          color: MaterialStateColor.resolveWith((states) {
+            if (states.contains(MaterialState.disabled)) return Colors.black;
+            if (states.contains(MaterialState.selected)) return Colors.white;
+            return Colors.grey.shade400;
+          }),
+        ),
+        options: [
+          FormBuilderFieldOption(value: null, child: Text('All')),
+          ...RecipeStatus.values.map(
+            (status) => FormBuilderFieldOption(
+              value: status,
+              child: Text(status.name.toTitleCase()),
+            ),
+          )
+        ],
+      ),
+    );
+
+    return EditableScaffold(
+      backgroundColor: Colors.grey.shade50,
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           await DbService.publicDb.recipeMeta().create(randomRecipeMeta);
         },
         child: const Icon(Icons.plus_one_rounded),
       ),
-      body: NestedScrollView(
-        headerSliverBuilder: (context, _) => [
-          SliverAppBar(
-            title: Align(
-              alignment: Alignment.center,
-              child: Text(
-                "Recipes",
-                style: TextStyle(
-                  fontSize: 26,
-                  fontFamily: Fonts.headline,
-                  color: Colors.black54,
-                ),
-              ),
-            ),
-            actions: [Container(width: 38)],
-            leadingWidth: 38,
-            leading: Avatar(
-              onPressed: () => RouteService.goToProfile(context),
-            ),
-            backgroundColor: Colors.transparent,
-            centerTitle: true,
-            floating: true,
-            pinned: true,
-            snap: false,
-            bottom: PreferredSize(
-              preferredSize: Size.fromHeight(60),
-              child: Container(
-                width: 276,
-                decoration: ShapeDecoration(
-                  color: Colors.white,
-                  shape: StadiumBorder(),
-                ),
-                child: SalomonBottomBar(
-                  currentIndex: currentIndex,
-                  onTap: (index) {
-                    ref.set(currentIndexProvider, index);
-                    _controller.animateToPage(
-                      index,
-                      duration: Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    );
-                  },
-                  selectedItemColor: Palette.primaryDark,
-                  unselectedItemColor: Palette.primaryLight,
-                  items: [
-                    SalomonBottomBarItem(
-                      icon: Icon(CustomIcons.iterating_bowl),
-                      title: Text(
-                        "Iterating",
-                        style: TextStyle(fontFamily: Fonts.text),
-                      ),
-                    ),
-                    SalomonBottomBarItem(
-                      icon: Icon(CustomIcons.perfected_bowl),
-                      title: Text(
-                        "Perfected",
-                        style: TextStyle(fontFamily: Fonts.text),
-                      ),
-                    ),
-                    SalomonBottomBarItem(
-                      icon: Icon(CustomIcons.dropped_bowl),
-                      title: Text(
-                        "Dropped",
-                        style: TextStyle(fontFamily: Fonts.text),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          )
+      bottomNavigationBar: DishfulBottomNavigationBar(),
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(height: 35),
+          title.paddingOnly(left: 34),
+          Container(height: 15),
+          filtersList.paddingSymmetric(horizontal: 34),
+          Container(height: 25),
+          recipesList,
+          Container(height: 25),
         ],
-        body: PageView(
-          controller: _controller,
-          onPageChanged: (index) => ref.set(currentIndexProvider, index),
-          children: RecipeStatus.values
-              .map(
-                (status) => recipesValue.toWidget(
-                  data: (allRecipes) {
-                    final recipes = allRecipes
-                        .where((recipe) => recipe.status == status)
-                        .toList();
-                    return recipes.isEmpty
-                        ? Text("No recipes")
-                        : MasonryGridView.extent(
-                            maxCrossAxisExtent: 250,
-                            mainAxisSpacing: 4,
-                            crossAxisSpacing: 4,
-                            itemCount: recipes.length,
-                            itemBuilder: (context, index) {
-                              final recipe = recipes[index];
-                              return RecipesCard(recipe);
-                            },
-                          );
-                  },
-                ),
-              )
-              .toList(),
-        ),
       ),
     );
   }
