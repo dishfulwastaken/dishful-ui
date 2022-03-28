@@ -125,8 +125,10 @@ class EditableWidget<T> extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final editableScaffold = EditableScaffold.maybeOf(context);
-    if (editableScaffold == null)
-      throw "Editable must have an ancestor EditableScaffold";
+    if (editableScaffold == null) {
+      print("Warning: Editable must have an ancestor EditableScaffold");
+      return defaultChildBuilder();
+    }
 
     final isEditing = ref.watch(editableScaffold.isEditingProvider);
     final FocusNode focusNode = FocusNode();

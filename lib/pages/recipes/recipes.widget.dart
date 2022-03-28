@@ -33,7 +33,7 @@ class RecipesPage extends ConsumerWidget {
       alignment: Alignment.topLeft,
       child: Text(
         "Let's make some\ndishes!",
-        style: context.headlineSmall,
+        style: context.headlineMedium,
       ),
     );
     final recipesList = ParallaxArea(
@@ -100,14 +100,13 @@ class RecipesPage extends ConsumerWidget {
     );
 
     return EditableScaffold(
-      backgroundColor: Colors.grey.shade50,
+      bottomNavigationBar: DishfulBottomNavigationBar(),
       floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.plus_one_rounded),
         onPressed: () async {
           await DbService.publicDb.recipeMeta().create(randomRecipeMeta);
         },
-        child: const Icon(Icons.plus_one_rounded),
       ),
-      bottomNavigationBar: DishfulBottomNavigationBar(),
       body: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

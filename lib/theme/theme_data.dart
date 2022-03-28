@@ -19,18 +19,11 @@ final themeData = ThemeData(
     unselectedItemColor: Colors.grey.shade400,
   ),
   textTheme: TextTheme(
-    headline1: headlineTextStyle,
-    headline2: headlineTextStyle,
-    headline3: headlineTextStyle,
-    headline4: headlineTextStyle,
-    headline5: headlineTextStyle,
-    headline6: headlineTextStyle,
-    subtitle1: subtitleTextStyle,
-    subtitle2: subtitleTextStyle,
-    bodyText1: bodyTextStyle,
-    bodyText2: bodyTextStyle,
-    caption: bodyTextStyle,
-    button: bodyTextStyle,
+    headlineSmall: headlineSmallTextStyle,
+    headlineMedium: headlineTextStyle,
+    titleMedium: titleTextStyle,
+    bodyMedium: bodyTextStyle,
+    labelMedium: bodyTextStyle,
   ),
   iconTheme: IconThemeData(color: Colors.grey.shade50),
   scrollbarTheme: ScrollbarThemeData(),
@@ -51,7 +44,12 @@ final headlineTextStyle = TextStyle(
   height: 1.15,
   color: Colors.black87,
 );
-final subtitleTextStyle = TextStyle(
+final headlineSmallTextStyle = TextStyle(
+  fontFamily: Fonts.headline,
+  fontSize: 28,
+  color: Colors.black87,
+);
+final titleTextStyle = TextStyle(
   fontFamily: Fonts.text,
   fontWeight: FontWeight.bold,
   fontSize: 16,

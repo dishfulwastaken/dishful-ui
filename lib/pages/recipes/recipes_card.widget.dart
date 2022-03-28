@@ -55,9 +55,12 @@ class RecipesCard extends StatelessWidget {
                           Icons.hide_image,
                           size: 64,
                         )
-                      : EditableImage(
-                          initialValue: _recipe.image.get,
-                          saveValue: (_) async {},
+                      : Hero(
+                          tag: "recipe-page-${_recipe.id}",
+                          child: EditableImage(
+                            initialValue: _recipe.image.get,
+                            saveValue: (_) async {},
+                          ),
                         ),
                 ),
               ],
@@ -81,11 +84,10 @@ class RecipesCard extends StatelessWidget {
                           color: Colors.white,
                         ),
                       ),
-                      Container(height: 4),
                       Text(
                         "${_recipe.iterationCount} Iterations  |  ${_recipe.status.name.toTitleCase()}",
                         style: context.bodyMedium?.copyWith(
-                          color: Colors.grey.shade50,
+                          color: Colors.grey.shade400,
                         ),
                       ),
                     ],

@@ -18,7 +18,7 @@ class Avatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Hero(
-      tag: "avatarTag",
+      tag: "avatar-tag",
       child: GestureDetector(
         onTap: onPressed,
         child: Container(

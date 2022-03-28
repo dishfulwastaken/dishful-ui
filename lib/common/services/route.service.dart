@@ -86,6 +86,7 @@ final _recipe = _AppRoute(
     final id = params["recipeId"]!.first;
     return RecipePage(id);
   },
+  transitionType: TransitionType.fadeIn,
 );
 
 List<_AppRoute> appRoutes = [_landing, _auth, _profile, _recipes, _recipe];
