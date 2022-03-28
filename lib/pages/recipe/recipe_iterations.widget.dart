@@ -1,3 +1,4 @@
+import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/domain/recipe_iteration.dart';
 import 'package:dishful/common/services/db.service.dart';
@@ -7,6 +8,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RecipeIterations extends ConsumerWidget {
   late final AsyncValueProvider<List<RecipeIteration>> recipeIterationsProvider;
+  final transformationController = TransformationController(
+      // Matrix4.identity().scaled(0.5),
+      );
 
   RecipeIterations(String id) {
     recipeIterationsProvider = getAllProvider(
@@ -20,7 +24,7 @@ class RecipeIterations extends ConsumerWidget {
 
     return recipeIterationsValue.toWidget(
       data: (recipeIterations) {
-        return recipeIterations.isEmpty
+        final recipeIterationsList = recipeIterations.isEmpty
             ? Text("No iterations")
             : ListView.builder(
                 itemCount: recipeIterations.length,
@@ -31,6 +35,29 @@ class RecipeIterations extends ConsumerWidget {
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
               );
+
+        return InteractiveViewer(
+          clipBehavior: Clip.antiAlias,
+          transformationController: transformationController,
+          boundaryMargin: EdgeInsets.symmetric(
+            horizontal: context.width,
+            vertical: context.height,
+          ),
+          minScale: 0.1,
+          maxScale: 5.0,
+          child: Container(
+            width: 50,
+            height: 50,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: <Color>[Colors.orange, Colors.red],
+                stops: <double>[0.0, 1.0],
+              ),
+            ),
+          ),
+        );
       },
     );
   }

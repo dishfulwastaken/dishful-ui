@@ -67,7 +67,7 @@ class RecipePage extends ConsumerWidget {
                 ),
               ),
               Text('Your iterations:'),
-              RecipeIterations(recipe.id),
+              Expanded(child: RecipeIterations(recipe.id)),
             ],
           ),
         );
