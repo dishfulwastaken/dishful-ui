@@ -14,7 +14,7 @@ class MockClient<T extends Serializable> extends Client<T> {
     return Future.delayed(mockDelay);
   }
 
-  Future<void> deleteAll() async {
+  Future<void> deleteAll({Map<String, String>? filters}) async {
     db.clear();
     return Future.delayed(mockDelay);
   }
@@ -29,7 +29,7 @@ class MockClient<T extends Serializable> extends Client<T> {
     return Future.delayed(mockDelay, () => data);
   }
 
-  Future<List<T>> getAll() {
+  Future<List<T>> getAll({Map<String, String>? filters}) {
     final data = db.values.toList();
     return Future.delayed(mockDelay, () => data);
   }
@@ -67,25 +67,43 @@ class MockDb extends Db {
   Future<void> init() async {}
   Future<void> close() async {}
 
-  MockClient<UserMeta> get userMeta => _build(
-        UserMetaSerializer(),
+  MockClient<Subscriber> get userMeta => _build(
+        SubscriberSerializer(),
       );
-  MockClient<RecipeMeta> recipeMeta({String? userId}) => _build(
-        RecipeMetaSerializer(),
+  MockClient<Recipe> recipeMeta({String? userId}) => _build(
+        RecipeSerializer(),
       );
-  MockClient<RecipeIteration> recipeIteration(
+  MockClient<Iteration> recipeIteration(
     String recipeId, {
     String? userId,
   }) =>
       _build(
-        RecipeIterationSerializer(),
+        IterationSerializer(),
       );
-  MockClient<RecipeReview> recipeReview(
+  MockClient<Review> recipeReview(
     String recipeId,
     String iterationId, {
     String? userId,
   }) =>
       _build(
-        RecipeReviewSerializer(),
+        ReviewSerializer(),
       );
+
+  @override
+  // TODO: implement collabs
+  Client<Collab> get collabs => throw UnimplementedError();
+
+  @override
+  Client<Iteration> iterations(String recipeId) {
+    // TODO: implement iterations
+    throw UnimplementedError();
+  }
+
+  @override
+  // TODO: implement recipes
+  Client<Recipe> get recipes => throw UnimplementedError();
+
+  @override
+  // TODO: implement subscribers
+  Client<Subscriber> get subscribers => throw UnimplementedError();
 }

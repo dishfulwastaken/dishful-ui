@@ -17,11 +17,14 @@ typedef SubscriptionCancel = Future<void> Function();
 typedef SubscriptionOnData<T> = void Function(T);
 typedef SubscriptionOnError<T> = void Function(T);
 
-typedef OnDeleteCallback = Future<void> Function(String id);
+typedef OnCreateHook<T> = Future<void> Function(T data);
+typedef OnReadHook<T> = Future<void> Function(T data);
+typedef OnUpdateHook<T> = Future<void> Function(T data);
+typedef OnDeleteHook = Future<void> Function(String id);
 
 abstract class Client<T extends Serializable> {
   /// Get all documents in the collection.
-  Future<List<T>> getAll();
+  Future<List<T>> getAll({Map<String, String>? filters});
 
   /// Get a document with ID = [id].
   Future<T?> get(String id);
@@ -37,7 +40,7 @@ abstract class Client<T extends Serializable> {
   Future<void> create(T data);
 
   /// Delete all documents in the collection.
-  Future<void> deleteAll();
+  Future<void> deleteAll({Map<String, String>? filters});
 
   /// Delete a document with ID = [id].
   Future<void> delete(String id);
@@ -63,14 +66,10 @@ abstract class Client<T extends Serializable> {
 abstract class Db {
   Future<void> init();
   Future<void> close();
-  Client<UserMeta> get userMeta;
-  Client<RecipeMeta> recipeMeta({String userId});
-  Client<RecipeIteration> recipeIteration(String recipeId, {String userId});
-  Client<RecipeReview> recipeReview(
-    String recipeId,
-    String iterationId, {
-    String? userId,
-  });
+  Client<Subscriber> get subscribers;
+  Client<Collab> get collabs;
+  Client<Recipe> get recipes;
+  Client<Iteration> iterations(String recipeId);
 }
 
 enum DbProvider { hive, firebase, mock }

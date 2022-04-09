@@ -2,10 +2,10 @@ part of db;
 
 class _HiveBoxName {
   static const _base = 'dishful_hive_storage';
-  static const userMeta = '${_base}_user_meta';
-  static const recipeMeta = '${_base}_recipe_meta';
-  static const recipeIteration = '${_base}_recipe_iteration';
-  static const recipeReview = '${_base}_recipe_review';
+  static const subscribers = '${_base}_user_meta';
+  static const recipes = '${_base}_recipes_meta';
+  static const iterations = '${_base}_recipes_iteration';
+  static const collabs = '${_base}_collabs';
 }
 
 class HiveClient<T extends Serializable> extends Client<T> {
@@ -22,7 +22,7 @@ class HiveClient<T extends Serializable> extends Client<T> {
     box = notOpen ? await Hive.openBox(boxName) : Hive.box(boxName);
   }
 
-  Future<List<T>> getAll() async {
+  Future<List<T>> getAll({Map<String, String>? filters}) async {
     assert(box != null, 'HiveClient.init must be called first!');
     final data = (box!.values).map(jsonifyMap).map(serializer.fromJson);
     return data.toList();
@@ -47,7 +47,7 @@ class HiveClient<T extends Serializable> extends Client<T> {
     await box!.put(data.id, serializer.toJson(data));
   }
 
-  Future<void> deleteAll() async {
+  Future<void> deleteAll({Map<String, String>? filters}) async {
     assert(box != null, 'HiveClient.init must be called first!');
     await box!.clear();
   }
@@ -108,29 +108,29 @@ class HiveDb extends Db {
     return client;
   }
 
-  HiveClient<UserMeta>? _userMeta;
-  HiveClient<RecipeMeta>? _recipeMeta;
-  HiveClient<RecipeIteration>? _recipeIteration;
-  HiveClient<RecipeReview>? _recipeReview;
+  HiveClient<Subscriber>? _subscribers;
+  HiveClient<Recipe>? _recipes;
+  HiveClient<Iteration>? _iterations;
+  HiveClient<Collab>? _collabs;
 
   Future<void> init() async {
     await Hive.initFlutter();
 
-    _userMeta = await _buildClient(
-      _HiveBoxName.userMeta,
-      UserMetaSerializer(),
+    _subscribers = await _buildClient(
+      _HiveBoxName.subscribers,
+      SubscriberSerializer(),
     );
-    _recipeMeta = await _buildClient(
-      _HiveBoxName.recipeMeta,
-      RecipeMetaSerializer(),
+    _recipes = await _buildClient(
+      _HiveBoxName.recipes,
+      RecipeSerializer(),
     );
-    _recipeIteration = await _buildClient(
-      _HiveBoxName.recipeIteration,
-      RecipeIterationSerializer(),
+    _iterations = await _buildClient(
+      _HiveBoxName.iterations,
+      IterationSerializer(),
     );
-    _recipeReview = await _buildClient(
-      _HiveBoxName.recipeReview,
-      RecipeReviewSerializer(),
+    _collabs = await _buildClient(
+      _HiveBoxName.collabs,
+      CollabSerializer(),
     );
   }
 
@@ -138,17 +138,8 @@ class HiveDb extends Db {
     await Hive.close();
   }
 
-  HiveClient<UserMeta> get userMeta => _userMeta!;
-  HiveClient<RecipeMeta> recipeMeta({String? userId}) => _recipeMeta!;
-  HiveClient<RecipeIteration> recipeIteration(
-    String recipeId, {
-    String? userId,
-  }) =>
-      _recipeIteration!;
-  HiveClient<RecipeReview> recipeReview(
-    String recipeId,
-    String iterationId, {
-    String? userId,
-  }) =>
-      _recipeReview!;
+  HiveClient<Subscriber> get subscribers => _subscribers!;
+  HiveClient<Recipe> get recipes => _recipes!;
+  HiveClient<Collab> get collabs => _collabs!;
+  HiveClient<Iteration> iterations(String recipeId) => _iterations!;
 }

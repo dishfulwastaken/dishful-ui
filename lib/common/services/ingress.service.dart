@@ -1,10 +1,10 @@
 library ingress;
 
-import 'package:dishful/common/domain/recipe_ingredient.dart';
-import 'package:dishful/common/domain/recipe_iteration.dart';
-import 'package:dishful/common/domain/recipe_meta.dart';
-import 'package:dishful/common/domain/recipe_review.dart';
-import 'package:dishful/common/domain/recipe_step.dart';
+import 'package:dishful/common/domain/ingredient.dart';
+import 'package:dishful/common/domain/iteration.dart';
+import 'package:dishful/common/domain/recipe.dart';
+import 'package:dishful/common/domain/review.dart';
+import 'package:dishful/common/domain/instruction.dart';
 
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
@@ -35,28 +35,28 @@ class IngressService {
     _document = parse(html);
   }
 
-  RecipeMeta? get recipeMeta {
+  Recipe? get recipe {
     assert(_document != null, "IngressService.init must be called first!");
-    return _adapter.recipeMeta(_document!);
+    return _adapter.recipe(_document!);
   }
 
-  RecipeIteration? get recipeIteration {
+  Iteration? get iteration {
     assert(_document != null, "IngressService.init must be called first!");
-    return _adapter.recipeIteration(_document!);
+    return _adapter.iteration(_document!);
   }
 
-  RecipeIngredient? get recipeIngredient {
+  Ingredient? get ingredient {
     assert(_document != null, "IngressService.init must be called first!");
-    return _adapter.recipeIngredient(_document!);
+    return _adapter.ingredient(_document!);
   }
 
-  RecipeStep? get recipeStep {
+  Instruction? get instruction {
     assert(_document != null, "IngressService.init must be called first!");
-    return _adapter.recipeStep(_document!);
+    return _adapter.instruction(_document!);
   }
 
-  RecipeReview? get recipeReview {
+  Review? get review {
     assert(_document != null, "IngressService.init must be called first!");
-    return _adapter.recipeReview(_document!);
+    return _adapter.review(_document!);
   }
 }

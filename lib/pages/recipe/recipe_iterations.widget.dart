@@ -1,20 +1,20 @@
 import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:dishful/common/data/providers.dart';
-import 'package:dishful/common/domain/recipe_iteration.dart';
+import 'package:dishful/common/domain/iteration.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/pages/recipe/recipe_iterations_card.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class RecipeIterations extends ConsumerWidget {
-  late final AsyncValueProvider<List<RecipeIteration>> recipeIterationsProvider;
+class Iterations extends ConsumerWidget {
+  late final AsyncValueProvider<List<Iteration>> recipeIterationsProvider;
   final transformationController = TransformationController(
       // Matrix4.identity().scaled(0.5),
       );
 
-  RecipeIterations(String id) {
+  Iterations(String id) {
     recipeIterationsProvider = getAllProvider(
-      DbService.publicDb.recipeIteration(id),
+      DbService.publicDb.iterations(id),
     );
   }
 
@@ -30,7 +30,7 @@ class RecipeIterations extends ConsumerWidget {
                 itemCount: recipeIterations.length,
                 itemBuilder: (context, index) {
                   final recipeIteration = recipeIterations[index];
-                  return RecipeIterationsCard(recipeIteration);
+                  return IterationsCard(recipeIteration);
                 },
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,

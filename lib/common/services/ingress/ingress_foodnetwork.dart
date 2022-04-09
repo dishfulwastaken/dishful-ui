@@ -7,15 +7,33 @@ class FoodNetworkAdapter extends Adapter {
 
   String sanitizeUrl(String url) => url;
 
-  RecipeIngredient? recipeIngredient(Document document) =>
-      throw UnimplementedError();
+  @override
+  Ingredient? ingredient(Document document) {
+    // TODO: implement ingredient
+    throw UnimplementedError();
+  }
 
-  RecipeIteration? recipeIteration(Document document) =>
-      throw UnimplementedError();
+  @override
+  Instruction? instruction(Document document) {
+    // TODO: implement instruction
+    throw UnimplementedError();
+  }
 
-  RecipeMeta? recipeMeta(Document document) => throw UnimplementedError();
+  @override
+  Iteration? iteration(Document document) {
+    // TODO: implement iteration
+    throw UnimplementedError();
+  }
 
-  RecipeReview? recipeReview(Document document) => throw UnimplementedError();
+  @override
+  Recipe? recipe(Document document) {
+    // TODO: implement recipe
+    throw UnimplementedError();
+  }
 
-  RecipeStep? recipeStep(Document document) => throw UnimplementedError();
+  @override
+  Review? review(Document document) {
+    // TODO: implement review
+    throw UnimplementedError();
+  }
 }

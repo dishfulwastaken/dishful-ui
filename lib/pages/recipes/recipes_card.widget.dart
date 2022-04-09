@@ -2,7 +2,7 @@ import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:blurhash_dart/blurhash_dart.dart';
 import 'package:dishful/common/data/strings.dart';
 import 'package:dishful/common/data/image.dart';
-import 'package:dishful/common/domain/recipe_meta.dart';
+import 'package:dishful/common/domain/recipe.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/services/route.service.dart';
 import 'package:dishful/common/widgets/editable.widget.dart';
@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:parallax_animation/parallax_animation.dart';
 
 class RecipesCard extends StatelessWidget {
-  final RecipeMeta _recipe;
+  final Recipe _recipe;
 
   RecipesCard(this._recipe);
 
@@ -32,7 +32,7 @@ class RecipesCard extends StatelessWidget {
               children: [
                 FittedBox(
                   fit: BoxFit.fill,
-                  child: _recipe.image.get == null
+                  child: _recipe.pictures.isNotEmpty
                       ? Container(
                           color: Colors.grey.shade300,
                           width: 100,
@@ -40,7 +40,7 @@ class RecipesCard extends StatelessWidget {
                         )
                       : Image.memory(
                           imageToBytes(
-                            BlurHash.decode(_recipe.image.get!.blurHash)
+                            BlurHash.decode(_recipe.pictures.first.blurHash)
                                 .toImage(
                               100,
                               200,
@@ -50,7 +50,7 @@ class RecipesCard extends StatelessWidget {
                 ),
                 FittedBox(
                   fit: BoxFit.scaleDown,
-                  child: _recipe.image.get == null
+                  child: _recipe.pictures.isNotEmpty
                       ? Icon(
                           Icons.hide_image,
                           size: 64,
@@ -58,7 +58,7 @@ class RecipesCard extends StatelessWidget {
                       : Hero(
                           tag: "recipe-page-${_recipe.id}",
                           child: EditableImage(
-                            initialValue: _recipe.image.get,
+                            initialValue: _recipe.pictures.first,
                             saveValue: (_) async {},
                           ),
                         ),
@@ -101,7 +101,7 @@ class RecipesCard extends StatelessWidget {
                   alignment: Alignment.bottomRight,
                   child: IconButton(
                     onPressed: () async {
-                      await DbService.publicDb.recipeMeta().delete(_recipe.id);
+                      await DbService.publicDb.recipes.delete(_recipe.id);
                     },
                     icon: Icon(Icons.delete),
                   ),

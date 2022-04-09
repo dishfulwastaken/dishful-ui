@@ -4,13 +4,13 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 
 import 'package:uuid/uuid.dart';
 
-part 'generated/recipe_image.g.dart';
+part 'generated/picture.g.dart';
 
 final uuid = Uuid();
 
 @CopyWith()
 @JsonSerializable()
-class RecipeImage extends Serializable {
+class Picture extends Serializable {
   final String id;
   final bool isLocal;
   late final String path;
@@ -18,7 +18,7 @@ class RecipeImage extends Serializable {
   final int width;
   final int height;
 
-  RecipeImage({
+  Picture({
     required this.id,
     required this.isLocal,
     required this.blurHash,
@@ -26,7 +26,7 @@ class RecipeImage extends Serializable {
     required this.height,
   });
 
-  RecipeImage.create({
+  Picture.create({
     String? id,
     required this.blurHash,
     required this.width,
@@ -34,11 +34,11 @@ class RecipeImage extends Serializable {
     this.isLocal = false,
   }) : id = id ?? uuid.v1();
 
-  RecipeImage copyWithPath(String path) => copyWith()..path = path;
+  Picture copyWithPath(String path) => copyWith()..path = path;
 }
 
-class RecipeImageSerializer extends Serializer<RecipeImage> {
-  const RecipeImageSerializer();
-  RecipeImage fromJson(Json json) => _$RecipeImageFromJson(json);
-  Json toJson(RecipeImage data) => _$RecipeImageToJson(data);
+class PictureSerializer extends Serializer<Picture> {
+  const PictureSerializer();
+  Picture fromJson(Json json) => _$PictureFromJson(json);
+  Json toJson(Picture data) => _$PictureToJson(data);
 }

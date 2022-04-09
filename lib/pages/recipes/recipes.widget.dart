@@ -1,6 +1,6 @@
 import 'package:dishful/common/data/strings.dart';
 import 'package:dishful/common/data/providers.dart';
-import 'package:dishful/common/domain/recipe_meta.dart';
+import 'package:dishful/common/domain/recipe.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/test.dart';
 import 'package:dishful/common/widgets/dishful_bottom_navigation_bar.widget.dart';
@@ -18,10 +18,10 @@ import 'package:awesome_extensions/awesome_extensions.dart';
 final filterStatusProvider = StateProvider<RecipeStatus?>((_) => null);
 
 class RecipesPage extends ConsumerWidget {
-  late final AsyncValueProvider<List<RecipeMeta>> recipesProvider;
+  late final AsyncValueProvider<List<Recipe>> recipesProvider;
 
   RecipesPage() {
-    recipesProvider = getAllProvider(DbService.publicDb.recipeMeta());
+    recipesProvider = getAllProvider(DbService.publicDb.recipes);
   }
 
   @override
@@ -104,7 +104,7 @@ class RecipesPage extends ConsumerWidget {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.plus_one_rounded),
         onPressed: () async {
-          await DbService.publicDb.recipeMeta().create(randomRecipeMeta);
+          await DbService.publicDb.recipes.create(randomRecipe);
         },
       ),
       body: Column(

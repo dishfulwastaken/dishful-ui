@@ -1,4 +1,4 @@
-import 'package:dishful/common/domain/user_meta.dart';
+import 'package:dishful/common/domain/subscriber.dart';
 import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/services/route.service.dart';
@@ -48,8 +48,8 @@ class SignUp extends ConsumerWidget {
               password: password,
             );
 
-            final user = UserMeta.create(id: userId);
-            await DbService.publicDb.userMeta.create(user);
+            final subscriber = Subscriber.create(id: userId);
+            await DbService.publicDb.subscribers.create(subscriber);
 
             RouteService.goToRecipes(context, clearStack: true);
           } on AuthException<SignUpAuthExceptionCode> catch (error) {

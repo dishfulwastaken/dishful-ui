@@ -3,20 +3,20 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:uuid/uuid.dart';
 
-part 'generated/user_shared_recipe.g.dart';
+part 'generated/collab.g.dart';
 
 final uuid = Uuid();
 
 @CopyWith()
 @JsonSerializable()
-class UserSharedRecipe extends Serializable {
+class Collab extends Serializable {
   final String id;
   final String ownerId;
   final String recipeId;
   final List<String>? iterationIds;
   final UserRole role;
 
-  UserSharedRecipe({
+  Collab({
     required this.id,
     required this.ownerId,
     required this.recipeId,
@@ -24,7 +24,7 @@ class UserSharedRecipe extends Serializable {
     required this.role,
   });
 
-  UserSharedRecipe.create({
+  Collab.create({
     required this.ownerId,
     required this.recipeId,
     required this.role,
@@ -32,10 +32,10 @@ class UserSharedRecipe extends Serializable {
         iterationIds = [];
 }
 
-class UserSharedRecipeSerializer extends Serializer<UserSharedRecipe> {
-  const UserSharedRecipeSerializer();
-  UserSharedRecipe fromJson(Json json) => _$UserSharedRecipeFromJson(json);
-  Json toJson(UserSharedRecipe data) => _$UserSharedRecipeToJson(data);
+class CollabSerializer extends Serializer<Collab> {
+  const CollabSerializer();
+  Collab fromJson(Json json) => _$CollabFromJson(json);
+  Json toJson(Collab data) => _$CollabToJson(data);
 }
 
 enum UserRole { editor, reader, reviewer }
