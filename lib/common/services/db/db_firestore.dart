@@ -207,6 +207,14 @@ class FirestoreDb extends Db {
           ),
         );
       },
+      onUpdate: (iteration) async {
+        final recipe = await recipes.get(iteration.recipeId);
+        await recipes.update(
+          recipe!.copyWith(
+            updatedAt: DateTime.now(),
+          ),
+        );
+      },
       onDelete: (iterationId) async {
         final iteration = await iterations(recipeId).get(iterationId);
         final recipe = await recipes.get(iteration!.recipeId);
