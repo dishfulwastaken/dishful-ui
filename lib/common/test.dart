@@ -45,8 +45,9 @@ Recipe get randomRecipe => Recipe(
       updatedAt: f.date.dateTime(),
     );
 
-Iteration randomIteration(String parentId) => Iteration(
+Iteration randomIteration(String recipeId, String parentId) => Iteration(
       id: f.guid.guid(),
+      recipeId: recipeId,
       createdAt: f.date.dateTime(),
       updatedAt: f.date.dateTime(),
       parentId: parentId,

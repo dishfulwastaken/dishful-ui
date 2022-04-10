@@ -70,6 +70,10 @@ abstract class Db {
   Client<Collab> get collabs;
   Client<Recipe> get recipes;
   Client<Iteration> iterations(String recipeId);
+
+  String buildPath(Iterable<String> paths) {
+    return paths.intersperse("/").join();
+  }
 }
 
 enum DbProvider { hive, firebase, mock }

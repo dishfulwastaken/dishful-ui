@@ -189,19 +189,35 @@ class FirestoreDb extends Db {
   }
 
   FirestoreClient<Iteration> iterations(String recipeId) {
-    final collectionPath = _FirestoreCollectionName.recipes +
-        "/$recipeId/" +
-        _FirestoreCollectionName.iterations;
+    final collectionPath = buildPath([
+      _FirestoreCollectionName.recipes,
+      recipeId,
+      _FirestoreCollectionName.iterations,
+    ]);
 
     return FirestoreClient<Iteration>(
       collectionPath,
       IterationSerializer(),
+      onCreate: (iteration) async {
+        final recipe = await recipes.get(iteration.recipeId);
+        await recipes.update(
+          recipe!.copyWith(
+            updatedAt: DateTime.now(),
+            iterationCount: recipe.iterationCount + 1,
+          ),
+        );
+      },
       onDelete: (iterationId) async {
-        final pictures = (await iterations(recipeId).get(iterationId))
-                ?.reviews
-                .expand((review) => review.pictures)
-                .toList() ??
-            [];
+        final iteration = await iterations(recipeId).get(iterationId);
+        final recipe = await recipes.get(iteration!.recipeId);
+        await recipes.update(
+          recipe!.copyWith(
+            updatedAt: DateTime.now(),
+            iterationCount: recipe.iterationCount - 1,
+          ),
+        );
+        final pictures =
+            iteration.reviews.expand((review) => review.pictures).toList();
         pictures
             .where((picture) => !picture.isLocal)
             .forEach((picture) => StorageService.deleteFromPath(picture.path));

@@ -13,6 +13,7 @@ final uuid = Uuid();
 @JsonSerializable()
 class Iteration extends Serializable {
   final String id;
+  final String recipeId;
   final String? parentId;
   final String? title;
   @ReviewSerializer()
@@ -24,6 +25,7 @@ class Iteration extends Serializable {
 
   Iteration({
     required this.id,
+    required this.recipeId,
     this.parentId,
     this.title,
     required this.reviews,
@@ -33,6 +35,7 @@ class Iteration extends Serializable {
   });
 
   Iteration.create({
+    required this.recipeId,
     this.parentId,
     this.title,
     required this.changes,
@@ -40,6 +43,16 @@ class Iteration extends Serializable {
         createdAt = DateTime.now(),
         updatedAt = DateTime.now(),
         reviews = [];
+
+  Iteration.original({
+    required this.recipeId,
+  })  : id = recipeId,
+        parentId = recipeId,
+        title = "Original",
+        reviews = [],
+        changes = [],
+        createdAt = DateTime.now(),
+        updatedAt = DateTime.now();
 }
 
 class IterationSerializer extends Serializer<Iteration> {

@@ -3,6 +3,7 @@ library db;
 import 'dart:async';
 
 import 'package:dishful/common/data/env.dart';
+import 'package:dishful/common/data/intersperse.dart';
 import 'package:dishful/common/data/json.dart';
 import 'package:dishful/common/domain/collab.dart';
 import 'package:dishful/common/domain/iteration.dart';

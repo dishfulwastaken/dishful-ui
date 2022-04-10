@@ -47,7 +47,7 @@ class RecipePage extends ConsumerWidget {
             onPressed: () async {
               await DbService.publicDb
                   .iterations(recipe.id)
-                  .create(randomIteration(recipe.id));
+                  .create(randomIteration(recipe.id, recipe.id));
             },
           ),
           body: Column(
