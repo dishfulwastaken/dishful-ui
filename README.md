@@ -27,3 +27,9 @@ Development day 1: 25th July, 2021
     they decided to try a given change.
   - This will use far less storage space. Instead of storing the entire recipe for each iteration we store the changes 
     (which should be tiny in comparision).
+
+### Notes
+
+- **Order of the changes in an iteration matters!**
+  E.g. imagine two changes; the first removes an ingredient, the next
+  tries to edit that same ingredient; busted! 

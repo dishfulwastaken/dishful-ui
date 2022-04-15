@@ -40,7 +40,23 @@ class Change extends Serializable {
     this.swapInstructionIdOne,
     this.swapInstructionIdTwo,
     this.newDiet,
-  });
+  }) : assert(
+          type == ChangeType.editServes && newServes != null ||
+              type == ChangeType.editSpiceLevel && newSpiceLevel != null ||
+              type == ChangeType.editCookTime && newCookTime != null ||
+              type == ChangeType.editPrepTime && newPrepTime != null ||
+              type == ChangeType.editIngredient && newIngredient != null ||
+              type == ChangeType.removeIngredient && newIngredient != null ||
+              type == ChangeType.addIngredient && newIngredient != null ||
+              type == ChangeType.editInstruction && newInstruction != null ||
+              type == ChangeType.removeInstruction && newInstruction != null ||
+              type == ChangeType.addInstruction && newInstruction != null ||
+              type == ChangeType.swapInstructions &&
+                  swapInstructionIdOne != null &&
+                  swapInstructionIdTwo != null ||
+              type == ChangeType.removeDiet && newDiet != null ||
+              type == ChangeType.addDiet && newDiet != null,
+        );
 
   Change.create({
     required this.type,

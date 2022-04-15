@@ -1,3 +1,5 @@
+import 'package:dishful/common/data/swap.dart';
+import 'package:dishful/common/domain/change.dart';
 import 'package:dishful/common/domain/ingredient.dart';
 import 'package:dishful/common/domain/instruction.dart';
 import 'package:dishful/common/domain/picture.dart';
@@ -76,6 +78,66 @@ class Recipe extends Serializable {
         updatedAt = DateTime.now(),
         status = RecipeStatus.iterating,
         pictures = [];
+
+  Recipe applyChange(Change change) {
+    switch (change.type) {
+      case ChangeType.editServes:
+        return copyWith(serves: change.newServes);
+      case ChangeType.editSpiceLevel:
+        return copyWith(spiceLevel: change.newSpiceLevel);
+      case ChangeType.editCookTime:
+        return copyWith(cookTime: change.newCookTime);
+      case ChangeType.editPrepTime:
+        return copyWith(prepTime: change.newPrepTime);
+      case ChangeType.editIngredient:
+        final newIngredient = change.newIngredient!;
+        final newIngredients = ingredients.map(
+          (ingredient) =>
+              ingredient.id == newIngredient.id ? newIngredient : ingredient,
+        );
+        return copyWith(ingredients: newIngredients.toList());
+      case ChangeType.removeIngredient:
+        final oldIngredientId = change.newIngredient!.id;
+        final newIngredients = ingredients.where(
+          (ingredient) => ingredient.id != oldIngredientId,
+        );
+        return copyWith(ingredients: newIngredients.toList());
+      case ChangeType.addIngredient:
+        final newIngredients = [...ingredients, change.newIngredient!];
+        return copyWith(ingredients: newIngredients.toList());
+      case ChangeType.editInstruction:
+        final newInstruction = change.newInstruction!;
+        final newInstructions = instructions.map(
+          (instruction) => instruction.id == newInstruction.id
+              ? newInstruction
+              : instruction,
+        );
+        return copyWith(instructions: newInstructions.toList());
+      case ChangeType.removeInstruction:
+        final oldInstructionId = change.newInstruction!.id;
+        final newInstructions = instructions.where(
+          (instruction) => instruction.id != oldInstructionId,
+        );
+        return copyWith(instructions: newInstructions.toList());
+      case ChangeType.addInstruction:
+        final newInstructions = [...instructions, change.newInstruction!];
+        return copyWith(instructions: newInstructions.toList());
+      case ChangeType.swapInstructions:
+        final newInstructions = instructions.swapFirstWhere(
+          (instruction) => [
+            change.swapInstructionIdOne,
+            change.swapInstructionIdTwo
+          ].contains(instruction.id),
+        );
+        return copyWith(instructions: newInstructions.toList());
+      case ChangeType.removeDiet:
+        final newDiets = diets!.where((diet) => diet != change.newDiet);
+        return copyWith(diets: newDiets.toList());
+      case ChangeType.addDiet:
+        final newDiets = [...(diets ?? []), change.newDiet!];
+        return copyWith(diets: newDiets.toList());
+    }
+  }
 }
 
 class RecipeSerializer extends Serializer<Recipe> {
