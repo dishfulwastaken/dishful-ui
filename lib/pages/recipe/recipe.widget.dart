@@ -10,10 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RecipePage extends ConsumerWidget {
-  late final AsyncValueProvider<Recipe> recipeProvider;
+  late final FutureProvider<Recipe?> recipeProvider;
 
   RecipePage(String id) {
-    recipeProvider = getProvider(DbService.publicDb.recipes, id);
+    recipeProvider = getProvider(DbService.publicDb.recipes, id: id);
   }
 
   @override
@@ -22,6 +22,8 @@ class RecipePage extends ConsumerWidget {
 
     return recipeValue.toWidget(
       data: (recipe) {
+        if (recipe == null) return Text("No recipe found with ID");
+
         final title = Stack(
           children: [
             Container(

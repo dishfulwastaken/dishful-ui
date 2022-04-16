@@ -39,20 +39,11 @@ class MockClient<T extends Serializable> extends Client<T> {
     return Future.delayed(mockDelay, () {});
   }
 
-  SubscriptionCancel watchAll(
-    SubscriptionOnData<List<T>> onData,
-    SubscriptionOnError onError,
-  ) {
-    // TODO: implement watchAll
+  Stream<List<T>> watchAll({Map<String, String>? filters}) {
     throw UnimplementedError();
   }
 
-  SubscriptionCancel watch(
-    String id,
-    SubscriptionOnData<T> onData,
-    SubscriptionOnError onError,
-  ) {
-    // TODO: implement watch
+  Stream<T?> watch(String id) {
     throw UnimplementedError();
   }
 }

@@ -57,44 +57,26 @@ class HiveClient<T extends Serializable> extends Client<T> {
     await box!.delete(id);
   }
 
-  SubscriptionCancel watchAll(
-    SubscriptionOnData<List<T>> onData,
-    SubscriptionOnError onError,
-  ) {
+  Stream<List<T>> watchAll({Map<String, String>? filters}) {
     assert(box != null, 'HiveClient.init must be called first!');
     final rawStream = box!.watch();
     final serializedStream = rawStream.map(
       (event) =>
           (box!.values).map(jsonifyMap).map(serializer.fromJson).toList(),
     );
-    final subscription = serializedStream.listen(
-      (data) {
-        onData(data);
-      },
-    );
 
-    return subscription.cancel;
+    return serializedStream;
   }
 
-  SubscriptionCancel watch(
-    String id,
-    SubscriptionOnData<T> onData,
-    SubscriptionOnError onError,
-  ) {
+  Stream<T?> watch(String id) {
     assert(box != null, 'HiveClient.init must be called first!');
     final rawStream = box!.watch(key: id);
     final serializedStream = rawStream.map<T?>(
       (event) =>
           event.deleted ? null : serializer.fromJson(jsonifyMap(event.value)),
     );
-    final subscription = serializedStream.listen(
-      (nullableData) {
-        if (nullableData == null) return;
-        onData(nullableData);
-      },
-    );
 
-    return subscription.cancel;
+    return serializedStream;
   }
 }
 

@@ -10,15 +10,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ProfilePage extends ConsumerWidget {
-  late final AsyncValueProvider<User> userProvider;
-  late final AsyncValueProvider<Subscriber> subscriberProvider;
+  late final AutoDisposeStreamProvider<User?> userProvider;
+  late final AutoDisposeStreamProvider<Subscriber?> subscriberProvider;
 
   ProfilePage({Key? key}) : super(key: key) {
     final id = AuthService.currentUser?.uid;
     if (id == null) throw "No current user";
 
-    userProvider = currentUserProvider();
-    subscriberProvider = getProvider(DbService.publicDb.subscribers, id);
+    userProvider = watchCurrentUserProvider();
+    subscriberProvider = watchProvider(DbService.publicDb.subscribers, id: id);
   }
 
   @override
@@ -49,14 +49,14 @@ class ProfilePage extends ConsumerWidget {
               Container(height: 12),
               EditableTextField(
                 prefix: "Display name:",
-                initialValue: user.displayName,
+                initialValue: user?.displayName,
                 style: TextStyle(color: Colors.black, fontSize: 13),
                 saveValue: (displayName) async {
-                  await user.updateDisplayName(displayName);
+                  await user?.updateDisplayName(displayName);
                 },
               ),
-              Text("Email: ${user.email}"),
-              Text("Is pro user: ${subscriber.isCurrentlySubscribed}")
+              Text("Email: ${user?.email}"),
+              Text("Is pro user: ${subscriber?.isCurrentlySubscribed}")
             ],
           );
         },

@@ -9,7 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flash/flash.dart';
 
 class ProFeature extends ConsumerWidget {
-  late final AsyncValueProvider<Subscriber> subscriberProvider;
+  late final FutureProvider<Subscriber?> subscriberProvider;
   final String why;
   final Widget child;
 
@@ -21,14 +21,15 @@ class ProFeature extends ConsumerWidget {
     final id = AuthService.currentUser?.uid;
     if (id == null) throw "No current user";
 
-    subscriberProvider = getProvider(DbService.publicDb.subscribers, id);
+    subscriberProvider = getProvider(DbService.publicDb.subscribers, id: id);
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isPro = ref.watch(
       subscriberProvider.select(
-          (value) => value.asData?.value.isCurrentlySubscribed ?? false),
+        (value) => value.asData?.value?.isCurrentlySubscribed ?? false,
+      ),
     );
 
     return isPro

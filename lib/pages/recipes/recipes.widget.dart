@@ -18,7 +18,7 @@ import 'package:awesome_extensions/awesome_extensions.dart';
 final filterStatusProvider = StateProvider<RecipeStatus?>((_) => null);
 
 class RecipesPage extends ConsumerWidget {
-  late final AsyncValueProvider<List<Recipe>> recipesProvider;
+  late final FutureProvider<List<Recipe>> recipesProvider;
 
   RecipesPage() {
     recipesProvider = getAllProvider(DbService.publicDb.recipes);

@@ -32,7 +32,7 @@ class RecipesCard extends StatelessWidget {
               children: [
                 FittedBox(
                   fit: BoxFit.fill,
-                  child: _recipe.pictures.isNotEmpty
+                  child: _recipe.pictures.isEmpty
                       ? Container(
                           color: Colors.grey.shade300,
                           width: 100,
@@ -50,7 +50,7 @@ class RecipesCard extends StatelessWidget {
                 ),
                 FittedBox(
                   fit: BoxFit.scaleDown,
-                  child: _recipe.pictures.isNotEmpty
+                  child: _recipe.pictures.isEmpty
                       ? Icon(
                           Icons.hide_image,
                           size: 64,

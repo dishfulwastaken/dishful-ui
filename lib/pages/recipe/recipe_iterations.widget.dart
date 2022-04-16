@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class Iterations extends ConsumerWidget {
-  late final AsyncValueProvider<List<Iteration>> recipeIterationsProvider;
+  late final FutureProvider<List<Iteration>> recipeIterationsProvider;
   final transformationController = TransformationController(
       // Matrix4.identity().scaled(0.5),
       );

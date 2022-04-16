@@ -106,36 +106,30 @@ class FirestoreClient<T extends Serializable> extends Client<T> {
     await _collection.doc(data.id).set(data);
   }
 
-  SubscriptionCancel watchAll(
-    SubscriptionOnData<List<T>> onData,
-    SubscriptionOnError onError,
-  ) {
-    final subscription = _collection.snapshots().listen(
-      (querySnapshot) {
-        final data = extractNonNullData(querySnapshot.docs);
-        onData(data.toList());
-      },
-      onError: onError,
-    );
+  Stream<List<T>> watchAll({Map<String, String>? filters}) {
+    final query = filters == null
+        ? _collection
+        : filters.entries.fold<Query<T?>>(
+            _collection,
+            (previousValue, filter) => previousValue.where(
+              filter.key,
+              isEqualTo: filter.value,
+            ),
+          );
+    final stream = query
+        .snapshots()
+        .map((querySnapshot) => extractNonNullData(querySnapshot.docs));
 
-    return subscription.cancel;
+    return stream;
   }
 
-  SubscriptionCancel watch(
-    String id,
-    SubscriptionOnData<T> onData,
-    SubscriptionOnError onError,
-  ) {
-    final subscription = _collection.doc(id).snapshots().listen(
-      (documentSnapshot) {
-        if (!documentSnapshot.exists) return;
-        final data = documentSnapshot.data()!;
-        onData(data);
-      },
-      onError: onError,
-    );
+  Stream<T?> watch(String id) {
+    final stream = _collection
+        .doc(id)
+        .snapshots()
+        .map((documentSnapshot) => documentSnapshot.data());
 
-    return subscription.cancel;
+    return stream;
   }
 }
 
