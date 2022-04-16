@@ -37,3 +37,10 @@ class InstructionSerializer extends Serializer<Instruction> {
   Instruction fromJson(Json json) => _$InstructionFromJson(json);
   Json toJson(Instruction data) => _$InstructionToJson(data);
 }
+
+class NullableInstructionSerializer extends Serializer<Instruction?> {
+  const NullableInstructionSerializer();
+  Instruction? fromJson(Json json) => _$InstructionFromJson(json);
+  Json toJson(Instruction? data) =>
+      data == null ? {} : _$InstructionToJson(data);
+}

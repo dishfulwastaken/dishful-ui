@@ -42,4 +42,10 @@ class IngredientSerializer extends Serializer<Ingredient> {
   Json toJson(Ingredient data) => _$IngredientToJson(data);
 }
 
+class NullableIngredientSerializer extends Serializer<Ingredient?> {
+  const NullableIngredientSerializer();
+  Ingredient? fromJson(Json json) => _$IngredientFromJson(json);
+  Json toJson(Ingredient? data) => data == null ? {} : _$IngredientToJson(data);
+}
+
 enum IngredientUnit { l, ml, kg, g, tsp, tbsp, cup, ounce }

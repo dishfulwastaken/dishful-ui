@@ -20,9 +20,9 @@ class Change extends Serializable {
   final int? newSpiceLevel;
   final Duration? newCookTime;
   final Duration? newPrepTime;
-  @IngredientSerializer()
+  @NullableIngredientSerializer()
   final Ingredient? newIngredient;
-  @InstructionSerializer()
+  @NullableInstructionSerializer()
   final Instruction? newInstruction;
   final String? swapInstructionIdOne;
   final String? swapInstructionIdTwo;

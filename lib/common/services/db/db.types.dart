@@ -6,7 +6,7 @@ abstract class Serializable {
   String get id;
 }
 
-abstract class Serializer<T extends Serializable>
+abstract class Serializer<T extends Serializable?>
     extends JsonConverter<T, Json> {
   const Serializer();
   Json toJson(T data);

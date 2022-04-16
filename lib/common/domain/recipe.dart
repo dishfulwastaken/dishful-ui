@@ -134,7 +134,7 @@ class Recipe extends Serializable {
         final newDiets = diets!.where((diet) => diet != change.newDiet);
         return copyWith(diets: newDiets.toList());
       case ChangeType.addDiet:
-        final newDiets = [...(diets ?? []), change.newDiet!];
+        final newDiets = [...(diets ?? <RecipeDiet>[]), change.newDiet!];
         return copyWith(diets: newDiets.toList());
     }
   }
