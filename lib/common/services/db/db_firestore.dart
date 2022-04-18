@@ -2,7 +2,7 @@ part of db;
 
 class _FirestoreCollectionName {
   static const _base = 'dishful_firestore_db';
-  static const subscribers = '${_base}_subscribers';
+  static const subscriptions = '${_base}_subscribers';
   static const collabs = '${_base}_collabs';
   static const recipes = '${_base}_recipes';
   static const iterations = '${_base}_iterations';
@@ -84,6 +84,18 @@ class FirestoreClient<T extends Serializable> extends Client<T> {
   }
 
   Future<List<T>> getAll({Map<String, String>? filters}) async {
+    /// Some queries!
+    ///
+    final userId = AuthService.currentUser!.uid;
+    final allRecipesIHaveAccessTo =
+        _collection.where('roles.$userId', isNull: false);
+    final allRecipesIOwn =
+        _collection.where('roles.$userId', isEqualTo: Role.owner);
+    final allRecipesSharedWithMe =
+        _collection.where('roles.$userId', isNotEqualTo: Role.owner);
+    final allRecipesIOwnThatAreNotShared =
+        _collection.where('roles', isEqualTo: {userId: Role.owner});
+
     final query = filters == null
         ? _collection
         : filters.entries.fold<Query<T?>>(
@@ -143,24 +155,15 @@ class FirestoreDb extends Db {
 
   Future<void> close() async {}
 
-  FirestoreClient<Subscriber> get subscribers {
-    final collectionPath = _FirestoreCollectionName.subscribers;
+  FirestoreClient<Subscription> get subscriptions {
+    final collectionPath = _FirestoreCollectionName.subscriptions;
 
-    return FirestoreClient<Subscriber>(
+    return FirestoreClient<Subscription>(
       collectionPath,
-      SubscriberSerializer(),
+      SubscriptionSerializer(),
       onDelete: (userId) async {
         await recipes.deleteAll();
       },
-    );
-  }
-
-  FirestoreClient<Collab> get collabs {
-    final collectionPath = _FirestoreCollectionName.collabs;
-
-    return FirestoreClient<Collab>(
-      collectionPath,
-      CollabSerializer(),
     );
   }
 
@@ -177,7 +180,6 @@ class FirestoreDb extends Db {
             .forEach((picture) => StorageService.deleteFromPath(picture.path));
 
         await iterations(recipeId).deleteAll();
-        await collabs.deleteAll();
       },
     );
   }

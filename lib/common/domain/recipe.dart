@@ -17,12 +17,12 @@ final uuid = Uuid();
 @JsonSerializable()
 class Recipe extends Serializable {
   final String id;
-  final String ownerId;
   final String name;
   final String description;
   final String? inspiration;
   final int iterationCount;
-  final RecipeStatus status;
+  final Status status;
+  final Map<String, Role> roles;
 
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -38,7 +38,7 @@ class Recipe extends Serializable {
   final List<Ingredient> ingredients;
   @InstructionSerializer()
   final List<Instruction> instructions;
-  final List<RecipeDiet>? diets;
+  final List<Diet>? diets;
 
   Recipe({
     required this.updatedAt,
@@ -50,7 +50,7 @@ class Recipe extends Serializable {
     required this.instructions,
     this.diets,
     required this.id,
-    required this.ownerId,
+    required this.roles,
     required this.name,
     required this.description,
     this.inspiration,
@@ -72,12 +72,14 @@ class Recipe extends Serializable {
     required this.description,
     this.inspiration,
   })  : id = uuid.v1(),
-        ownerId = AuthService.currentUser!.uid,
+        roles = {AuthService.currentUser!.uid: Role.owner},
         iterationCount = 0,
         createdAt = DateTime.now(),
         updatedAt = DateTime.now(),
-        status = RecipeStatus.iterating,
+        status = Status.iterating,
         pictures = [];
+
+  bool get isShared => roles.length > 1;
 
   Recipe applyChange(Change change) {
     switch (change.type) {
@@ -134,7 +136,7 @@ class Recipe extends Serializable {
         final newDiets = diets!.where((diet) => diet != change.newDiet);
         return copyWith(diets: newDiets.toList());
       case ChangeType.addDiet:
-        final newDiets = [...(diets ?? <RecipeDiet>[]), change.newDiet!];
+        final newDiets = [...(diets ?? <Diet>[]), change.newDiet!];
         return copyWith(diets: newDiets.toList());
     }
   }
@@ -146,6 +148,8 @@ class RecipeSerializer extends Serializer<Recipe> {
   Json toJson(Recipe data) => _$RecipeToJson(data);
 }
 
-enum RecipeStatus { perfected, iterating, dropped }
+enum Status { perfected, iterating, dropped }
 
-enum RecipeDiet { none, vegetarian, vegan, gluttenFree }
+enum Diet { none, vegetarian, vegan, gluttenFree }
+
+enum Role { owner, editor, reader, reviewer }

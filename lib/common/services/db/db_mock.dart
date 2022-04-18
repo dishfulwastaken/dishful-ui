@@ -58,8 +58,8 @@ class MockDb extends Db {
   Future<void> init() async {}
   Future<void> close() async {}
 
-  MockClient<Subscriber> get userMeta => _build(
-        SubscriberSerializer(),
+  MockClient<Subscription> get userMeta => _build(
+        SubscriptionSerializer(),
       );
   MockClient<Recipe> recipeMeta({String? userId}) => _build(
         RecipeSerializer(),
@@ -81,10 +81,6 @@ class MockDb extends Db {
       );
 
   @override
-  // TODO: implement collabs
-  Client<Collab> get collabs => throw UnimplementedError();
-
-  @override
   Client<Iteration> iterations(String recipeId) {
     // TODO: implement iterations
     throw UnimplementedError();
@@ -95,6 +91,6 @@ class MockDb extends Db {
   Client<Recipe> get recipes => throw UnimplementedError();
 
   @override
-  // TODO: implement subscribers
-  Client<Subscriber> get subscribers => throw UnimplementedError();
+  // TODO: implement subscriptions
+  Client<Subscription> get subscriptions => throw UnimplementedError();
 }

@@ -2,7 +2,7 @@ part of db;
 
 class _HiveBoxName {
   static const _base = 'dishful_hive_storage';
-  static const subscribers = '${_base}_user_meta';
+  static const subscriptions = '${_base}_user_meta';
   static const recipes = '${_base}_recipes_meta';
   static const iterations = '${_base}_recipes_iteration';
   static const collabs = '${_base}_collabs';
@@ -90,17 +90,16 @@ class HiveDb extends Db {
     return client;
   }
 
-  HiveClient<Subscriber>? _subscribers;
+  HiveClient<Subscription>? _subscribers;
   HiveClient<Recipe>? _recipes;
   HiveClient<Iteration>? _iterations;
-  HiveClient<Collab>? _collabs;
 
   Future<void> init() async {
     await Hive.initFlutter();
 
     _subscribers = await _buildClient(
-      _HiveBoxName.subscribers,
-      SubscriberSerializer(),
+      _HiveBoxName.subscriptions,
+      SubscriptionSerializer(),
     );
     _recipes = await _buildClient(
       _HiveBoxName.recipes,
@@ -110,18 +109,13 @@ class HiveDb extends Db {
       _HiveBoxName.iterations,
       IterationSerializer(),
     );
-    _collabs = await _buildClient(
-      _HiveBoxName.collabs,
-      CollabSerializer(),
-    );
   }
 
   Future<void> close() async {
     await Hive.close();
   }
 
-  HiveClient<Subscriber> get subscribers => _subscribers!;
+  HiveClient<Subscription> get subscriptions => _subscribers!;
   HiveClient<Recipe> get recipes => _recipes!;
-  HiveClient<Collab> get collabs => _collabs!;
   HiveClient<Iteration> iterations(String recipeId) => _iterations!;
 }

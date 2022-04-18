@@ -1,5 +1,5 @@
 import 'package:dishful/common/data/providers.dart';
-import 'package:dishful/common/domain/subscriber.dart';
+import 'package:dishful/common/domain/subscription.dart';
 import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/widgets/avatar.widget.dart';
@@ -11,14 +11,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ProfilePage extends ConsumerWidget {
   late final AutoDisposeStreamProvider<User?> userProvider;
-  late final AutoDisposeStreamProvider<Subscriber?> subscriberProvider;
+  late final AutoDisposeStreamProvider<Subscription?> subscriberProvider;
 
   ProfilePage({Key? key}) : super(key: key) {
     final id = AuthService.currentUser?.uid;
     if (id == null) throw "No current user";
 
     userProvider = watchCurrentUserProvider();
-    subscriberProvider = watchProvider(DbService.publicDb.subscribers, id: id);
+    subscriberProvider =
+        watchProvider(DbService.publicDb.subscriptions, id: id);
   }
 
   @override
@@ -40,7 +41,7 @@ class ProfilePage extends ConsumerWidget {
       body: userValue.and(subscriberValue).toWidget(
         data: (userTuple) {
           final user = userTuple.item1;
-          final subscriber = userTuple.item2;
+          final subscription = userTuple.item2;
 
           return ListView(
             padding: EdgeInsets.all(12),
@@ -56,7 +57,7 @@ class ProfilePage extends ConsumerWidget {
                 },
               ),
               Text("Email: ${user?.email}"),
-              Text("Is pro user: ${subscriber?.isCurrentlySubscribed}")
+              Text("Is pro user: ${subscription?.isCurrentlySubscribed}")
             ],
           );
         },

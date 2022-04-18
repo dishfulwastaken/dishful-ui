@@ -51,8 +51,7 @@ abstract class Client<T extends Serializable> {
 abstract class Db {
   Future<void> init();
   Future<void> close();
-  Client<Subscriber> get subscribers;
-  Client<Collab> get collabs;
+  Client<Subscription> get subscriptions;
   Client<Recipe> get recipes;
   Client<Iteration> iterations(String recipeId);
 

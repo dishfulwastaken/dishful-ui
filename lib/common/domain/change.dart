@@ -26,7 +26,7 @@ class Change extends Serializable {
   final Instruction? newInstruction;
   final String? swapInstructionIdOne;
   final String? swapInstructionIdTwo;
-  final RecipeDiet? newDiet;
+  final Diet? newDiet;
 
   Change({
     required this.id,

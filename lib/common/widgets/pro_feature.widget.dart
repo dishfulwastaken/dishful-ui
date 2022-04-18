@@ -1,5 +1,5 @@
 import 'package:dishful/common/data/providers.dart';
-import 'package:dishful/common/domain/subscriber.dart';
+import 'package:dishful/common/domain/subscription.dart';
 import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/theme/palette.dart';
@@ -9,7 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flash/flash.dart';
 
 class ProFeature extends ConsumerWidget {
-  late final FutureProvider<Subscriber?> subscriberProvider;
+  late final FutureProvider<Subscription?> subscriberProvider;
   final String why;
   final Widget child;
 
@@ -21,7 +21,7 @@ class ProFeature extends ConsumerWidget {
     final id = AuthService.currentUser?.uid;
     if (id == null) throw "No current user";
 
-    subscriberProvider = getProvider(DbService.publicDb.subscribers, id: id);
+    subscriberProvider = getProvider(DbService.publicDb.subscriptions, id: id);
   }
 
   @override

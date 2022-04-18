@@ -4,6 +4,7 @@ import 'package:dishful/common/domain/ingredient.dart';
 import 'package:dishful/common/domain/iteration.dart';
 import 'package:dishful/common/domain/recipe.dart';
 import 'package:dishful/common/domain/instruction.dart';
+import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/services/ingress.service.dart';
 import 'package:faker/faker.dart';
@@ -27,14 +28,14 @@ Duration get randomDuration => Duration(
 
 Recipe get randomRecipe => Recipe(
       id: f.guid.guid(),
-      ownerId: f.guid.guid(),
+      roles: {AuthService.currentUser!.uid: Role.owner},
       name: f.food.dish(),
       description: f.lorem
           .sentences(f.randomGenerator.integer(4, min: 1))
           .reduce((acc, cur) => "$acc $cur"),
       inspiration: f.lorem.sentence(),
       iterationCount: 0,
-      status: f.randomGenerator.element(RecipeStatus.values),
+      status: f.randomGenerator.element(Status.values),
       createdAt: f.date.dateTime(),
       pictures: [],
       cookTime: randomDuration,
