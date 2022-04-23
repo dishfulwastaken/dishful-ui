@@ -51,7 +51,7 @@ extension AsyncValueExtension<T> on AsyncValue<T> {
 
 FutureProvider<List<T>> getAllProvider<T extends Serializable>(
   Client<T> client, {
-  Map<String, String>? filters,
+  List<Filter>? filters,
 }) =>
     FutureProvider((ref) => client.getAll(filters: filters));
 
@@ -63,7 +63,7 @@ FutureProvider<T?> getProvider<T extends Serializable>(
 
 AutoDisposeStreamProvider<List<T>> watchAllProvider<T extends Serializable>(
   Client<T> client, {
-  Map<String, String>? filters,
+  List<Filter>? filters,
 }) =>
     StreamProvider.autoDispose((ref) async* {
       final stream = client.watchAll(filters: filters);

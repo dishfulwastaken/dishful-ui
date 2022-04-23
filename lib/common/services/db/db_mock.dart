@@ -14,7 +14,7 @@ class MockClient<T extends Serializable> extends Client<T> {
     return Future.delayed(mockDelay);
   }
 
-  Future<void> deleteAll({Map<String, String>? filters}) async {
+  Future<void> deleteAll({List<Filter>? filters}) async {
     db.clear();
     return Future.delayed(mockDelay);
   }
@@ -29,7 +29,7 @@ class MockClient<T extends Serializable> extends Client<T> {
     return Future.delayed(mockDelay, () => data);
   }
 
-  Future<List<T>> getAll({Map<String, String>? filters}) {
+  Future<List<T>> getAll({List<Filter>? filters}) {
     final data = db.values.toList();
     return Future.delayed(mockDelay, () => data);
   }
@@ -39,13 +39,17 @@ class MockClient<T extends Serializable> extends Client<T> {
     return Future.delayed(mockDelay, () {});
   }
 
-  Stream<List<T>> watchAll({Map<String, String>? filters}) {
+  Stream<List<T>> watchAll({List<Filter>? filters}) {
     throw UnimplementedError();
   }
 
   Stream<T?> watch(String id) {
     throw UnimplementedError();
   }
+
+  @override
+  // TODO: implement filterAdapter
+  FilterAdapter get filterAdapter => throw UnimplementedError();
 }
 
 class MockDb extends Db {

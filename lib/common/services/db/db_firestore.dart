@@ -3,9 +3,26 @@ part of db;
 class _FirestoreCollectionName {
   static const _base = 'dishful_firestore_db';
   static const subscriptions = '${_base}_subscribers';
-  static const collabs = '${_base}_collabs';
   static const recipes = '${_base}_recipes';
   static const iterations = '${_base}_iterations';
+}
+
+class FirestoreFilterAdapter<T extends Serializable,
+    U extends CollectionReference<T?>> extends FilterAdapter<Query<T?>, U> {
+  @override
+  Query<T?> applyFilters(List<Filter> filters, U container) {
+    final query = filters.fold<Query<T?>>(
+      container,
+      (previousValue, filter) => previousValue.where(
+        filter.field,
+        isEqualTo: filter.isEqualTo,
+        isNotEqualTo: filter.isNotEqualTo,
+        isNull: filter.isNull,
+      ),
+    );
+
+    return query;
+  }
 }
 
 class FirestoreClient<T extends Serializable> extends Client<T> {
@@ -14,10 +31,12 @@ class FirestoreClient<T extends Serializable> extends Client<T> {
   final OnUpdateHook<T>? onUpdate;
   final OnDeleteHook? onDelete;
   late final CollectionReference<T?> _collection;
+  final FilterAdapter<Query<T?>, CollectionReference<T?>> filterAdapter;
 
   FirestoreClient(
     String collectionPath,
     Serializer<T> serializer, {
+    required this.filterAdapter,
     this.onCreate,
     this.onRead,
     this.onUpdate,
@@ -57,16 +76,10 @@ class FirestoreClient<T extends Serializable> extends Client<T> {
     await _collection.doc(id).delete();
   }
 
-  Future<void> deleteAll({Map<String, String>? filters}) async {
+  Future<void> deleteAll({List<Filter>? filters}) async {
     final query = filters == null
         ? _collection
-        : filters.entries.fold<Query<T?>>(
-            _collection,
-            (previousValue, filter) => previousValue.where(
-              filter.key,
-              isEqualTo: filter.value,
-            ),
-          );
+        : filterAdapter.applyFilters(filters, _collection);
 
     final docs = (await query.get()).docs;
     docs.forEach((element) async {
@@ -83,28 +96,22 @@ class FirestoreClient<T extends Serializable> extends Client<T> {
     return data;
   }
 
-  Future<List<T>> getAll({Map<String, String>? filters}) async {
+  Future<List<T>> getAll({List<Filter>? filters}) async {
     /// Some queries!
     ///
-    final userId = AuthService.currentUser!.uid;
-    final allRecipesIHaveAccessTo =
-        _collection.where('roles.$userId', isNull: false);
-    final allRecipesIOwn =
-        _collection.where('roles.$userId', isEqualTo: Role.owner);
-    final allRecipesSharedWithMe =
-        _collection.where('roles.$userId', isNotEqualTo: Role.owner);
-    final allRecipesIOwnThatAreNotShared =
-        _collection.where('roles', isEqualTo: {userId: Role.owner});
+    // final userId = AuthService.currentUser!.uid;
+    // final allRecipesIHaveAccessTo =
+    //     _collection.where('roles.$userId', isNull: false);
+    // final allRecipesIOwn =
+    //     _collection.where('roles.$userId', isEqualTo: Role.owner);
+    // final allRecipesSharedWithMe =
+    //     _collection.where('roles.$userId', isNotEqualTo: Role.owner);
+    // final allRecipesIOwnThatAreNotShared =
+    //     _collection.where('roles', isEqualTo: {userId: Role.owner});
 
     final query = filters == null
         ? _collection
-        : filters.entries.fold<Query<T?>>(
-            _collection,
-            (previousValue, filter) => previousValue.where(
-              filter.key,
-              isEqualTo: filter.value,
-            ),
-          );
+        : filterAdapter.applyFilters(filters, _collection);
 
     final docs = (await query.get()).docs;
     final data = extractNonNullData(docs).toList();
@@ -118,16 +125,10 @@ class FirestoreClient<T extends Serializable> extends Client<T> {
     await _collection.doc(data.id).set(data);
   }
 
-  Stream<List<T>> watchAll({Map<String, String>? filters}) {
+  Stream<List<T>> watchAll({List<Filter>? filters}) {
     final query = filters == null
         ? _collection
-        : filters.entries.fold<Query<T?>>(
-            _collection,
-            (previousValue, filter) => previousValue.where(
-              filter.key,
-              isEqualTo: filter.value,
-            ),
-          );
+        : filterAdapter.applyFilters(filters, _collection);
     final stream = query
         .snapshots()
         .map((querySnapshot) => extractNonNullData(querySnapshot.docs));
@@ -161,6 +162,7 @@ class FirestoreDb extends Db {
     return FirestoreClient<Subscription>(
       collectionPath,
       SubscriptionSerializer(),
+      filterAdapter: FirestoreFilterAdapter(),
       onDelete: (userId) async {
         await recipes.deleteAll();
       },
@@ -173,6 +175,7 @@ class FirestoreDb extends Db {
     return FirestoreClient<Recipe>(
       collectionPath,
       RecipeSerializer(),
+      filterAdapter: FirestoreFilterAdapter(),
       onDelete: (recipeId) async {
         final pictures = (await recipes.get(recipeId))?.pictures ?? [];
         pictures
@@ -194,6 +197,7 @@ class FirestoreDb extends Db {
     return FirestoreClient<Iteration>(
       collectionPath,
       IterationSerializer(),
+      filterAdapter: FirestoreFilterAdapter(),
       onCreate: (iteration) async {
         final recipe = await recipes.get(iteration.recipeId);
         await recipes.update(

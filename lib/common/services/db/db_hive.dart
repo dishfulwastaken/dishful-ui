@@ -1,16 +1,26 @@
 part of db;
 
 class _HiveBoxName {
-  static const _base = 'dishful_hive_storage';
-  static const subscriptions = '${_base}_user_meta';
-  static const recipes = '${_base}_recipes_meta';
-  static const iterations = '${_base}_recipes_iteration';
-  static const collabs = '${_base}_collabs';
+  static const _base = 'dishful_hive_db';
+  static const subscriptions = '${_base}_subscribers';
+  static const recipes = '${_base}_recipes';
+  static const iterations = '${_base}_iterations';
+}
+
+class HiveFilterAdapter<T extends Serializable, U extends Box>
+    extends FilterAdapter<List<T>, U> {
+  @override
+  List<T> applyFilters(List<Filter> filters, U container) {
+    return container.get('');
+  }
 }
 
 class HiveClient<T extends Serializable> extends Client<T> {
   Box<Map>? box;
   late final Serializer<T> serializer;
+  final FilterAdapter<List<T>, Box> filterAdapter;
+
+  HiveClient({required this.filterAdapter});
 
   Future<void> init({
     required String boxName,
@@ -22,7 +32,7 @@ class HiveClient<T extends Serializable> extends Client<T> {
     box = notOpen ? await Hive.openBox(boxName) : Hive.box(boxName);
   }
 
-  Future<List<T>> getAll({Map<String, String>? filters}) async {
+  Future<List<T>> getAll({List<Filter>? filters}) async {
     assert(box != null, 'HiveClient.init must be called first!');
     final data = (box!.values).map(jsonifyMap).map(serializer.fromJson);
     return data.toList();
@@ -47,7 +57,7 @@ class HiveClient<T extends Serializable> extends Client<T> {
     await box!.put(data.id, serializer.toJson(data));
   }
 
-  Future<void> deleteAll({Map<String, String>? filters}) async {
+  Future<void> deleteAll({List<Filter>? filters}) async {
     assert(box != null, 'HiveClient.init must be called first!');
     await box!.clear();
   }
@@ -57,7 +67,7 @@ class HiveClient<T extends Serializable> extends Client<T> {
     await box!.delete(id);
   }
 
-  Stream<List<T>> watchAll({Map<String, String>? filters}) {
+  Stream<List<T>> watchAll({List<Filter>? filters}) {
     assert(box != null, 'HiveClient.init must be called first!');
     final rawStream = box!.watch();
     final serializedStream = rawStream.map(
@@ -85,7 +95,7 @@ class HiveDb extends Db {
     String boxName,
     Serializer<T> serializer,
   ) async {
-    final client = HiveClient<T>();
+    final client = HiveClient<T>(filterAdapter: HiveFilterAdapter());
     await client.init(boxName: boxName, serializer: serializer);
     return client;
   }

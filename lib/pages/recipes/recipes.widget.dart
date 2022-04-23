@@ -24,7 +24,9 @@ class RecipesPage extends ConsumerWidget {
   RecipesPage() {
     recipesProvider = getAllProvider(
       DbService.publicDb.recipes,
-      filters: {"userId": AuthService.currentUser?.uid ?? ''},
+      filters: [
+        Filter(field: "userId", isEqualTo: AuthService.currentUser?.uid)
+      ],
     );
   }
 
