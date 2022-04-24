@@ -2,7 +2,7 @@ part of db;
 
 class _HiveBoxName {
   static const _base = 'dishful_hive_db';
-  static const subscriptions = '${_base}_subscribers';
+  static const subscriptions = '${_base}_subscriptions';
   static const recipes = '${_base}_recipes';
   static const iterations = '${_base}_iterations';
 }
@@ -100,14 +100,14 @@ class HiveDb extends Db {
     return client;
   }
 
-  HiveClient<Subscription>? _subscribers;
+  HiveClient<Subscription>? _subscriptions;
   HiveClient<Recipe>? _recipes;
   HiveClient<Iteration>? _iterations;
 
   Future<void> init() async {
     await Hive.initFlutter();
 
-    _subscribers = await _buildClient(
+    _subscriptions = await _buildClient(
       _HiveBoxName.subscriptions,
       SubscriptionSerializer(),
     );
@@ -125,7 +125,7 @@ class HiveDb extends Db {
     await Hive.close();
   }
 
-  HiveClient<Subscription> get subscriptions => _subscribers!;
+  HiveClient<Subscription> get subscriptions => _subscriptions!;
   HiveClient<Recipe> get recipes => _recipes!;
   HiveClient<Iteration> iterations(String recipeId) => _iterations!;
 }

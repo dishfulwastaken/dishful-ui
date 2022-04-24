@@ -2,7 +2,7 @@ part of db;
 
 class _FirestoreCollectionName {
   static const _base = 'dishful_firestore_db';
-  static const subscriptions = '${_base}_subscribers';
+  static const subscriptions = '${_base}_subscriptions';
   static const recipes = '${_base}_recipes';
   static const iterations = '${_base}_iterations';
 }
