@@ -6,22 +6,60 @@ abstract class Serializable {
   String get id;
 }
 
-abstract class Serializer<T extends Serializable>
+abstract class Serializer<T extends Serializable?>
     extends JsonConverter<T, Json> {
   const Serializer();
   Json toJson(T data);
   T fromJson(Json json);
 }
 
-typedef SubscriptionCancel = Future<void> Function();
-typedef SubscriptionOnData<T> = void Function(T);
-typedef SubscriptionOnError<T> = void Function(T);
+typedef OnCreateHook<T> = Future<void> Function(T data);
+typedef OnReadHook<T> = Future<void> Function(T data);
+typedef OnUpdateHook<T> = Future<void> Function(T data);
+typedef OnDeleteHook = Future<void> Function(String id);
 
-typedef OnDeleteCallback = Future<void> Function(String id);
+class Filter {
+  final Object field;
+  final Object? isEqualTo;
+  final Object? isNotEqualTo;
+  final bool? isNull;
+  // TODO: support the following filters as needed.
+  // final Object? isLessThan;
+  // final Object? isLessThanOrEqualTo;
+  // final Object? isGreaterThan;
+  // final Object? isGreaterThanOrEqualTo;
+  // final Object? arrayContains;
+  // final List<Object?>? arrayContainsAny;
+  // final List<Object?>? whereIn;
+  // final List<Object?>? whereNotIn;
+
+  Filter({
+    required this.field,
+    this.isEqualTo,
+    this.isNotEqualTo,
+    this.isNull,
+    // this.isLessThan,
+    // this.isLessThanOrEqualTo,
+    // this.isGreaterThan,
+    // this.isGreaterThanOrEqualTo,
+    // this.arrayContains,
+    // this.arrayContainsAny,
+    // this.whereIn,
+    // this.whereNotIn,
+  });
+}
+
+abstract class FilterAdapter<T, U> {
+  /// [T] is what will be returned after applying the filters.
+  /// [U] is a object specific to the DB that the filters will be applied to.
+  T applyFilters(List<Filter> filters, U container);
+}
 
 abstract class Client<T extends Serializable> {
+  abstract final FilterAdapter filterAdapter;
+
   /// Get all documents in the collection.
-  Future<List<T>> getAll();
+  Future<List<T>> getAll({List<Filter>? filters});
 
   /// Get a document with ID = [id].
   Future<T?> get(String id);
@@ -37,40 +75,28 @@ abstract class Client<T extends Serializable> {
   Future<void> create(T data);
 
   /// Delete all documents in the collection.
-  Future<void> deleteAll();
+  Future<void> deleteAll({List<Filter>? filters});
 
   /// Delete a document with ID = [id].
   Future<void> delete(String id);
 
-  /// Subscribe to changes to the entire collection.
-  /// Returns a function that *must* be called that will
-  /// cancel the subscription.
-  SubscriptionCancel watchAll(
-    SubscriptionOnData<List<T>> onData,
-    SubscriptionOnError onError,
-  );
+  /// Streams all documents in the collection.
+  Stream<List<T>> watchAll({List<Filter>? filters});
 
-  /// Subscribe to change to a document with ID = [id].
-  /// Returns a function that *must* be called that will
-  /// cancel the subscription.
-  SubscriptionCancel watch(
-    String id,
-    SubscriptionOnData<T> onData,
-    SubscriptionOnError onError,
-  );
+  /// Streams a document with ID = [id]
+  Stream<T?> watch(String id);
 }
 
 abstract class Db {
   Future<void> init();
   Future<void> close();
-  Client<UserMeta> get userMeta;
-  Client<RecipeMeta> recipeMeta({String userId});
-  Client<RecipeIteration> recipeIteration(String recipeId, {String userId});
-  Client<RecipeReview> recipeReview(
-    String recipeId,
-    String iterationId, {
-    String? userId,
-  });
+  Client<Subscription> get subscriptions;
+  Client<Recipe> get recipes;
+  Client<Iteration> iterations(String recipeId);
+
+  String buildPath(Iterable<String> paths) {
+    return paths.intersperse("/").join();
+  }
 }
 
 enum DbProvider { hive, firebase, mock }

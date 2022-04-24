@@ -4,7 +4,7 @@ import 'package:cross_file_image/cross_file_image.dart';
 import 'package:dishful/common/data/image.dart';
 import 'package:dishful/common/data/intersperse.dart';
 import 'package:dishful/common/data/providers.dart';
-import 'package:dishful/common/domain/recipe_image.dart';
+import 'package:dishful/common/domain/picture.dart';
 import 'package:dishful/common/services/storage.service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -213,9 +213,9 @@ class EditableTextField extends StatelessWidget {
 }
 
 class EditableImage extends ConsumerWidget {
-  final RecipeImage? initialValue;
-  final Future Function(RecipeImage?) saveValue;
-  late final StateProvider<RecipeImage?> recipeImageProvider;
+  final Picture? initialValue;
+  final Future Function(Picture?) saveValue;
+  late final StateProvider<Picture?> recipeImageProvider;
 
   EditableImage({
     Key? key,
@@ -229,7 +229,7 @@ class EditableImage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final recipeImage = ref.watch(recipeImageProvider);
 
-    return EditableWidget<RecipeImage?>(
+    return EditableWidget<Picture?>(
       getValue: () => ref.read(recipeImageProvider),
       setValue: (value) => ref.set(recipeImageProvider, value),
       saveValue: saveValue,
@@ -285,7 +285,7 @@ class EditableImage extends ConsumerWidget {
                     numCompY: blurImageComponents(resizedImage).item2,
                   );
 
-                  final blurImage = RecipeImage.create(
+                  final blurImage = Picture.create(
                     id: initialValue?.id,
                     blurHash: blurHash.hash,
                     width: resizedImage.width,

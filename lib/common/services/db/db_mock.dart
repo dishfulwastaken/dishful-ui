@@ -14,7 +14,7 @@ class MockClient<T extends Serializable> extends Client<T> {
     return Future.delayed(mockDelay);
   }
 
-  Future<void> deleteAll() async {
+  Future<void> deleteAll({List<Filter>? filters}) async {
     db.clear();
     return Future.delayed(mockDelay);
   }
@@ -29,7 +29,7 @@ class MockClient<T extends Serializable> extends Client<T> {
     return Future.delayed(mockDelay, () => data);
   }
 
-  Future<List<T>> getAll() {
+  Future<List<T>> getAll({List<Filter>? filters}) {
     final data = db.values.toList();
     return Future.delayed(mockDelay, () => data);
   }
@@ -39,22 +39,17 @@ class MockClient<T extends Serializable> extends Client<T> {
     return Future.delayed(mockDelay, () {});
   }
 
-  SubscriptionCancel watchAll(
-    SubscriptionOnData<List<T>> onData,
-    SubscriptionOnError onError,
-  ) {
-    // TODO: implement watchAll
+  Stream<List<T>> watchAll({List<Filter>? filters}) {
     throw UnimplementedError();
   }
 
-  SubscriptionCancel watch(
-    String id,
-    SubscriptionOnData<T> onData,
-    SubscriptionOnError onError,
-  ) {
-    // TODO: implement watch
+  Stream<T?> watch(String id) {
     throw UnimplementedError();
   }
+
+  @override
+  // TODO: implement filterAdapter
+  FilterAdapter get filterAdapter => throw UnimplementedError();
 }
 
 class MockDb extends Db {
@@ -67,25 +62,39 @@ class MockDb extends Db {
   Future<void> init() async {}
   Future<void> close() async {}
 
-  MockClient<UserMeta> get userMeta => _build(
-        UserMetaSerializer(),
+  MockClient<Subscription> get userMeta => _build(
+        SubscriptionSerializer(),
       );
-  MockClient<RecipeMeta> recipeMeta({String? userId}) => _build(
-        RecipeMetaSerializer(),
+  MockClient<Recipe> recipeMeta({String? userId}) => _build(
+        RecipeSerializer(),
       );
-  MockClient<RecipeIteration> recipeIteration(
+  MockClient<Iteration> recipeIteration(
     String recipeId, {
     String? userId,
   }) =>
       _build(
-        RecipeIterationSerializer(),
+        IterationSerializer(),
       );
-  MockClient<RecipeReview> recipeReview(
+  MockClient<Review> recipeReview(
     String recipeId,
     String iterationId, {
     String? userId,
   }) =>
       _build(
-        RecipeReviewSerializer(),
+        ReviewSerializer(),
       );
+
+  @override
+  Client<Iteration> iterations(String recipeId) {
+    // TODO: implement iterations
+    throw UnimplementedError();
+  }
+
+  @override
+  // TODO: implement recipes
+  Client<Recipe> get recipes => throw UnimplementedError();
+
+  @override
+  // TODO: implement subscriptions
+  Client<Subscription> get subscriptions => throw UnimplementedError();
 }

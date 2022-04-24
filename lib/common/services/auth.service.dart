@@ -1,4 +1,3 @@
-import 'package:dishful/common/services/db.service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dishful/common/data/env.dart';
 
@@ -26,19 +25,8 @@ class AuthService {
 
   static User? get currentUser => _auth.currentUser;
 
-  static SubscriptionCancel watchCurrentUser(
-    SubscriptionOnData<User> onData,
-    SubscriptionOnError onError,
-  ) {
-    final subscription = _auth.authStateChanges().listen(
-      (user) {
-        if (user == null) return;
-        onData(user);
-      },
-      onError: onError,
-    );
-
-    return subscription.cancel;
+  static Stream<User?> watchCurrentUser() {
+    return _auth.userChanges();
   }
 
   static Future<void> init() async {

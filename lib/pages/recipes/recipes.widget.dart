@@ -1,6 +1,7 @@
 import 'package:dishful/common/data/strings.dart';
 import 'package:dishful/common/data/providers.dart';
-import 'package:dishful/common/domain/recipe_meta.dart';
+import 'package:dishful/common/domain/recipe.dart';
+import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/test.dart';
 import 'package:dishful/common/widgets/dishful_bottom_navigation_bar.widget.dart';
@@ -15,13 +16,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:parallax_animation/parallax_animation.dart';
 import 'package:awesome_extensions/awesome_extensions.dart';
 
-final filterStatusProvider = StateProvider<RecipeStatus?>((_) => null);
+final filterStatusProvider = StateProvider<Status?>((_) => null);
 
 class RecipesPage extends ConsumerWidget {
-  late final AsyncValueProvider<List<RecipeMeta>> recipesProvider;
+  late final FutureProvider<List<Recipe>> recipesProvider;
 
   RecipesPage() {
-    recipesProvider = getAllProvider(DbService.publicDb.recipeMeta());
+    recipesProvider = getAllProvider(
+      DbService.publicDb.recipes,
+      filters: [
+        Filter(field: "userId", isEqualTo: AuthService.currentUser?.uid)
+      ],
+    );
   }
 
   @override
@@ -69,7 +75,7 @@ class RecipesPage extends ConsumerWidget {
       ),
     );
     final filtersList = FormBuilder(
-      child: FormBuilderChoiceChip<RecipeStatus?>(
+      child: FormBuilderChoiceChip<Status?>(
         name: 'choice_chip',
         onChanged: (status) => ref.set(filterStatusProvider, status),
         pressElevation: 0,
@@ -89,7 +95,7 @@ class RecipesPage extends ConsumerWidget {
         ),
         options: [
           FormBuilderFieldOption(value: null, child: Text('All')),
-          ...RecipeStatus.values.map(
+          ...Status.values.map(
             (status) => FormBuilderFieldOption(
               value: status,
               child: Text(status.name.toTitleCase()),
@@ -104,7 +110,7 @@ class RecipesPage extends ConsumerWidget {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.plus_one_rounded),
         onPressed: () async {
-          await DbService.publicDb.recipeMeta().create(randomRecipeMeta);
+          await DbService.publicDb.recipes.create(randomRecipe);
         },
       ),
       body: Column(

@@ -13,6 +13,13 @@ extension WidgetRefExtension on WidgetRef {
   }
 }
 
+extension StreamExtension on Stream {
+  void close() {
+    // TODO: verify that this works and also try using take(0)
+    this.take(1);
+  }
+}
+
 extension AsyncValueExtension<T> on AsyncValue<T> {
   AsyncValue<Tuple2<T, U>> and<U>(AsyncValue<U> other) {
     if (this is AsyncError) {
@@ -42,61 +49,41 @@ extension AsyncValueExtension<T> on AsyncValue<T> {
       );
 }
 
-typedef AsyncValueProvider<T> = AutoDisposeStateProvider<AsyncValue<T>>;
+FutureProvider<List<T>> getAllProvider<T extends Serializable>(
+  Client<T> client, {
+  List<Filter>? filters,
+}) =>
+    FutureProvider((ref) => client.getAll(filters: filters));
 
-AsyncValueProvider<List<T>> getAllProvider<T extends Serializable>(
-  Client<T> client,
-) {
-  return StateProvider.autoDispose((ref) {
-    final cancel = client.watchAll(
-      (data) {
-        ref.controller.update((state) => AsyncValue.data(data));
-      },
-      (error) {
-        ref.controller.update((state) => AsyncValue.error(error));
-      },
-    );
+FutureProvider<T?> getProvider<T extends Serializable>(
+  Client<T> client, {
+  required String id,
+}) =>
+    FutureProvider((ref) => client.get(id));
 
-    ref.onDispose(cancel);
+AutoDisposeStreamProvider<List<T>> watchAllProvider<T extends Serializable>(
+  Client<T> client, {
+  List<Filter>? filters,
+}) =>
+    StreamProvider.autoDispose((ref) async* {
+      final stream = client.watchAll(filters: filters);
+      ref.onDispose(stream.close);
+      await for (final value in stream) yield value;
+    });
 
-    return AsyncValue.loading();
-  });
-}
+AutoDisposeStreamProvider<T?> watchProvider<T extends Serializable>(
+  Client<T> client, {
+  required String id,
+}) =>
+    StreamProvider.autoDispose((ref) async* {
+      final stream = client.watch(id);
+      ref.onDispose(stream.close);
+      await for (final value in stream) yield value;
+    });
 
-AsyncValueProvider<T> getProvider<T extends Serializable>(
-  Client<T> client,
-  String id,
-) {
-  return StateProvider.autoDispose((ref) {
-    final cancel = client.watch(
-      id,
-      (data) {
-        ref.controller.update((state) => AsyncValue.data(data));
-      },
-      (error) {
-        ref.controller.update((state) => AsyncValue.error(error));
-      },
-    );
-
-    ref.onDispose(cancel);
-
-    return AsyncValue.loading();
-  });
-}
-
-AsyncValueProvider<User> currentUserProvider() {
-  return StateProvider.autoDispose((ref) {
-    final cancel = AuthService.watchCurrentUser(
-      (data) {
-        ref.controller.update((state) => AsyncValue.data(data));
-      },
-      (error) {
-        ref.controller.update((state) => AsyncValue.error(error));
-      },
-    );
-
-    ref.onDispose(cancel);
-
-    return AsyncValue.loading();
-  });
-}
+AutoDisposeStreamProvider<User?> watchCurrentUserProvider() =>
+    StreamProvider.autoDispose((ref) async* {
+      final stream = AuthService.watchCurrentUser();
+      ref.onDispose(stream.close);
+      await for (final value in stream) yield value;
+    });

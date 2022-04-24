@@ -1,13 +1,13 @@
-import 'package:dishful/common/domain/recipe_iteration.dart';
+import 'package:dishful/common/domain/iteration.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/services/functions.service.dart';
 import 'package:dishful/common/services/ingress.service.dart';
 import 'package:flutter/material.dart';
 
-class RecipeIterationsCard extends StatelessWidget {
-  final RecipeIteration _recipeIteration;
+class IterationsCard extends StatelessWidget {
+  final Iteration _iteration;
 
-  RecipeIterationsCard(this._recipeIteration);
+  IterationsCard(this._iteration);
 
   @override
   Widget build(BuildContext context) {
@@ -15,19 +15,9 @@ class RecipeIterationsCard extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            _recipeIteration.id,
+            _iteration.id,
             textScaleFactor: 1.25,
           ),
-          IconButton(
-            onPressed: () async {
-              await DbService.publicDb
-                  .recipeIteration(_recipeIteration.parentId!)
-                  .delete(_recipeIteration.id);
-            },
-            icon: Icon(Icons.delete),
-          ),
-          Text("# of Steps: ${_recipeIteration.steps.length}"),
-          Text("# of Ingredients: ${_recipeIteration.ingredients.length}"),
           IconButton(
             onPressed: () async {
               final r = await FunctionsService.fetchHtml(testUrlA);

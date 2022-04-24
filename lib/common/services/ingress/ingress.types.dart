@@ -10,23 +10,23 @@ abstract class Adapter {
   /// also preparing the [url] to be fetched (if needed).
   String sanitizeUrl(String url);
 
-  /// Try to create a [RecipeIngredient] from the
+  /// Try to create a [Ingredient] from the
   /// [document].
-  RecipeIngredient? recipeIngredient(Document document);
+  Ingredient? ingredient(Document document);
 
-  /// Try to create a [RecipeIteration] from the
+  /// Try to create a [Iteration] from the
   /// [document].
-  RecipeIteration? recipeIteration(Document document);
+  Iteration? iteration(Document document);
 
-  /// Try to create a [RecipeMeta] from the
+  /// Try to create a [Recipe] from the
   /// [document].
-  RecipeMeta? recipeMeta(Document document);
+  Recipe? recipe(Document document);
 
-  /// Try to create a [RecipeReview] from the
+  /// Try to create a [Review] from the
   /// [document].
-  RecipeReview? recipeReview(Document document);
+  Review? review(Document document);
 
-  /// Try to create a [RecipeStep] from the
+  /// Try to create a [Instruction] from the
   /// [document].
-  RecipeStep? recipeStep(Document document);
+  Instruction? instruction(Document document);
 }
