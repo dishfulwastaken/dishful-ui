@@ -5,6 +5,7 @@ import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/test.dart';
 import 'package:dishful/common/widgets/dishful_bottom_navigation_bar.widget.dart';
+import 'package:dishful/common/widgets/dishful_scaffold.widget.dart';
 import 'package:dishful/common/widgets/editable.widget.dart';
 import 'package:dishful/common/widgets/replacements/form_builder_choice_chips.dart';
 import 'package:dishful/pages/recipes/recipes_card.widget.dart';
@@ -105,26 +106,34 @@ class RecipesPage extends ConsumerWidget {
       ),
     );
 
-    return EditableScaffold(
-      bottomNavigationBar: DishfulBottomNavigationBar(),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.plus_one_rounded),
-        onPressed: () async {
-          await DbService.publicDb.recipes.create(randomRecipe);
-        },
-      ),
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(height: 35),
-          title.paddingOnly(left: 34),
-          Container(height: 15),
-          filtersList.paddingSymmetric(horizontal: 34),
-          Container(height: 25),
-          recipesList,
-          Container(height: 25),
-        ],
-      ),
+    return DishfulScaffold(
+      title: "Testing title",
+      subtitle: "Subtitle yayy",
+      body: Text("body!!"),
+      leading: Icon(Icons.back_hand, color: Colors.red),
+      action: Icon(Icons.save, color: Colors.red),
     );
+
+    // return EditableScaffold(
+    //   bottomNavigationBar: DishfulBottomNavigationBar(),
+    //   floatingActionButton: FloatingActionButton(
+    //     child: const Icon(Icons.plus_one_rounded),
+    //     onPressed: () async {
+    //       await DbService.publicDb.recipes.create(randomRecipe);
+    //     },
+    //   ),
+    //   body: Column(
+    //     mainAxisSize: MainAxisSize.min,
+    //     children: [
+    //       Container(height: 35),
+    //       title.paddingOnly(left: 34),
+    //       Container(height: 15),
+    //       filtersList.paddingSymmetric(horizontal: 34),
+    //       Container(height: 25),
+    //       recipesList,
+    //       Container(height: 25),
+    //     ],
+    //   ),
+    // );
   }
 }

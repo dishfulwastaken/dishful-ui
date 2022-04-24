@@ -38,6 +38,7 @@ dependencies:
   awesome_extensions: ^1.1.0
   flash: ^2.0.3+2
 
+  responsive_scaffold_nullsafe: ^1.0.1
   salomon_bottom_bar: ^3.2.0
   parallax_animation: ^0.0.3
   blobs: ^2.0.0
