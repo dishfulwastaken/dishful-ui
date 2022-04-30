@@ -1,4 +1,5 @@
 import 'package:awesome_extensions/awesome_extensions.dart';
+import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
 
 class DishfulScaffold extends StatelessWidget {
@@ -28,7 +29,7 @@ class DishfulScaffold extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(height: 14),
+            Container(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -36,12 +37,17 @@ class DishfulScaffold extends StatelessWidget {
                 if (action != null) action!
               ],
             ),
-            Container(height: 10),
-            Text(title, style: context.titleMedium),
-            Container(height: 10),
-            if (subtitle != null) Text(subtitle!, style: context.bodyMedium),
-            Container(height: 14),
-            Center(child: body),
+            Container(height: 20),
+            Text(title, style: context.titleLarge),
+            if (subtitle != null) ...[
+              Container(height: 10),
+              Text(
+                subtitle!,
+                style: context.bodyMedium!.copyWith(color: Palette.grey),
+              ),
+            ],
+            Container(height: 16),
+            Expanded(child: body),
           ],
         ),
       ),

@@ -3,59 +3,33 @@ import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
 
 final themeData = ThemeData(
-  fontFamily: Fonts.text,
   primaryColor: Palette.primary,
   primaryColorDark: Palette.primaryDark,
   primaryColorLight: Palette.primaryLight,
   secondaryHeaderColor: Palette.secondary,
-  scaffoldBackgroundColor: Colors.grey.shade50,
-  bottomNavigationBarTheme: BottomNavigationBarThemeData(
-    type: BottomNavigationBarType.fixed,
-    elevation: 0,
-    backgroundColor: Colors.white,
-    showSelectedLabels: false,
-    showUnselectedLabels: false,
-    selectedItemColor: Colors.black87,
-    unselectedItemColor: Colors.grey.shade400,
-  ),
+  scaffoldBackgroundColor: Palette.white,
   textTheme: TextTheme(
-    headlineSmall: headlineSmallTextStyle,
-    headlineMedium: headlineTextStyle,
+    titleSmall: titleTextStyle.copyWith(fontSize: 18),
     titleMedium: titleTextStyle,
+    titleLarge: titleTextStyle.copyWith(fontSize: 28),
     bodyMedium: bodyTextStyle,
-    labelMedium: bodyTextStyle,
   ),
-  iconTheme: IconThemeData(color: Colors.grey.shade50),
+  iconTheme: IconThemeData(color: Palette.lightGrey),
   scrollbarTheme: ScrollbarThemeData(),
   buttonTheme: ButtonThemeData(
     shape: StadiumBorder(),
     buttonColor: Palette.secondary,
     disabledColor: Palette.disabled,
   ),
-  appBarTheme: AppBarTheme(
-    backgroundColor: Colors.grey.shade50,
-    elevation: 0,
-  ),
 );
 
-final headlineTextStyle = TextStyle(
-  fontFamily: Fonts.headline,
-  fontSize: 38,
-  height: 1.15,
-  color: Colors.black87,
+final _baseTextStyle = TextStyle(
+  fontFamily: Fonts.rest,
+  color: Palette.black,
 );
-final headlineSmallTextStyle = TextStyle(
-  fontFamily: Fonts.headline,
-  fontSize: 28,
-  color: Colors.black87,
-);
-final titleTextStyle = TextStyle(
-  fontFamily: Fonts.text,
+
+final titleTextStyle = _baseTextStyle.copyWith(
   fontWeight: FontWeight.bold,
-  fontSize: 16,
+  fontSize: 22,
 );
-final bodyTextStyle = TextStyle(
-  fontFamily: Fonts.text,
-  fontSize: 13,
-  // color: Colors.white,
-);
+final bodyTextStyle = _baseTextStyle.copyWith(fontSize: 16);

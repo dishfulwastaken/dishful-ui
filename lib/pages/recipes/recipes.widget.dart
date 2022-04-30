@@ -110,8 +110,8 @@ class RecipesPage extends ConsumerWidget {
       title: "Testing title",
       subtitle: "Subtitle yayy",
       body: Text("body!!"),
-      leading: Icon(Icons.back_hand, color: Colors.red),
-      action: Icon(Icons.save, color: Colors.red),
+      leading: Icon(Icons.back_hand),
+      action: Icon(Icons.save),
     );
 
     // return EditableScaffold(
