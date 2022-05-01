@@ -36,7 +36,9 @@ dependencies:
 
   responsive_framework: ^0.1.5
   awesome_extensions: ^1.1.0
+  animations: ^2.0.2
   flash: ^2.0.3+2
+  flutter_portal: ^1.0.0
 
   responsive_scaffold_nullsafe: ^1.0.1
   salomon_bottom_bar: ^3.2.0

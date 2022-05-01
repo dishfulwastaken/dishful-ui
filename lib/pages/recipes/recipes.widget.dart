@@ -3,10 +3,8 @@ import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/domain/recipe.dart';
 import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/db.service.dart';
-import 'package:dishful/common/test.dart';
-import 'package:dishful/common/widgets/dishful_bottom_navigation_bar.widget.dart';
+import 'package:dishful/common/widgets/dishful_menu.dart';
 import 'package:dishful/common/widgets/dishful_scaffold.widget.dart';
-import 'package:dishful/common/widgets/editable.widget.dart';
 import 'package:dishful/common/widgets/replacements/form_builder_choice_chips.dart';
 import 'package:dishful/pages/recipes/recipes_card.widget.dart';
 import 'package:dishful/theme/palette.dart';
@@ -111,7 +109,20 @@ class RecipesPage extends ConsumerWidget {
       subtitle: "Subtitle yayy",
       body: Text("body!!"),
       leading: Icon(Icons.back_hand),
-      action: Icon(Icons.save),
+      action: DishfulMenu(
+        items: [
+          DishfulMenuItem(
+            text: "New Recipe",
+            iconData: Icons.add,
+            onTap: () {},
+          ),
+          DishfulMenuItem(
+            text: "Import",
+            iconData: Icons.file_upload,
+            onTap: () {},
+          ),
+        ],
+      ),
     );
 
     // return EditableScaffold(

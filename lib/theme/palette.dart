@@ -10,5 +10,5 @@ abstract class Palette {
   static const white = Color.fromRGBO(244, 248, 249, 1);
   static const black = Color.fromRGBO(27, 27, 29, 1);
   static const grey = Color.fromRGBO(147, 151, 155, 1);
-  static const lightGrey = Color.fromARGB(255, 190, 195, 200);
+  static const lightGrey = Color.fromRGBO(200, 205, 210, 1);
 }
