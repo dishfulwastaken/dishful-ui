@@ -1,7 +1,7 @@
 import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/db.service.dart';
-import 'package:dishful/common/widgets/async_error.widget.dart';
-import 'package:dishful/common/widgets/async_loading.widget.dart';
+import 'package:dishful/common/widgets/dishful_error.widget.dart';
+import 'package:dishful/common/widgets/dishful_loading.widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,13 +39,14 @@ extension AsyncValueExtension<T> on AsyncValue<T> {
 
   Widget toWidget({
     required Widget Function(T) data,
-    Widget Function() loading = asyncLoading,
-    Widget Function(Object, StackTrace?) error = asyncError,
   }) =>
       when(
         data: data,
-        loading: loading,
-        error: error,
+        loading: () => DishfulLoading(),
+        error: (error, trace) => DishfulError(
+          error: error.toString(),
+          stack: trace.toString(),
+        ),
       );
 }
 
