@@ -6,6 +6,7 @@ import 'package:dishful/common/domain/recipe.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/services/route.service.dart';
 import 'package:dishful/common/widgets/editable.widget.dart';
+import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:parallax_animation/parallax_animation.dart';
 
@@ -19,7 +20,7 @@ class RecipesCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => RouteService.goToRecipe(context, _recipe.id),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(14),
         child: ConstrainedBox(
           constraints: BoxConstraints(
             maxWidth: context.width * 0.80,
@@ -34,7 +35,7 @@ class RecipesCard extends StatelessWidget {
                   fit: BoxFit.fill,
                   child: _recipe.pictures.isEmpty
                       ? Container(
-                          color: Colors.grey.shade300,
+                          color: Colors.white,
                           width: 100,
                           height: 100,
                         )
@@ -80,15 +81,13 @@ class RecipesCard extends StatelessWidget {
                     children: [
                       Text(
                         _recipe.name,
-                        style: context.headlineSmall?.copyWith(
-                          color: Colors.white,
-                        ),
+                        style: context.titleMedium,
                       ),
+                      Container(height: 10),
                       Text(
                         "${_recipe.iterationCount} Iterations  |  ${_recipe.status.name.toTitleCase()}",
-                        style: context.bodyMedium?.copyWith(
-                          color: Colors.grey.shade400,
-                        ),
+                        style:
+                            context.bodyMedium!.copyWith(color: Palette.grey),
                       ),
                     ],
                   ),

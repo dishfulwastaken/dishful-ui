@@ -25,7 +25,7 @@ class DishfulScaffold extends StatelessWidget {
     return Scaffold(
       drawer: drawer,
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 22),
+        padding: EdgeInsets.symmetric(horizontal: 26),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

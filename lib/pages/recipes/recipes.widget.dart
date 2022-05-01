@@ -3,6 +3,7 @@ import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/domain/recipe.dart';
 import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/db.service.dart';
+import 'package:dishful/common/test.dart';
 import 'package:dishful/common/widgets/dishful_menu.dart';
 import 'package:dishful/common/widgets/dishful_scaffold.widget.dart';
 import 'package:dishful/common/widgets/replacements/form_builder_choice_chips.dart';
@@ -34,13 +35,6 @@ class RecipesPage extends ConsumerWidget {
     final recipesValue = ref.watch(recipesProvider);
     final filterStatus = ref.watch(filterStatusProvider);
 
-    final title = Align(
-      alignment: Alignment.topLeft,
-      child: Text(
-        "Let's make some\ndishes!",
-        style: context.headlineMedium,
-      ),
-    );
     final recipesList = ParallaxArea(
       child: recipesValue.toWidget(
         data: (recipes) {
@@ -64,7 +58,7 @@ class RecipesPage extends ConsumerWidget {
                         final recipe = filteredRecipes[index];
                         return RecipesCard(recipe).paddingOnly(
                           right: 16,
-                          left: isFirst ? context.width * 0.10 : 0,
+                          left: isFirst ? 26 : 0,
                         );
                       },
                     ),
@@ -105,16 +99,16 @@ class RecipesPage extends ConsumerWidget {
     );
 
     return DishfulScaffold(
-      title: "Testing title",
-      subtitle: "Subtitle yayy",
-      body: Text("body!!"),
-      leading: Icon(Icons.back_hand),
+      title: "Recipes",
+      leading: Icon(Icons.menu),
       action: DishfulMenu(
         items: [
           DishfulMenuItem(
             text: "New Recipe",
             iconData: Icons.add,
-            onTap: () {},
+            onTap: () {
+              DbService.publicDb.recipes.create(randomRecipe);
+            },
           ),
           DishfulMenuItem(
             text: "Import",
@@ -123,28 +117,17 @@ class RecipesPage extends ConsumerWidget {
           ),
         ],
       ),
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          filtersList,
+          Container(height: 25),
+          Expanded(
+            child: OverflowBox(child: recipesList, maxWidth: context.width),
+          ),
+          Container(height: 25),
+        ],
+      ),
     );
-
-    // return EditableScaffold(
-    //   bottomNavigationBar: DishfulBottomNavigationBar(),
-    //   floatingActionButton: FloatingActionButton(
-    //     child: const Icon(Icons.plus_one_rounded),
-    //     onPressed: () async {
-    //       await DbService.publicDb.recipes.create(randomRecipe);
-    //     },
-    //   ),
-    //   body: Column(
-    //     mainAxisSize: MainAxisSize.min,
-    //     children: [
-    //       Container(height: 35),
-    //       title.paddingOnly(left: 34),
-    //       Container(height: 15),
-    //       filtersList.paddingSymmetric(horizontal: 34),
-    //       Container(height: 25),
-    //       recipesList,
-    //       Container(height: 25),
-    //     ],
-    //   ),
-    // );
   }
 }
