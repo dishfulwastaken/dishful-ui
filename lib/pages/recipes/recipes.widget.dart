@@ -5,6 +5,7 @@ import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/test.dart';
 import 'package:dishful/common/widgets/dishful_empty.widget.dart';
+import 'package:dishful/common/widgets/dishful_icon_button.widget.dart';
 import 'package:dishful/common/widgets/dishful_menu.widget.dart';
 import 'package:dishful/common/widgets/dishful_scaffold.widget.dart';
 import 'package:dishful/common/widgets/replacements/form_builder_choice_chips.dart';
@@ -95,8 +96,14 @@ class RecipesPage extends ConsumerWidget {
 
     return DishfulScaffold(
       title: "Recipes",
-      leading: Icon(Icons.menu),
-      action: DishfulMenu(
+      withDrawer: true,
+      leading: (context) => DishfulIconButton(
+        icon: Icon(Icons.menu),
+        onPressed: () {
+          Scaffold.of(context).openDrawer();
+        },
+      ),
+      action: (_) => DishfulMenu(
         items: [
           DishfulMenuItem(
             text: "New Recipe",

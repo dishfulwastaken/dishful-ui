@@ -12,6 +12,8 @@ final themeData = ThemeData(
   backgroundColor: Palette.white,
   splashColor: Palette.primaryLight,
   textTheme: TextTheme(
+    headlineSmall: headlineTextStyle.copyWith(fontSize: 62),
+    headlineMedium: headlineTextStyle,
     titleSmall: titleTextStyle.copyWith(fontSize: 18),
     titleMedium: titleTextStyle,
     titleLarge: titleTextStyle.copyWith(fontSize: 28),
@@ -22,6 +24,12 @@ final themeData = ThemeData(
       height: 1.8,
     ),
     labelMedium: labelTextStyle,
+  ),
+  drawerTheme: DrawerThemeData(
+    backgroundColor: Palette.primary,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.horizontal(right: Radius.circular(8)),
+    ),
   ),
   iconTheme: IconThemeData(color: Palette.lightGrey),
   scrollbarTheme: ScrollbarThemeData(),
@@ -46,11 +54,16 @@ final themeData = ThemeData(
   ),
 );
 
+final headlineTextStyle = TextStyle(
+  fontFamily: Fonts.logo,
+  color: Colors.white,
+  fontSize: 76,
+);
+
 final _baseTextStyle = TextStyle(
   fontFamily: Fonts.rest,
   color: Palette.black,
 );
-
 final titleTextStyle = _baseTextStyle.copyWith(
   fontWeight: FontWeight.bold,
   fontSize: 22,

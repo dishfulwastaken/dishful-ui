@@ -2,6 +2,7 @@ import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/widgets/animations/fade_scale.widget.dart';
 import 'package:dishful/common/widgets/dishful_icon_button.widget.dart';
+import 'package:dishful/common/widgets/dishful_icon_text.widget.dart';
 import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_portal/flutter_portal.dart';
@@ -113,16 +114,7 @@ class DishfulMenuItem extends ConsumerWidget {
         ref.set(isOpenProvider, false);
         onTap();
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
-        child: Row(
-          children: [
-            Icon(iconData, color: Palette.black),
-            Container(width: 8),
-            Text(text, style: context.bodyMedium)
-          ],
-        ),
-      ),
+      child: DishfulIconText(text: text, iconData: iconData),
     );
   }
 }

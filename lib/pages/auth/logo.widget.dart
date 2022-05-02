@@ -1,5 +1,4 @@
-import 'package:dishful/common/data/color.dart';
-import 'package:dishful/theme/font.dart';
+import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -35,14 +34,7 @@ class Logo extends StatelessWidget {
         ),
         Padding(
           padding: EdgeInsets.only(top: 6),
-          child: Text(
-            "Dishful",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 76,
-              fontFamily: Fonts.logo,
-            ),
-          ),
+          child: Text("Dishful", style: context.headlineMedium),
         ),
       ],
     );

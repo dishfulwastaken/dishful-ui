@@ -32,13 +32,13 @@ class RecipePage extends ConsumerWidget {
           title: recipe.name,
           subtitle:
               "${recipe.iterationCount} Iterations  |  ${recipe.status.name.toTitleCase()}",
-          leading: DishfulIconButton(
+          leading: (_) => DishfulIconButton(
             icon: const BackButtonIcon(),
             onPressed: () {
               Navigator.maybePop(context);
             },
           ),
-          action: DishfulMenu(
+          action: (_) => DishfulMenu(
             items: [
               DishfulMenuItem(
                 text: "New Iteration",
