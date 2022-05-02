@@ -3,7 +3,6 @@ import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/domain/recipe.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/test.dart';
-import 'package:dishful/common/widgets/dishful_bottom_navigation_bar.widget.dart';
 import 'package:dishful/common/widgets/editable.widget.dart';
 import 'package:dishful/pages/recipe/recipe_iterations.widget.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +42,6 @@ class RecipePage extends ConsumerWidget {
         );
 
         return EditableScaffold(
-          bottomNavigationBar: DishfulBottomNavigationBar(),
           floatingActionButton: FloatingActionButton(
             child: const Icon(Icons.plus_one_rounded),
             onPressed: () async {

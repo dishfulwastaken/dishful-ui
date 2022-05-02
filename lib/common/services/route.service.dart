@@ -67,7 +67,6 @@ final _profile = _AppRoute(
   handlerFunc: (context, params, args) {
     return ProfilePage();
   },
-  transitionType: TransitionType.fadeIn,
 );
 
 final _recipes = _AppRoute(
@@ -76,7 +75,6 @@ final _recipes = _AppRoute(
   handlerFunc: (context, params, args) {
     return RecipesPage();
   },
-  transitionType: TransitionType.fadeIn,
 );
 
 final _recipe = _AppRoute(
@@ -86,7 +84,6 @@ final _recipe = _AppRoute(
     final id = params["recipeId"]!.first;
     return RecipePage(id);
   },
-  transitionType: TransitionType.fadeIn,
 );
 
 List<_AppRoute> appRoutes = [_landing, _auth, _profile, _recipes, _recipe];

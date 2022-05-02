@@ -3,7 +3,6 @@ import 'package:dishful/common/domain/subscription.dart';
 import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/widgets/avatar.widget.dart';
-import 'package:dishful/common/widgets/dishful_bottom_navigation_bar.widget.dart';
 import 'package:dishful/common/widgets/editable.widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +36,6 @@ class ProfilePage extends ConsumerWidget {
       appBar: AppBar(
         title: Text("Profile"),
       ),
-      bottomNavigationBar: DishfulBottomNavigationBar(),
       body: userValue.and(subscriberValue).toWidget(
         data: (userTuple) {
           final user = userTuple.item1;
