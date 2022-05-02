@@ -48,25 +48,28 @@ class DishfulMenu extends ConsumerWidget {
               icon: Icon(Icons.more_horiz),
             ),
           ),
-          portalFollower: FadeScaleContainer(
-            isVisibleProvider: isOpenProvider,
-            child: IntrinsicWidth(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  buildSpacer(true),
-                  Container(
-                    /// Fix weird spacing glitch where a 1px gap can sometimes
-                    /// be seen in between the items; this just paints a white
-                    /// background so it can never be seen.
-                    color: Colors.white,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: items,
+          portalFollower: IgnorePointer(
+            ignoring: !isOpen,
+            child: FadeScaleContainer(
+              isVisibleProvider: isOpenProvider,
+              child: IntrinsicWidth(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    buildSpacer(true),
+                    Container(
+                      /// Fix weird spacing glitch where a 1px gap can sometimes
+                      /// be seen in between the items; this just paints a white
+                      /// background so it can never be seen.
+                      color: Colors.white,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: items,
+                      ),
                     ),
-                  ),
-                  buildSpacer(false),
-                ],
+                    buildSpacer(false),
+                  ],
+                ),
               ),
             ),
           ),
