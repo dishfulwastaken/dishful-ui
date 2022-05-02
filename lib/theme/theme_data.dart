@@ -21,6 +21,7 @@ final themeData = ThemeData(
       fontWeight: FontWeight.bold,
       height: 1.8,
     ),
+    labelMedium: labelTextStyle,
   ),
   iconTheme: IconThemeData(color: Palette.lightGrey),
   scrollbarTheme: ScrollbarThemeData(),
@@ -55,3 +56,12 @@ final titleTextStyle = _baseTextStyle.copyWith(
   fontSize: 22,
 );
 final bodyTextStyle = _baseTextStyle.copyWith(fontSize: 16);
+final labelTextStyle = _baseTextStyle.copyWith(
+  fontSize: 14,
+  height: 1.6,
+  color: MaterialStateColor.resolveWith((states) {
+    if (states.contains(MaterialState.disabled)) return Palette.black;
+    if (states.contains(MaterialState.selected)) return Colors.white;
+    return Palette.grey;
+  }),
+);

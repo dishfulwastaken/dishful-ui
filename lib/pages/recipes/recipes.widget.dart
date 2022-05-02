@@ -78,15 +78,9 @@ class RecipesPage extends ConsumerWidget {
         backgroundColor: Colors.white,
         selectedColor: Palette.primary,
         decoration: InputDecoration(border: InputBorder.none),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
         labelPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 18),
-        labelStyle: TextStyle(
-          color: MaterialStateColor.resolveWith((states) {
-            if (states.contains(MaterialState.disabled)) return Colors.black;
-            if (states.contains(MaterialState.selected)) return Colors.white;
-            return Colors.grey.shade400;
-          }),
-        ),
+        labelStyle: context.labelMedium,
         options: [
           FormBuilderFieldOption(value: null, child: Text('All')),
           ...Status.values.map(

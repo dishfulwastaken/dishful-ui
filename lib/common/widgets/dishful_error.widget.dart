@@ -30,7 +30,7 @@ class DishfulError extends StatelessWidget {
             margin: const EdgeInsets.all(26),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(6),
               color: Colors.white,
             ),
             child: Text(
