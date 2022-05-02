@@ -55,7 +55,16 @@ class DishfulMenu extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   buildSpacer(true),
-                  ...items,
+                  Container(
+                    /// Fix weird spacing glitch where a 1px gap can sometimes
+                    /// be seen in between the items; this just paints a white
+                    /// background so it can never be seen.
+                    color: Colors.white,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: items,
+                    ),
+                  ),
                   buildSpacer(false),
                 ],
               ),
