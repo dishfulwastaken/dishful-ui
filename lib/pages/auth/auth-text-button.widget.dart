@@ -1,3 +1,5 @@
+import 'package:awesome_extensions/awesome_extensions.dart';
+import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
 
 class AuthTextButton extends StatelessWidget {
@@ -20,7 +22,7 @@ class AuthTextButton extends StatelessWidget {
         padding: EdgeInsets.all(2),
         child: Icon(
           iconData,
-          color: Colors.white,
+          color: Palette.white,
           size: 22,
         ),
       );
@@ -38,10 +40,7 @@ class AuthTextButton extends StatelessWidget {
             if (leftIcon != null) buildIcon(leftIcon!),
             Text(
               text,
-              style: TextStyle(
-                fontSize: 13,
-                color: Colors.white,
-              ),
+              style: context.bodySmall!.copyWith(color: Palette.white),
             ),
             if (leftIcon != null) Container(width: 24),
             if (rightIcon != null) buildIcon(rightIcon!),

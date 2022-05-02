@@ -13,6 +13,11 @@ final themeData = ThemeData(
     titleMedium: titleTextStyle,
     titleLarge: titleTextStyle.copyWith(fontSize: 28),
     bodyMedium: bodyTextStyle,
+    bodySmall: bodyTextStyle.copyWith(
+      fontSize: 13,
+      fontWeight: FontWeight.bold,
+      height: 1.8,
+    ),
   ),
   iconTheme: IconThemeData(color: Palette.lightGrey),
   scrollbarTheme: ScrollbarThemeData(),

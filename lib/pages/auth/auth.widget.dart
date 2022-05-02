@@ -27,7 +27,7 @@ class AuthPage extends ConsumerWidget {
             Logo(),
             Spacer(),
             ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: 360, maxWidth: 800),
+              constraints: BoxConstraints(maxHeight: 416, maxWidth: 800),
               child: PageView(
                 controller: _controller,
                 physics: NeverScrollableScrollPhysics(),

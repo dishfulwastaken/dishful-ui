@@ -1,5 +1,5 @@
+import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:dishful/common/data/providers.dart';
-import 'package:dishful/theme/font.dart';
 import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,20 +30,18 @@ class AuthButton extends ConsumerWidget {
             },
       style: ButtonStyle(
         shape: MaterialStateProperty.all(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(100),
-          ),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         ),
         padding: MaterialStateProperty.all(
           EdgeInsets.symmetric(vertical: 26, horizontal: 22),
         ),
         backgroundColor: MaterialStateProperty.resolveWith(
           (states) => states.contains(MaterialState.disabled)
-              ? Palette.disabled
+              ? Palette.lightGrey
               : Palette.secondary,
         ),
         textStyle: MaterialStateProperty.all(
-          TextStyle(fontFamily: Fonts.text, color: Colors.white),
+          context.bodySmall!.copyWith(color: Palette.white),
         ),
       ),
       child: Row(
@@ -51,10 +49,7 @@ class AuthButton extends ConsumerWidget {
         children: [
           Text(
             isLoading ? "Loading..." : text,
-            style: TextStyle(
-              fontSize: 13,
-              color: Colors.white,
-            ),
+            style: context.bodySmall!.copyWith(color: Palette.white),
           ),
         ],
       ),
