@@ -1,6 +1,7 @@
 import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/widgets/animations/fade_scale.widget.dart';
+import 'package:dishful/common/widgets/dishful_icon_button.widget.dart';
 import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_portal/flutter_portal.dart';
@@ -42,7 +43,7 @@ class DishfulMenu extends ConsumerWidget {
           ),
           child: IgnorePointer(
             ignoring: isOpen,
-            child: IconButton(
+            child: DishfulIconButton(
               onPressed: () => ref.set(isOpenProvider, true),
               icon: Icon(Icons.more_horiz),
             ),
@@ -88,20 +89,13 @@ class DishfulMenuItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    /// Cannot use [TextButton.icon] here because the
+    /// [Row] that it arranges the icon & label in centers them;
+    /// we want to justify start.
     return TextButton(
       style: ButtonStyle(
+        /// Removes the rounded corners from the button
         shape: MaterialStateProperty.all(RoundedRectangleBorder()),
-        splashFactory: NoSplash.splashFactory,
-        backgroundColor: MaterialStateProperty.resolveWith(
-          (states) {
-            if (states.contains(MaterialState.pressed))
-              return Palette.primaryLight;
-            if (states.contains(MaterialState.hovered))
-              return Palette.lightGrey;
-
-            return Colors.white;
-          },
-        ),
       ),
       onPressed: () {
         ref.set(isOpenProvider, false);

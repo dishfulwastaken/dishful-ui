@@ -32,6 +32,9 @@ class AuthTextButton extends StatelessWidget {
     return Align(
       alignment: alignment,
       child: TextButton(
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(Colors.transparent),
+        ),
         onPressed: onPressed,
         child: Row(
           mainAxisSize: MainAxisSize.min,

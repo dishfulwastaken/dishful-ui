@@ -4,7 +4,8 @@ import 'package:dishful/common/domain/recipe.dart';
 import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/test.dart';
-import 'package:dishful/common/widgets/dishful_menu.dart';
+import 'package:dishful/common/widgets/dishful_empty.widget.dart';
+import 'package:dishful/common/widgets/dishful_menu.widget.dart';
 import 'package:dishful/common/widgets/dishful_scaffold.widget.dart';
 import 'package:dishful/common/widgets/replacements/form_builder_choice_chips.dart';
 import 'package:dishful/pages/recipes/recipes_card.widget.dart';
@@ -45,7 +46,7 @@ class RecipesPage extends ConsumerWidget {
                   .toList();
 
           return filteredRecipes.isEmpty
-              ? Text("No recipes")
+              ? DishfulEmpty(subject: "recipe", onPressed: () {})
               : Flexible(
                   child: AnimatedSwitcher(
                     duration: 400.milliseconds,

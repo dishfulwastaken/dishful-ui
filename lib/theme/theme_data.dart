@@ -8,6 +8,9 @@ final themeData = ThemeData(
   primaryColorLight: Palette.primaryLight,
   secondaryHeaderColor: Palette.secondary,
   scaffoldBackgroundColor: Palette.white,
+  canvasColor: Palette.white,
+  backgroundColor: Palette.white,
+  splashColor: Palette.primaryLight,
   textTheme: TextTheme(
     titleSmall: titleTextStyle.copyWith(fontSize: 18),
     titleMedium: titleTextStyle,
@@ -22,9 +25,23 @@ final themeData = ThemeData(
   iconTheme: IconThemeData(color: Palette.lightGrey),
   scrollbarTheme: ScrollbarThemeData(),
   buttonTheme: ButtonThemeData(
-    shape: StadiumBorder(),
-    buttonColor: Palette.secondary,
-    disabledColor: Palette.disabled,
+    disabledColor: Palette.grey,
+    hoverColor: Palette.lightGrey,
+    splashColor: Palette.primaryLight,
+  ),
+  textButtonTheme: TextButtonThemeData(
+    style: ButtonStyle(
+      splashFactory: NoSplash.splashFactory,
+      backgroundColor: MaterialStateProperty.resolveWith(
+        (states) {
+          if (states.contains(MaterialState.pressed))
+            return Palette.primaryLight;
+          if (states.contains(MaterialState.hovered)) return Palette.lightGrey;
+
+          return Colors.white;
+        },
+      ),
+    ),
   ),
 );
 

@@ -10,9 +10,15 @@ class DishfulLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LoadingAnimationWidget.newtonCradle(
-      color: light ? Palette.white : Palette.primary,
-      size: context.width * 0.3,
+    /// Wrap in a [Scaffold] for situations where [DishfulLoading] is
+    /// rendered without a parent [Scaffold].
+    return Scaffold(
+      body: Center(
+        child: LoadingAnimationWidget.newtonCradle(
+          color: light ? Palette.white : Palette.primary,
+          size: context.width * 0.3,
+        ),
+      ),
     );
   }
 }

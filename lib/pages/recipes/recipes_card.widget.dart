@@ -5,6 +5,7 @@ import 'package:dishful/common/data/image.dart';
 import 'package:dishful/common/domain/recipe.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/services/route.service.dart';
+import 'package:dishful/common/widgets/dishful_icon_button.widget.dart';
 import 'package:dishful/common/widgets/editable.widget.dart';
 import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
@@ -98,7 +99,7 @@ class RecipesCard extends StatelessWidget {
                     vertical: 18,
                   ),
                   alignment: Alignment.bottomRight,
-                  child: IconButton(
+                  child: DishfulIconButton(
                     onPressed: () async {
                       await DbService.publicDb.recipes.delete(_recipe.id);
                     },
