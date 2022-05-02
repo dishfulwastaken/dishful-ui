@@ -57,7 +57,10 @@ class RecipePage extends ConsumerWidget {
               DishfulMenuItem(
                 text: "Delete",
                 iconData: Icons.delete,
-                onTap: () {},
+                onTap: () {
+                  DbService.publicDb.recipes.delete(recipe.id);
+                  Navigator.maybePop(context);
+                },
               ),
               DishfulMenuItem(
                 text: "Export",

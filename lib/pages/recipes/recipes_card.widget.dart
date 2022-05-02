@@ -93,19 +93,6 @@ class RecipesCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                Container(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 18,
-                  ),
-                  alignment: Alignment.bottomRight,
-                  child: DishfulIconButton(
-                    onPressed: () async {
-                      await DbService.publicDb.recipes.delete(_recipe.id);
-                    },
-                    icon: Icon(Icons.delete),
-                  ),
-                ),
               ],
             ),
           ),
