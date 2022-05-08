@@ -7,9 +7,7 @@ class Avatar extends StatelessWidget {
   Avatar({required this.onPressed, Key? key}) : super(key: key);
 
   String get initials {
-    if (AuthService.currentUser == null) return "";
-
-    final email = AuthService.currentUser!.email!;
+    final email = AuthService.currentUser.email!;
     final name = email.split("@").first;
 
     return name.characters.take(2).toString().toUpperCase();

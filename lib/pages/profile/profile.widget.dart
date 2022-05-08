@@ -13,8 +13,7 @@ class ProfilePage extends ConsumerWidget {
   late final AutoDisposeStreamProvider<Subscription?> subscriberProvider;
 
   ProfilePage({Key? key}) : super(key: key) {
-    final id = AuthService.currentUser?.uid;
-    if (id == null) throw "No current user";
+    final id = AuthService.currentUser.uid;
 
     userProvider = watchCurrentUserProvider();
     subscriberProvider =

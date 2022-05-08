@@ -18,8 +18,7 @@ class ProFeature extends ConsumerWidget {
     required this.why,
     Key? key,
   }) : super(key: key) {
-    final id = AuthService.currentUser?.uid;
-    if (id == null) throw "No current user";
+    final id = AuthService.currentUser.uid;
 
     subscriberProvider = getProvider(DbService.publicDb.subscriptions, id: id);
   }

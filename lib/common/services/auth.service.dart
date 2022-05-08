@@ -23,7 +23,7 @@ enum SignOutAuthExceptionCode { other }
 class AuthService {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  static User? get currentUser => _auth.currentUser;
+  static User get currentUser => _auth.currentUser!;
 
   static Stream<User?> watchCurrentUser() {
     return _auth.userChanges();

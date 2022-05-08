@@ -72,7 +72,7 @@ class Recipe extends Serializable {
     required this.description,
     this.inspiration,
   })  : id = uuid.v1(),
-        roles = {AuthService.currentUser!.uid: Role.owner},
+        roles = {AuthService.currentUser.uid: Role.owner},
         iterationCount = 0,
         createdAt = DateTime.now(),
         updatedAt = DateTime.now(),

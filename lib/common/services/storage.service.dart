@@ -15,7 +15,7 @@ class StorageService {
   }
 
   static String _getFilePath(String imageId, {String? userId}) {
-    userId ??= AuthService.currentUser?.uid;
+    userId ??= AuthService.currentUser.uid;
     return "$userId/${imageId}";
   }
 

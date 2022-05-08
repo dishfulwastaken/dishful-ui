@@ -28,7 +28,7 @@ Duration get randomDuration => Duration(
 
 Recipe get randomRecipe => Recipe(
       id: f.guid.guid(),
-      roles: {AuthService.currentUser!.uid: Role.owner},
+      roles: {AuthService.currentUser.uid: Role.owner},
       name: f.food.dish(),
       description: f.lorem
           .sentences(f.randomGenerator.integer(4, min: 1))

@@ -9,6 +9,7 @@ import 'package:dishful/common/widgets/dishful_icon_button.widget.dart';
 import 'package:dishful/common/widgets/dishful_menu.widget.dart';
 import 'package:dishful/common/widgets/dishful_scaffold.widget.dart';
 import 'package:dishful/common/widgets/forms/dishful_dropdown_field.widget.dart';
+import 'package:dishful/common/widgets/pictures/dishful_picture.widget.dart';
 import 'package:dishful/common/widgets/replacements/form_builder_choice_chips.dart';
 import 'package:dishful/pages/recipes/recipes_card.widget.dart';
 import 'package:dishful/theme/palette.dart';
@@ -28,7 +29,7 @@ class RecipesPage extends ConsumerWidget {
     recipesProvider = getAllProvider(
       DbService.publicDb.recipes,
       filters: [
-        Filter(field: "userId", isEqualTo: AuthService.currentUser?.uid)
+        Filter(field: "userId", isEqualTo: AuthService.currentUser.uid)
       ],
     );
   }
@@ -127,7 +128,8 @@ class RecipesPage extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           // filtersList,
-          DishfulDropdownField.theme(context),
+          // DishfulDropdownField.theme(context),
+          DishfulEditablePicture(),
           Container(height: 25),
           Expanded(
             child: OverflowBox(child: recipesList, maxWidth: context.width),
