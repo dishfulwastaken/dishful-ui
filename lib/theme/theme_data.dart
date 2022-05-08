@@ -18,11 +18,7 @@ final themeData = ThemeData(
     titleMedium: titleTextStyle,
     titleLarge: titleTextStyle.copyWith(fontSize: 28),
     bodyMedium: bodyTextStyle,
-    bodySmall: bodyTextStyle.copyWith(
-      fontSize: 13,
-      fontWeight: FontWeight.bold,
-      height: 1.8,
-    ),
+    bodySmall: bodyTextStyleSmall,
     labelMedium: labelTextStyle,
   ),
   drawerTheme: DrawerThemeData(
@@ -30,6 +26,22 @@ final themeData = ThemeData(
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.horizontal(right: Radius.circular(8)),
     ),
+  ),
+  inputDecorationTheme: InputDecorationTheme(
+    filled: true,
+    errorMaxLines: 2,
+    contentPadding: EdgeInsets.zero,
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(14),
+      borderSide: BorderSide.none,
+    ),
+
+    /// Some defaults that should be applied to
+    /// most inputs:
+    fillColor: Colors.white,
+    hintStyle: bodyTextStyleSmall.copyWith(color: Palette.lightGrey),
+    labelStyle: bodyTextStyleSmall,
+    prefixIconColor: Palette.lightGrey,
   ),
   iconTheme: IconThemeData(color: Palette.lightGrey),
   scrollbarTheme: ScrollbarThemeData(),
@@ -69,6 +81,11 @@ final titleTextStyle = _baseTextStyle.copyWith(
   fontSize: 22,
 );
 final bodyTextStyle = _baseTextStyle.copyWith(fontSize: 16);
+final bodyTextStyleSmall = bodyTextStyle.copyWith(
+  fontSize: 13,
+  fontWeight: FontWeight.bold,
+  height: 1.8,
+);
 final labelTextStyle = _baseTextStyle.copyWith(
   fontSize: 14,
   height: 1.6,

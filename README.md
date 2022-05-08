@@ -53,6 +53,13 @@ Development day 1: 25th July, 2021
      This becomes trivial because collabs are stored on a recipe; given the recipe, we can directly access the
      collabs property. 
 
+- **Why not use more named constructors?**
+I have opted to use `static` methods in place of named constructors because it is not currently possible
+to provide type parameters in named constructors (if the parent class has generics). Another benefit is that
+optional parameters do not need to be passed.
+
+Instead of a mix, everywhere uses `static` methods instead of named constructors.
+
 ### Notes
 
 - **Order of the changes in an iteration matters!**

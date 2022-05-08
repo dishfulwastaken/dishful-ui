@@ -2,9 +2,9 @@ import 'package:dishful/common/domain/subscription.dart';
 import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/services/route.service.dart';
+import 'package:dishful/common/widgets/forms/dishful_text_field.widget.dart';
 import 'package:dishful/pages/auth/auth-button.widget.dart';
 import 'package:dishful/pages/auth/auth-text-button.widget.dart';
-import 'package:dishful/pages/auth/auth-text-field.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -21,18 +21,14 @@ class SignUp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final emailField = AuthTextField.email(context);
-    final passwordField = AuthTextField.password(context);
-    final confirmPasswordField = AuthTextField(
-      name: "confirm-password",
-      hintText: "Confirm Password",
-      icon: Icons.lock,
-      obscureText: true,
-      additionalValidators: [
-        (value) => value == passwordField.text
-            ? null
-            : "This field must match the password."
-      ],
+    final emailField = DishfulTextField.email(context);
+    final passwordField = DishfulTextField.password(context);
+    final confirmPasswordField = DishfulTextField.confirmPassword(
+      context,
+      passwordMatchValidator: (value) =>
+          value == passwordField.getValue(_formKey.currentState!)
+              ? null
+              : "This field must match the password.",
     );
     final signUpButton = AuthButton(
       text: "Sign up",
@@ -41,8 +37,8 @@ class SignUp extends ConsumerWidget {
 
         if (formState.validate()) {
           try {
-            final email = formState.value["email"];
-            final password = formState.value["password"];
+            final email = emailField.getValue(formState);
+            final password = passwordField.getValue(formState);
             final userId = await AuthService.signUp(
               email: email,
               password: password,
@@ -55,19 +51,13 @@ class SignUp extends ConsumerWidget {
           } on AuthException<SignUpAuthExceptionCode> catch (error) {
             switch (error.code) {
               case SignUpAuthExceptionCode.passwordWeak:
-                formState.invalidateField(
-                  name: "password",
-                  errorText: error.message,
-                );
-                passwordField.clear();
-                confirmPasswordField.clear();
+                passwordField.invalidate(formState, error.message);
+                passwordField.clear(formState);
+                confirmPasswordField.clear(formState);
                 break;
               case SignUpAuthExceptionCode.emailTaken:
               default:
-                formState.invalidateField(
-                  name: "email",
-                  errorText: error.message,
-                );
+                emailField.invalidate(formState, error.message);
                 break;
             }
           } on Exception {

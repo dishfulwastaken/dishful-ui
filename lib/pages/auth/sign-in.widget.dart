@@ -1,8 +1,8 @@
 import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/route.service.dart';
+import 'package:dishful/common/widgets/forms/dishful_text_field.widget.dart';
 import 'package:dishful/pages/auth/auth-button.widget.dart';
 import 'package:dishful/pages/auth/auth-text-button.widget.dart';
-import 'package:dishful/pages/auth/auth-text-field.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,8 +19,8 @@ class SignIn extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final emailField = AuthTextField.email(context);
-    final passwordField = AuthTextField.password(context);
+    final emailField = DishfulTextField.email(context);
+    final passwordField = DishfulTextField.password(context);
     final forgotPasswordText = AuthTextButton(
       text: "Forgot password?",
       onPressed: () => print("Forgot password lol"),
@@ -34,26 +34,20 @@ class SignIn extends ConsumerWidget {
         if (formState.validate()) {
           try {
             await AuthService.signIn(
-              email: formState.value["email"],
-              password: formState.value["password"],
+              email: emailField.getValue(formState),
+              password: passwordField.getValue(formState),
             );
             RouteService.goToRecipes(context, clearStack: true);
           } on AuthException<SignInAuthExceptionCode> catch (error) {
             switch (error.code) {
               case SignInAuthExceptionCode.passwordWrong:
-                formState.invalidateField(
-                  name: "password",
-                  errorText: error.message,
-                );
-                passwordField.clear();
+                passwordField.invalidate(formState, error.message);
+                passwordField.clear(formState);
                 break;
               case SignInAuthExceptionCode.userDisabled:
               case SignInAuthExceptionCode.userNotFoundWithEmail:
               default:
-                formState.invalidateField(
-                  name: "email",
-                  errorText: error.message,
-                );
+                emailField.invalidate(formState, error.message);
                 break;
             }
           }

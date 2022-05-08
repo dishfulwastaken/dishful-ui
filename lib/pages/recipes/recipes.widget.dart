@@ -8,6 +8,7 @@ import 'package:dishful/common/widgets/dishful_empty.widget.dart';
 import 'package:dishful/common/widgets/dishful_icon_button.widget.dart';
 import 'package:dishful/common/widgets/dishful_menu.widget.dart';
 import 'package:dishful/common/widgets/dishful_scaffold.widget.dart';
+import 'package:dishful/common/widgets/forms/dishful_dropdown_field.widget.dart';
 import 'package:dishful/common/widgets/replacements/form_builder_choice_chips.dart';
 import 'package:dishful/pages/recipes/recipes_card.widget.dart';
 import 'package:dishful/theme/palette.dart';
@@ -78,7 +79,10 @@ class RecipesPage extends ConsumerWidget {
         runSpacing: 10,
         backgroundColor: Colors.white,
         selectedColor: Palette.primary,
-        decoration: InputDecoration(border: InputBorder.none),
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          fillColor: Colors.transparent,
+        ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
         labelPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 18),
         labelStyle: context.labelMedium,
@@ -122,7 +126,8 @@ class RecipesPage extends ConsumerWidget {
       body: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          filtersList,
+          // filtersList,
+          DishfulDropdownField.theme(context),
           Container(height: 25),
           Expanded(
             child: OverflowBox(child: recipesList, maxWidth: context.width),
