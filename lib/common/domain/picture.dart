@@ -1,4 +1,6 @@
+import 'package:cross_file/cross_file.dart';
 import 'package:dishful/common/services/db.service.dart';
+import 'package:dishful/common/services/storage.service.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 
@@ -13,7 +15,7 @@ final uuid = Uuid();
 class Picture extends Serializable {
   final String id;
   final bool isLocal;
-  late final String path;
+  late final String? path;
   final String blurHash;
   final int width;
   final int height;
@@ -35,6 +37,14 @@ class Picture extends Serializable {
   }) : id = id ?? uuid.v1();
 
   Picture copyWithPath(String path) => copyWith()..path = path;
+
+  Future<Picture> Function() upload({required XFile file}) {
+    return () async {
+      /// TODO: if isLocal, copy to the apps document dir (i think), return that path
+      final path = isLocal ? file.path : await StorageService.upload(file, id);
+      return copyWithPath(path);
+    };
+  }
 }
 
 class PictureSerializer extends Serializer<Picture> {

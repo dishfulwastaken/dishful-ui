@@ -179,8 +179,8 @@ class FirestoreDb extends Db {
       onDelete: (recipeId) async {
         final pictures = (await recipes.get(recipeId))?.pictures ?? [];
         pictures
-            .where((picture) => !picture.isLocal)
-            .forEach((picture) => StorageService.deleteFromPath(picture.path));
+            .where((picture) => !picture.isLocal && picture.path != null)
+            .forEach((picture) => StorageService.deleteFromPath(picture.path!));
 
         await iterations(recipeId).deleteAll();
       },
@@ -227,8 +227,8 @@ class FirestoreDb extends Db {
         final pictures =
             iteration.reviews.expand((review) => review.pictures).toList();
         pictures
-            .where((picture) => !picture.isLocal)
-            .forEach((picture) => StorageService.deleteFromPath(picture.path));
+            .where((picture) => !picture.isLocal && picture.path != null)
+            .forEach((picture) => StorageService.deleteFromPath(picture.path!));
       },
     );
   }

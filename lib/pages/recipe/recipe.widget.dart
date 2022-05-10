@@ -8,6 +8,7 @@ import 'package:dishful/common/widgets/dishful_icon_button.widget.dart';
 import 'package:dishful/common/widgets/dishful_menu.widget.dart';
 import 'package:dishful/common/widgets/dishful_scaffold.widget.dart';
 import 'package:dishful/common/widgets/editable.widget.dart';
+import 'package:dishful/common/widgets/pictures/dishful_picture.widget.dart';
 import 'package:dishful/pages/recipe/recipe_iterations.widget.dart';
 import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
@@ -74,7 +75,21 @@ class RecipePage extends ConsumerWidget {
               ),
             ],
           ),
-          body: Iterations(recipe.id),
+          body: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DishfulEditablePicture(
+                onSave: (maybePicture) async {
+                  final updatedRecipe = recipe.copyWith(
+                    pictures: maybePicture == null ? [] : [maybePicture],
+                  );
+
+                  await DbService.publicDb.recipes.update(updatedRecipe);
+                },
+              ),
+              Iterations(recipe.id),
+            ],
+          ),
         );
 
         // return EditableScaffold(

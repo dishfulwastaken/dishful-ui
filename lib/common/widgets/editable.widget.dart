@@ -237,8 +237,8 @@ class EditableImage extends ConsumerWidget {
           ? Text("No image")
           : OctoImage.fromSet(
               image: recipeImage.isLocal
-                  ? XFileImage(XFile(recipeImage.path)) as ImageProvider
-                  : CachedNetworkImageProvider(recipeImage.path),
+                  ? XFileImage(XFile(recipeImage.path!)) as ImageProvider
+                  : CachedNetworkImageProvider(recipeImage.path!),
               octoSet: OctoSet.blurHash(recipeImage.blurHash),
               width: recipeImage.width.toDouble(),
               height: recipeImage.height.toDouble(),

@@ -1,5 +1,6 @@
 import 'package:dishful/common/data/strings.dart';
 import 'package:dishful/common/data/providers.dart';
+import 'package:dishful/common/domain/picture.dart';
 import 'package:dishful/common/domain/recipe.dart';
 import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/db.service.dart';
@@ -29,7 +30,10 @@ class RecipesPage extends ConsumerWidget {
     recipesProvider = getAllProvider(
       DbService.publicDb.recipes,
       filters: [
-        Filter(field: "userId", isEqualTo: AuthService.currentUser.uid)
+        Filter(
+          field: "roles.${AuthService.currentUser.uid}",
+          isEqualTo: "owner",
+        )
       ],
     );
   }
@@ -127,9 +131,7 @@ class RecipesPage extends ConsumerWidget {
       body: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // filtersList,
-          // DishfulDropdownField.theme(context),
-          DishfulEditablePicture(),
+          filtersList,
           Container(height: 25),
           Expanded(
             child: OverflowBox(child: recipesList, maxWidth: context.width),
