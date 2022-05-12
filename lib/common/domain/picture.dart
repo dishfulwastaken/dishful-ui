@@ -40,10 +40,18 @@ class Picture extends Serializable {
 
   Future<Picture> Function() upload({required XFile file}) {
     return () async {
-      /// TODO: if isLocal, copy to the apps document dir (i think), return that path
+      /// TODO: if taken from the camera (not gallery) then we must
+      /// move the file to a more permanent location and use THAT new
+      /// file path.
       final path = isLocal ? file.path : await StorageService.upload(file, id);
       return copyWithPath(path);
     };
+  }
+
+  Future<void> delete() async {
+    if (path == null) return;
+
+    await StorageService.delete(id);
   }
 }
 

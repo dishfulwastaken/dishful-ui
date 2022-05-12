@@ -79,10 +79,17 @@ class RecipePage extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               DishfulEditablePicture(
+                initialValue:
+                    recipe.pictures.isNotEmpty ? recipe.pictures.first : null,
                 onSave: (maybePicture) async {
                   final updatedRecipe = recipe.copyWith(
                     pictures: maybePicture == null ? [] : [maybePicture],
                   );
+
+                  await DbService.publicDb.recipes.update(updatedRecipe);
+                },
+                onDelete: (picture) async {
+                  final updatedRecipe = recipe.copyWith(pictures: []);
 
                   await DbService.publicDb.recipes.update(updatedRecipe);
                 },

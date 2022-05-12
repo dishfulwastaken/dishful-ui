@@ -54,11 +54,22 @@ Development day 1: 25th July, 2021
      collabs property. 
 
 - **Why not use more named constructors?**
-I have opted to use `static` methods in place of named constructors because it is not currently possible
-to provide type parameters in named constructors (if the parent class has generics). Another benefit is that
-optional parameters do not need to be passed.
+  I have opted to use `static` methods in place of named constructors because it is not currently possible
+  to provide type parameters in named constructors (if the parent class has generics). Another benefit is that
+  optional parameters do not need to be passed. Instead of a mix, everywhere uses `static` methods instead of named constructors.
 
-Instead of a mix, everywhere uses `static` methods instead of named constructors.
+- **How does the image uploading work in `DishfulEditablePicture`?**
+  [DishfulEditablePicture] will upload the file to the correct
+  storage location and delegates the [Picture] storage to the
+  consumer.
+
+  Different consumers will want to store their [Picture]s in
+  different locations, whereas they all will use the [StorageService]
+  to store the associated [XFile]s.
+
+  Similarly, [DishfulEditablePicture] with delete the file from the storage
+  location and will delegate the deletion of the associated [Picture] object
+  to the consumer.
 
 ### Notes
 

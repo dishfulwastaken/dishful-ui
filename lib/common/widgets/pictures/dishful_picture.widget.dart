@@ -1,6 +1,6 @@
 import 'dart:typed_data';
-import 'dart:io' show Platform;
 
+import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:blurhash_dart/blurhash_dart.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cross_file_image/cross_file_image.dart';
@@ -9,7 +9,6 @@ import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/domain/picture.dart';
 import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/db.service.dart';
-import 'package:dishful/common/services/storage.service.dart';
 import 'package:dishful/common/widgets/dishful_loading.widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -17,9 +16,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:octo_image/octo_image.dart';
 
-typedef TemporaryPicture = Future<Picture> Function();
+class _PictureBuilder {
+  final Future<Picture> Function() upload;
+  final Picture pictureWithoutPath;
 
-Future<TemporaryPicture> createPicture(
+  const _PictureBuilder({
+    required this.upload,
+    required this.pictureWithoutPath,
+  });
+}
+
+Future<_PictureBuilder> createPictureBuilder(
   XFile file, {
   required Picture? currentPicture,
 }) async {
@@ -47,16 +54,22 @@ Future<TemporaryPicture> createPicture(
     isLocal: isLocal,
   );
 
-  return pictureWithoutPath.upload(file: file);
+  final pictureBuilder = _PictureBuilder(
+    pictureWithoutPath: pictureWithoutPath,
+    upload: pictureWithoutPath.upload(file: file),
+  );
+
+  return pictureBuilder;
 }
 
 class DishfulEditablePicture extends ConsumerWidget {
-  final StateProvider<TemporaryPicture?> _temporaryPictureProvider =
+  final StateProvider<_PictureBuilder?> _pictureBuilderProvider =
       StateProvider((_) => null);
   late final StateProvider<Picture?> pictureProvider;
   late final StateProvider<bool> isEditingProvider;
   final StateProvider<bool> isLoadingProvider = StateProvider((_) => false);
   final Future<void> Function(Picture?) onSave;
+  final Future<void> Function(Picture) onDelete;
   final Picture? initialValue;
 
   DishfulEditablePicture({
@@ -64,6 +77,7 @@ class DishfulEditablePicture extends ConsumerWidget {
     StateProvider<Picture?>? pictureProvider,
     StateProvider<bool>? isEditingProvider,
     required this.onSave,
+    required this.onDelete,
     this.initialValue,
   })  : pictureProvider = pictureProvider ?? StateProvider((_) => initialValue),
         isEditingProvider = isEditingProvider ?? StateProvider((_) => true),
@@ -72,36 +86,36 @@ class DishfulEditablePicture extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final savedPicture = ref.watch(pictureProvider);
-    final temporaryPicture = ref.watch(_temporaryPictureProvider);
+    final pictureBuilder = ref.watch(_pictureBuilderProvider);
     final isEditing = ref.watch(isEditingProvider);
     final isLoading = ref.watch(isLoadingProvider);
-
-    if (!isEditing) return DishfulPicture(picture: savedPicture);
+    final blurHashPicture = pictureBuilder?.pictureWithoutPath ?? savedPicture;
 
     final uploadButton = TextButton(
-      child: Text("Upload"),
+      child: Text(
+        pictureBuilder == null && savedPicture == null ? "Upload" : "Change",
+      ),
       onPressed: () async {
         final _picker = ImagePicker();
         final file = await _picker.pickImage(source: ImageSource.gallery);
-        final newTemporaryPicture = await createPicture(
+        final newPictureBuilder = await createPictureBuilder(
           file!,
           currentPicture: savedPicture,
         );
 
-        ref.set(_temporaryPictureProvider, newTemporaryPicture);
+        ref.set(_pictureBuilderProvider, newPictureBuilder);
       },
     );
 
-    final removeButton = TextButton(
-      child: Text("Remove"),
-      onPressed: () {
-        if (temporaryPicture != null) {
-          ref.set(_temporaryPictureProvider, null);
-          return;
-        }
-        if (savedPicture != null) {
-          ref.set(pictureProvider, null);
-          return;
+    final deleteButton = TextButton(
+      child: Text("Delete"),
+      onPressed: () async {
+        try {
+          await savedPicture!.delete();
+          await onDelete(savedPicture);
+        } catch (e) {
+          print("Picture file or object deletion failed.");
+          print(e);
         }
       },
     );
@@ -110,20 +124,19 @@ class DishfulEditablePicture extends ConsumerWidget {
       child: Text("Save"),
       onPressed: () async {
         ref.set(isLoadingProvider, true);
-        final _temporaryPicture = ref.read(_temporaryPictureProvider);
-        ref.set(_temporaryPictureProvider, null);
+        final _pictureBuilder = ref.read(_pictureBuilderProvider);
 
-        /// [DishfulEditablePicture] will upload the file to the correct
-        /// storage location and delegates the [Picture] storage to the
-        /// consumer.
-        ///
-        /// Different consumers will want to store their [Picture]s in
-        /// different locations, whereas they all will use the [StorageService]
-        /// to store the associated [XFile]s.
-        final newPicture = await _temporaryPicture?.call();
-        await onSave(newPicture);
+        try {
+          final newPicture = await _pictureBuilder?.upload();
+          await onSave(newPicture);
 
-        ref.set(pictureProvider, newPicture);
+          ref.set(_pictureBuilderProvider, null);
+          ref.set(pictureProvider, newPicture);
+        } catch (e) {
+          print("Picture file or object upload failed.");
+          print(e);
+        }
+
         ref.set(isLoadingProvider, false);
         ref.set(isEditingProvider, false);
       },
@@ -132,19 +145,20 @@ class DishfulEditablePicture extends ConsumerWidget {
     final cancelButton = TextButton(
       child: Text("Cancel"),
       onPressed: () {
-        ref.set(_temporaryPictureProvider, null);
+        ref.set(_pictureBuilderProvider, null);
         ref.set(isEditingProvider, false);
       },
     );
 
-    return Stack(
+    final readonlyChild = DishfulPicture(picture: savedPicture);
+    final editingChild = Stack(
       alignment: Alignment.center,
       children: [
-        if (savedPicture != null && temporaryPicture == null)
+        if (blurHashPicture != null)
           DishfulBlurHash(
-            blurHash: savedPicture.blurHash,
-            width: savedPicture.width,
-            height: savedPicture.height,
+            blurHash: blurHashPicture.blurHash,
+            width: blurHashPicture.width,
+            height: blurHashPicture.height,
           ),
         if (isLoading)
           DishfulLoading()
@@ -153,13 +167,20 @@ class DishfulEditablePicture extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               uploadButton,
-              if (temporaryPicture != null || savedPicture != null)
-                removeButton,
-              if (temporaryPicture != null) saveButton,
-              if (temporaryPicture != null) cancelButton,
+              if (savedPicture != null) deleteButton,
+              if (pictureBuilder != null) saveButton,
+              if (pictureBuilder != null) cancelButton,
             ],
           )
       ],
+    );
+
+    return AnimatedCrossFade(
+      firstChild: editingChild,
+      secondChild: readonlyChild,
+      crossFadeState:
+          isEditing ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+      duration: 800.milliseconds,
     );
   }
 }
@@ -203,11 +224,7 @@ class DishfulBlurHash extends StatelessWidget {
     );
     return FittedBox(
       fit: BoxFit.fill,
-      child: Image.memory(
-        bytes,
-        width: width.toDouble(),
-        height: height.toDouble(),
-      ),
+      child: Image.memory(bytes),
     );
   }
 }
