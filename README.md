@@ -71,6 +71,25 @@ Development day 1: 25th July, 2021
   location and will delegate the deletion of the associated [Picture] object
   to the consumer.
 
+- **What are the different states of picture upload?**
+
+  State A: If no image has been uploaded, then show `Upload` button.
+  State B: If an image has been uploaded, then show `Change` and `Delete` buttons.
+
+  A -> B: on `Upload` press
+  B -> A: on `Delete` press
+
+  What about save and cancel?
+
+  The user will never just be editing the image; they will be creating a new resource, or editing an existing one. As such, while they are doing one of these two things, the icons at the top of the `DishfulScaffold` will change to the conventional cancel (top left) and save (top right).
+
+- **The `edit` pattern of Dishful**
+  When on a page with a title and a menu, clicking the menu will reveal an edit button that will edit *the entity that is represented by that page's title*. e.g. on a recipe page, edit button edits that recipe.
+  Clicking on the edit button will take you to a new route - if in a modal, that route will remain in the modal.
+  The route will be rendered by the resource's create new page, except with all of the current values already filled in.
+  The top left icon will be cancel, which will simply pop the route.
+  The top right icon will be save, which will save the values entered on that page, request the underlying resource again to refresh the previous route's data (as we know we literally just changed it), and then pop the route.
+
 ### Notes
 
 - **Order of the changes in an iteration matters!**

@@ -53,6 +53,7 @@ final themeData = ThemeData(
   textButtonTheme: TextButtonThemeData(
     style: ButtonStyle(
       splashFactory: NoSplash.splashFactory,
+      textStyle: MaterialStateProperty.all(bodyTextStyleSmall),
       backgroundColor: MaterialStateProperty.resolveWith(
         (states) {
           if (states.contains(MaterialState.pressed))

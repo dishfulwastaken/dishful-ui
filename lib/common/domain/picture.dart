@@ -38,14 +38,12 @@ class Picture extends Serializable {
 
   Picture copyWithPath(String path) => copyWith()..path = path;
 
-  Future<Picture> Function() upload({required XFile file}) {
-    return () async {
-      /// TODO: if taken from the camera (not gallery) then we must
-      /// move the file to a more permanent location and use THAT new
-      /// file path.
-      final path = isLocal ? file.path : await StorageService.upload(file, id);
-      return copyWithPath(path);
-    };
+  Future<Picture> upload({required XFile file}) async {
+    /// TODO: if taken from the camera (not gallery) then we must
+    /// move the file to a more permanent location and use THAT new
+    /// file path.
+    final path = isLocal ? file.path : await StorageService.upload(file, id);
+    return copyWithPath(path);
   }
 
   Future<void> delete() async {

@@ -1,4 +1,4 @@
-import 'package:awesome_extensions/awesome_extensions.dart';
+import 'package:dishful/common/data/maybe.dart';
 import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/data/strings.dart';
 import 'package:dishful/common/domain/recipe.dart';
@@ -7,12 +7,13 @@ import 'package:dishful/common/test.dart';
 import 'package:dishful/common/widgets/dishful_icon_button.widget.dart';
 import 'package:dishful/common/widgets/dishful_menu.widget.dart';
 import 'package:dishful/common/widgets/dishful_scaffold.widget.dart';
-import 'package:dishful/common/widgets/editable.widget.dart';
 import 'package:dishful/common/widgets/pictures/dishful_picture.widget.dart';
+import 'package:dishful/common/widgets/pictures/dishful_upload_picture.widget.dart';
 import 'package:dishful/pages/recipe/recipe_iterations.widget.dart';
-import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final isEditingProvider = StateProvider((_) => false);
 
 class RecipePage extends ConsumerWidget {
   late final FutureProvider<Recipe?> recipeProvider;
@@ -24,10 +25,28 @@ class RecipePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final recipeValue = ref.watch(recipeProvider);
+    final isEditing = ref.watch(isEditingProvider);
 
     return recipeValue.toWidget(
       data: (recipe) {
         if (recipe == null) return throw "No recipe found with ID";
+
+        final uploadPicture = DishfulUploadPicture(
+          initialValue:
+              recipe.pictures.isNotEmpty ? recipe.pictures.first : null,
+          onUpload: (picture) async {
+            final updatedRecipe = recipe.copyWith(
+              pictures: [picture],
+            );
+
+            await DbService.publicDb.recipes.update(updatedRecipe);
+          },
+          onDelete: (picture) async {
+            final updatedRecipe = recipe.copyWith(pictures: []);
+
+            await DbService.publicDb.recipes.update(updatedRecipe);
+          },
+        );
 
         return DishfulScaffold(
           title: recipe.name,
@@ -78,57 +97,28 @@ class RecipePage extends ConsumerWidget {
           body: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              DishfulEditablePicture(
-                initialValue:
-                    recipe.pictures.isNotEmpty ? recipe.pictures.first : null,
-                onSave: (maybePicture) async {
-                  final updatedRecipe = recipe.copyWith(
-                    pictures: maybePicture == null ? [] : [maybePicture],
-                  );
-
-                  await DbService.publicDb.recipes.update(updatedRecipe);
-                },
-                onDelete: (picture) async {
-                  final updatedRecipe = recipe.copyWith(pictures: []);
-
-                  await DbService.publicDb.recipes.update(updatedRecipe);
-                },
-              ),
-              Iterations(recipe.id),
+              if (isEditing) ...[
+                uploadPicture,
+                TextButton(
+                  child: Text("save"),
+                  onPressed: () {
+                    uploadPicture.save(ref);
+                    ref.set(isEditingProvider, false);
+                  },
+                ),
+              ] else ...[
+                DishfulPicture(picture: recipe.pictures.maybeFirst),
+                TextButton(
+                  child: Text("edit"),
+                  onPressed: () {
+                    ref.set(isEditingProvider, true);
+                  },
+                ),
+              ],
+              Expanded(child: Iterations(recipe.id)),
             ],
           ),
         );
-
-        // return EditableScaffold(
-        //   floatingActionButton: FloatingActionButton(
-        //     child: const Icon(Icons.plus_one_rounded),
-        //     onPressed: () async {
-        //       await DbService.publicDb
-        //           .iterations(recipe.id)
-        //           .create(randomIteration(recipe.id, recipe.id));
-        //     },
-        //   ),
-        //   body: Column(
-        //     children: [
-        //       Container(height: 35),
-        //       title.paddingSymmetric(horizontal: 34),
-        //       Container(height: 15),
-        //       // Hero(
-        //       //   tag: "recipe-page-${recipe.id}",
-        //       //   child: EditableImage(
-        //       //     initialValue: recipe.image.get,
-        //       //     saveValue: (recipeImage) async {
-        //       //       final updatedRecipe = recipe.copyWithImage(recipeImage);
-
-        //       //       await DbService.publicDb.recipeMeta().update(updatedRecipe);
-        //       //     },
-        //       //   ),
-        //       // ),
-        //       Text('Your iterations:'),
-        //       Expanded(child: Iterations(recipe.id)),
-        //     ],
-        //   ),
-        // );
       },
     );
   }
