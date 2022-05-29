@@ -58,8 +58,8 @@ Development day 1: 25th July, 2021
   to provide type parameters in named constructors (if the parent class has generics). Another benefit is that
   optional parameters do not need to be passed. Instead of a mix, everywhere uses `static` methods instead of named constructors.
 
-- **How does the image uploading work in `DishfulEditablePicture`?**
-  [DishfulEditablePicture] will upload the file to the correct
+- **How does the image uploading work in `DishfulUploadPicture`?**
+  [DishfulUploadPicture] will upload the file to the correct
   storage location and delegates the [Picture] storage to the
   consumer.
 
@@ -67,7 +67,7 @@ Development day 1: 25th July, 2021
   different locations, whereas they all will use the [StorageService]
   to store the associated [XFile]s.
 
-  Similarly, [DishfulEditablePicture] with delete the file from the storage
+  Similarly, [DishfulUploadPicture] with delete the file from the storage
   location and will delegate the deletion of the associated [Picture] object
   to the consumer.
 
