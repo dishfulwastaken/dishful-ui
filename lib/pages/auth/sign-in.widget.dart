@@ -66,6 +66,14 @@ class SignIn extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
+          /// TODO: REMOVE THIS ITS FOR QUICKLY LOGGING IN
+          TextButton(
+              onPressed: () {
+                emailField.setRawValue(_formKey.currentState!,
+                    to: "t@gmail.com");
+                passwordField.setRawValue(_formKey.currentState!, to: "123456");
+              },
+              child: Text('autofill')),
           Spacer(),
           emailField,
           Container(height: 12),

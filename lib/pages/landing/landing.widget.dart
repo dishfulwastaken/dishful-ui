@@ -28,9 +28,7 @@ class LandingPage extends StatelessWidget {
         print("Warning: init may have already been called!");
       }
 
-      /// TODO: remove this! this is temporary so we dont have to login
-      // RouteService.goToAuth(context);
-      RouteService.goToRecipes(context);
+      RouteService.goToAuth(context);
     });
 
     return Scaffold(

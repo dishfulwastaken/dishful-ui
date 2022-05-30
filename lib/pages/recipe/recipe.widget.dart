@@ -13,8 +13,6 @@ import 'package:dishful/pages/recipe/recipe_iterations.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final isEditingProvider = StateProvider((_) => false);
-
 class RecipePage extends ConsumerWidget {
   late final FutureProvider<Recipe?> recipeProvider;
 
@@ -25,7 +23,6 @@ class RecipePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final recipeValue = ref.watch(recipeProvider);
-    final isEditing = ref.watch(isEditingProvider);
 
     return recipeValue.toWidget(
       data: (recipe) {
@@ -58,7 +55,7 @@ class RecipePage extends ConsumerWidget {
               Navigator.maybePop(context);
             },
           ),
-          action: (_) => DishfulMenu(
+          action: (_, setIsEditing) => DishfulMenu(
             items: [
               DishfulMenuItem(
                 text: "New Iteration",
@@ -72,7 +69,9 @@ class RecipePage extends ConsumerWidget {
               DishfulMenuItem(
                 text: "Edit",
                 iconData: Icons.edit,
-                onTap: () {},
+                onTap: () {
+                  setIsEditing(true);
+                },
               ),
               DishfulMenuItem(
                 text: "Delete",
@@ -94,27 +93,17 @@ class RecipePage extends ConsumerWidget {
               ),
             ],
           ),
-          body: Column(
+          onSave: () async {
+            await uploadPicture.save(ref);
+            ref.refresh(recipeProvider);
+          },
+          body: (isEditing) => Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (isEditing) ...[
-                uploadPicture,
-                TextButton(
-                  child: Text("save"),
-                  onPressed: () {
-                    uploadPicture.save(ref);
-                    ref.set(isEditingProvider, false);
-                  },
-                ),
-              ] else ...[
+              if (isEditing)
+                uploadPicture
+              else
                 DishfulPicture(picture: recipe.pictures.maybeFirst),
-                TextButton(
-                  child: Text("edit"),
-                  onPressed: () {
-                    ref.set(isEditingProvider, true);
-                  },
-                ),
-              ],
               Expanded(child: Iterations(recipe.id)),
             ],
           ),

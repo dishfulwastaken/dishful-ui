@@ -1,17 +1,26 @@
+import 'dart:async';
+
 import 'package:awesome_extensions/awesome_extensions.dart';
+import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/widgets/dishful_drawer.widget.dart';
+import 'package:dishful/common/widgets/dishful_icon_button.widget.dart';
 import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class DishfulScaffold extends StatelessWidget {
+class DishfulScaffold extends ConsumerWidget {
   final String title;
   final String? subtitle;
   final bool withDrawer;
-  final Widget body;
+  final Widget Function(bool) body;
   final Widget Function(BuildContext)? leading;
-  final Widget Function(BuildContext)? action;
+  final Widget Function(BuildContext, void Function(bool))? action;
+  final FutureOr<void> Function()? onSave;
+  final FutureOr<void> Function()? onCancel;
 
-  const DishfulScaffold({
+  final isEditingProvider = StateProvider((_) => false);
+
+  DishfulScaffold({
     Key? key,
     required this.title,
     this.subtitle,
@@ -19,14 +28,30 @@ class DishfulScaffold extends StatelessWidget {
     required this.body,
     this.leading,
     this.action,
+    this.onSave,
+    this.onCancel,
   })  : assert(leading != null),
         super(key: key);
 
-  static DishfulScaffold? maybeOf(BuildContext context) {
-    return context.findAncestorWidgetOfExactType<DishfulScaffold>();
-  }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isEditing = ref.watch(isEditingProvider);
+    final setIsEditing = (bool to) => ref.set(isEditingProvider, to);
 
-  Widget build(BuildContext context) {
+    final saveButton = DishfulIconButton(
+      onPressed: () {
+        if (onSave != null) onSave!();
+        setIsEditing(false);
+      },
+      icon: Icon(Icons.save),
+    );
+    final cancelButton = DishfulIconButton(
+      onPressed: () async {
+        if (onCancel != null) onCancel!();
+        setIsEditing(false);
+      },
+      icon: Icon(Icons.close),
+    );
+
     return Scaffold(
       drawer: withDrawer ? DishfulDrawer() : null,
       body: Builder(
@@ -39,8 +64,14 @@ class DishfulScaffold extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  if (leading != null) leading!(context),
-                  if (action != null) action!(context)
+                  if (isEditing)
+                    cancelButton
+                  else if (leading != null)
+                    leading!(context),
+                  if (isEditing)
+                    saveButton
+                  else if (action != null)
+                    action!(context, setIsEditing)
                 ],
               ),
               Container(height: 20),
@@ -53,7 +84,7 @@ class DishfulScaffold extends StatelessWidget {
                 ),
               ],
               Container(height: 16),
-              Expanded(child: body),
+              Expanded(child: body(isEditing)),
             ],
           ),
         ),

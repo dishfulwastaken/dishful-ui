@@ -33,9 +33,9 @@ class RecipesCard extends StatelessWidget {
                 FittedBox(
                   fit: BoxFit.fill,
                   child: DishfulBlurHashPicture(
-                    blurHash: _recipe.pictures.first.blurHash,
-                    width: _recipe.pictures.first.width,
-                    height: _recipe.pictures.first.height,
+                    blurHash: _recipe.pictures.maybeFirst?.blurHash,
+                    width: _recipe.pictures.maybeFirst?.width,
+                    height: _recipe.pictures.maybeFirst?.height,
                   ),
                 ),
                 FittedBox(

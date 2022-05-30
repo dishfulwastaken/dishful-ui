@@ -112,7 +112,7 @@ class RecipesPage extends ConsumerWidget {
           Scaffold.of(context).openDrawer();
         },
       ),
-      action: (_) => DishfulMenu(
+      action: (_, __) => DishfulMenu(
         items: [
           DishfulMenuItem(
             text: "New Recipe",
@@ -128,7 +128,7 @@ class RecipesPage extends ConsumerWidget {
           ),
         ],
       ),
-      body: Column(
+      body: (_) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           filtersList,
