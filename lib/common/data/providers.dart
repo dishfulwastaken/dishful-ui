@@ -13,6 +13,18 @@ extension WidgetRefExtension on WidgetRef {
   }
 }
 
+extension AsyncSelectStreamExtension<T> on AutoDisposeStreamProvider<T> {
+  ProviderListenable<U> selectValue<U>(U Function(T?) selector) {
+    return select<U>((value) => selector(value.value));
+  }
+}
+
+extension AsyncSelectFutureExtension<T> on FutureProvider<T> {
+  ProviderListenable<U> selectValue<U>(U Function(T?) selector) {
+    return select<U>((value) => selector(value.value));
+  }
+}
+
 extension StreamExtension on Stream {
   void close() {
     // TODO: verify that this works and also try using take(0)

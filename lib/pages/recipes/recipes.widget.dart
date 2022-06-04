@@ -119,6 +119,7 @@ class RecipesPage extends ConsumerWidget {
             iconData: Icons.add,
             onTap: () {
               DbService.publicDb.recipes.create(randomRecipe);
+              ref.refresh(recipesProvider);
             },
           ),
           DishfulMenuItem(

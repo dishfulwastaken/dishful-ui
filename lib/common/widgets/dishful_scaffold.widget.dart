@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:dishful/common/data/providers.dart';
+import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/widgets/dishful_drawer.widget.dart';
 import 'package:dishful/common/widgets/dishful_icon_button.widget.dart';
 import 'package:dishful/theme/palette.dart';
@@ -9,8 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DishfulScaffold extends ConsumerWidget {
-  final String title;
+  final String? title;
+  final ProviderListenable<String?>? dynamicTitle;
   final String? subtitle;
+  final ProviderListenable<String?>? dynamicSubtitle;
   final bool withDrawer;
   final Widget Function(bool) body;
   final Widget Function(BuildContext)? leading;
@@ -22,8 +25,10 @@ class DishfulScaffold extends ConsumerWidget {
 
   DishfulScaffold({
     Key? key,
-    required this.title,
+    this.title,
+    this.dynamicTitle,
     this.subtitle,
+    this.dynamicSubtitle,
     this.withDrawer = false,
     required this.body,
     this.leading,
@@ -31,6 +36,7 @@ class DishfulScaffold extends ConsumerWidget {
     this.onSave,
     this.onCancel,
   })  : assert(leading != null),
+        assert(title != null || dynamicTitle != null),
         super(key: key);
 
   Widget build(BuildContext context, WidgetRef ref) {
@@ -51,6 +57,32 @@ class DishfulScaffold extends ConsumerWidget {
       },
       icon: Icon(Icons.close),
     );
+
+    Text renderTitle(String? text) =>
+        Text(text ?? '', style: context.titleLarge);
+
+    final _title = title != null
+        ? renderTitle(title)
+        : Consumer(builder: ((_, ref, __) {
+            final _dynamicTitle = ref.watch(dynamicTitle!);
+
+            return renderTitle(_dynamicTitle);
+          }));
+
+    Text renderSubtitle(String? text) => Text(
+          text ?? '',
+          style: context.bodyMedium!.copyWith(color: Palette.grey),
+        );
+
+    final _subtitle = (() {
+      if (subtitle != null) return renderSubtitle(subtitle);
+      if (dynamicSubtitle != null)
+        return Consumer(builder: ((_, ref, __) {
+          final _dynamicSubtitle = ref.watch(dynamicSubtitle!);
+
+          return renderSubtitle(_dynamicSubtitle);
+        }));
+    })();
 
     return Scaffold(
       drawer: withDrawer ? DishfulDrawer() : null,
@@ -75,14 +107,8 @@ class DishfulScaffold extends ConsumerWidget {
                 ],
               ),
               Container(height: 20),
-              Text(title, style: context.titleLarge),
-              if (subtitle != null) ...[
-                Container(height: 10),
-                Text(
-                  subtitle!,
-                  style: context.bodyMedium!.copyWith(color: Palette.grey),
-                ),
-              ],
+              _title,
+              if (_subtitle != null) ...[Container(height: 10), _subtitle],
               Container(height: 16),
               Expanded(child: body(isEditing)),
             ],

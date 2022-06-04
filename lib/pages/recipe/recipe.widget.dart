@@ -14,15 +14,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RecipePage extends ConsumerWidget {
-  late final FutureProvider<Recipe?> recipeProvider;
+  late final AutoDisposeStreamProvider<Recipe?> recipeProvider;
 
   RecipePage(String id) {
-    recipeProvider = getProvider(DbService.publicDb.recipes, id: id);
+    recipeProvider = watchProvider(DbService.publicDb.recipes, id: id);
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final recipeValue = ref.watch(recipeProvider);
+
+    ref.listen<String?>(
+      /// THIS IS HOW WE DO IT (LISTEN TO PART OF ASYNC VALUE DATA)
+      ///
+      /// TODO: come up with helper in future provider extension????
+      /// TODO: use this everywhere - come up with helper widget so we dont
+      /// make our code fucking grosssss
+      recipeProvider.select((value) => value.value?.name),
+      (previous, next) {
+        print("CHANGED----------------------");
+      },
+    );
 
     return recipeValue.toWidget(
       data: (recipe) {
@@ -46,9 +58,11 @@ class RecipePage extends ConsumerWidget {
         );
 
         return DishfulScaffold(
-          title: recipe.name,
-          subtitle:
-              "${recipe.iterationCount} Iterations  |  ${recipe.status.name.toTitleCase()}",
+          dynamicTitle: recipeProvider.selectValue((value) => value?.name),
+          dynamicSubtitle: recipeProvider.selectValue(
+            (value) =>
+                "${value?.iterationCount} Iterations  |  ${value?.status.name.toTitleCase()}",
+          ),
           leading: (_) => DishfulIconButton(
             icon: const BackButtonIcon(),
             onPressed: () {
