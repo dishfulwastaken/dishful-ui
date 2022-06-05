@@ -13,15 +13,9 @@ extension WidgetRefExtension on WidgetRef {
   }
 }
 
-extension AsyncSelectStreamExtension<T> on AutoDisposeStreamProvider<T> {
-  ProviderListenable<U> selectValue<U>(U Function(T?) selector) {
-    return select<U>((value) => selector(value.value));
-  }
-}
-
-extension AsyncSelectFutureExtension<T> on FutureProvider<T> {
-  ProviderListenable<U> selectValue<U>(U Function(T?) selector) {
-    return select<U>((value) => selector(value.value));
+extension SelectFromDataExtension<T> on ProviderBase<AsyncValue<T>> {
+  ProviderListenable<AsyncValue<U>> selectFromData<U>(U Function(T) selector) {
+    return this.select((value) => value.whenData(selector));
   }
 }
 
@@ -51,14 +45,20 @@ extension AsyncValueExtension<T> on AsyncValue<T> {
 
   Widget toWidget({
     required Widget Function(T) data,
+    bool allowError = false,
   }) =>
       when(
         data: data,
         loading: () => DishfulLoading(),
-        error: (error, trace) => DishfulError(
-          error: error.toString(),
-          stack: trace.toString(),
-        ),
+        error: (error, trace) => allowError
+            ? Error.throwWithStackTrace(
+                error,
+                trace ?? new StackTrace.fromString("Missing stack trace"),
+              )
+            : DishfulError(
+                error: error.toString(),
+                stack: trace.toString(),
+              ),
       );
 }
 

@@ -22,18 +22,22 @@ class RecipePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final recipeValue = ref.watch(recipeProvider);
+    // final recipeValue = ref.watch(recipeProvider);
 
-    ref.listen<String?>(
-      /// THIS IS HOW WE DO IT (LISTEN TO PART OF ASYNC VALUE DATA)
-      ///
-      /// TODO: come up with helper in future provider extension????
-      /// TODO: use this everywhere - come up with helper widget so we dont
-      /// make our code fucking grosssss
-      recipeProvider.select((value) => value.value?.name),
-      (previous, next) {
-        print("CHANGED----------------------");
-      },
+    final recipeNameProvider = recipeProvider.selectFromData(
+      (data) => data?.name,
+    );
+    final name = Consumer(
+      builder: ((context, ref, child) {
+        final recipeNameValue = ref.watch(recipeNameProvider);
+
+        /// TODO: sort out loading -
+        /// only show loading for the body??
+        return recipeNameValue.toWidget(
+          data: (name) => Text(name ?? ''),
+          allowError: true,
+        );
+      }),
     );
 
     return recipeValue.toWidget(
@@ -58,10 +62,10 @@ class RecipePage extends ConsumerWidget {
         );
 
         return DishfulScaffold(
-          dynamicTitle: recipeProvider.selectValue((value) => value?.name),
-          dynamicSubtitle: recipeProvider.selectValue(
+          dynamicTitle: recipeProvider.select((value) => value.value?.name),
+          dynamicSubtitle: recipeProvider.select(
             (value) =>
-                "${value?.iterationCount} Iterations  |  ${value?.status.name.toTitleCase()}",
+                "${value.value?.iterationCount} Iterations  |  ${value.value?.status.name.toTitleCase()}",
           ),
           leading: (_) => DishfulIconButton(
             icon: const BackButtonIcon(),

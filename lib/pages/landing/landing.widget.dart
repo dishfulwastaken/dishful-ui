@@ -14,7 +14,7 @@ class LandingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance?.scheduleFrameCallback((_) async {
+    WidgetsBinding.instance.scheduleFrameCallback((_) async {
       WidgetsFlutterBinding.ensureInitialized();
 
       try {
