@@ -7,7 +7,7 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:responsive_framework/responsive_wrapper.dart';
 
 void main() {
-  RouteService.init();
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(
     ProviderScope(
       child: Portal(
@@ -20,11 +20,12 @@ void main() {
 class Dishful extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Dishful',
       theme: themeData,
-      onGenerateRoute: RouteService.onGenerateRoute,
+      routeInformationParser: context.routeInformationParser,
+      routerDelegate: context.routerDelegate,
       localizationsDelegates: [FormBuilderLocalizations.delegate],
       builder: (context, child) => ResponsiveWrapper.builder(
         child,

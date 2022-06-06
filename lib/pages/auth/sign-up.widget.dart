@@ -47,7 +47,7 @@ class SignUp extends ConsumerWidget {
             final subscription = Subscription.create(id: userId);
             await DbService.publicDb.subscriptions.create(subscription);
 
-            RouteService.goToRecipes(context, clearStack: true);
+            context.goRecipes();
           } on AuthException<SignUpAuthExceptionCode> catch (error) {
             switch (error.code) {
               case SignUpAuthExceptionCode.passwordWeak:

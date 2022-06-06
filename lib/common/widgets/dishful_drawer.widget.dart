@@ -36,7 +36,7 @@ class DishfulDrawer extends StatelessWidget {
             iconData: Icons.home,
             routeKey: DrawerRouteKey.recipes,
             onPressed: () {
-              RouteService.goToRecipes(context);
+              context.goRecipes();
             },
           ),
           DishfulDrawerItem(
@@ -50,7 +50,7 @@ class DishfulDrawer extends StatelessWidget {
             iconData: Icons.account_circle,
             routeKey: DrawerRouteKey.profile,
             onPressed: () {
-              RouteService.goToProfile(context);
+              context.goProfile();
             },
           ),
           DishfulDrawerItem(

@@ -37,7 +37,7 @@ class SignIn extends ConsumerWidget {
               email: emailField.getValue(formState),
               password: passwordField.getValue(formState),
             );
-            RouteService.goToRecipes(context, clearStack: true);
+            context.goRecipes();
           } on AuthException<SignInAuthExceptionCode> catch (error) {
             switch (error.code) {
               case SignInAuthExceptionCode.passwordWrong:
