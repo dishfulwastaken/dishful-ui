@@ -31,8 +31,6 @@ class RecipePage extends ConsumerWidget {
       builder: ((context, ref, child) {
         final recipeNameValue = ref.watch(recipeNameProvider);
 
-        /// TODO: sort out loading -
-        /// only show loading for the body??
         return recipeNameValue.toWidget(
           data: (name) => Text(name ?? ''),
           allowError: true,
@@ -40,93 +38,97 @@ class RecipePage extends ConsumerWidget {
       }),
     );
 
-    return recipeValue.toWidget(
-      data: (recipe) {
-        if (recipe == null) return throw "No recipe found with ID";
+    return name;
 
-        final uploadPicture = DishfulUploadPicture(
-          initialValue:
-              recipe.pictures.isNotEmpty ? recipe.pictures.first : null,
-          onUpload: (picture) async {
-            final updatedRecipe = recipe.copyWith(
-              pictures: [picture],
-            );
+    // return recipeValue.toWidget(
+    //   data: (recipe) {
+    //     if (recipe == null) return throw "No recipe found with ID";
 
-            await DbService.publicDb.recipes.update(updatedRecipe);
-          },
-          onDelete: (picture) async {
-            final updatedRecipe = recipe.copyWith(pictures: []);
+    //     final uploadPicture = DishfulUploadPicture(
+    //       initialValue:
+    //           recipe.pictures.isNotEmpty ? recipe.pictures.first : null,
+    //       onUpload: (picture) async {
+    //         final updatedRecipe = recipe.copyWith(
+    //           pictures: [picture],
+    //         );
 
-            await DbService.publicDb.recipes.update(updatedRecipe);
-          },
-        );
+    //         await DbService.publicDb.recipes.update(updatedRecipe);
+    //       },
+    //       onDelete: (picture) async {
+    //         final updatedRecipe = recipe.copyWith(pictures: []);
 
-        return DishfulScaffold(
-          dynamicTitle: recipeProvider.select((value) => value.value?.name),
-          dynamicSubtitle: recipeProvider.select(
-            (value) =>
-                "${value.value?.iterationCount} Iterations  |  ${value.value?.status.name.toTitleCase()}",
-          ),
-          leading: (_) => DishfulIconButton(
-            icon: const BackButtonIcon(),
-            onPressed: () {
-              Navigator.maybePop(context);
-            },
-          ),
-          action: (_, setIsEditing) => DishfulMenu(
-            items: [
-              DishfulMenuItem(
-                text: "New Iteration",
-                iconData: Icons.add,
-                onTap: () {
-                  DbService.publicDb
-                      .iterations(recipe.id)
-                      .create(randomIteration(recipe.id, recipe.id));
-                },
-              ),
-              DishfulMenuItem(
-                text: "Edit",
-                iconData: Icons.edit,
-                onTap: () {
-                  setIsEditing(true);
-                },
-              ),
-              DishfulMenuItem(
-                text: "Delete",
-                iconData: Icons.delete,
-                onTap: () {
-                  DbService.publicDb.recipes.delete(recipe.id);
-                  Navigator.maybePop(context);
-                },
-              ),
-              DishfulMenuItem(
-                text: "Export",
-                iconData: Icons.file_download,
-                onTap: () {},
-              ),
-              DishfulMenuItem(
-                text: "Sharing",
-                iconData: Icons.group,
-                onTap: () {},
-              ),
-            ],
-          ),
-          onSave: () async {
-            await uploadPicture.save(ref);
-            ref.refresh(recipeProvider);
-          },
-          body: (isEditing) => Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (isEditing)
-                uploadPicture
-              else
-                DishfulPicture(picture: recipe.pictures.maybeFirst),
-              Expanded(child: Iterations(recipe.id)),
-            ],
-          ),
-        );
-      },
-    );
+    //         await DbService.publicDb.recipes.update(updatedRecipe);
+    //       },
+    //     );
+
+    //     uploadPicture.build().
+
+    //     return DishfulScaffold(
+    //       dynamicTitle: recipeProvider.select((value) => value.value?.name),
+    //       dynamicSubtitle: recipeProvider.select(
+    //         (value) =>
+    //             "${value.value?.iterationCount} Iterations  |  ${value.value?.status.name.toTitleCase()}",
+    //       ),
+    //       leading: (_) => DishfulIconButton(
+    //         icon: const BackButtonIcon(),
+    //         onPressed: () {
+    //           Navigator.maybePop(context);
+    //         },
+    //       ),
+    //       action: (_, setIsEditing) => DishfulMenu(
+    //         items: [
+    //           DishfulMenuItem(
+    //             text: "New Iteration",
+    //             iconData: Icons.add,
+    //             onTap: () {
+    //               DbService.publicDb
+    //                   .iterations(recipe.id)
+    //                   .create(randomIteration(recipe.id, recipe.id));
+    //             },
+    //           ),
+    //           DishfulMenuItem(
+    //             text: "Edit",
+    //             iconData: Icons.edit,
+    //             onTap: () {
+    //               setIsEditing(true);
+    //             },
+    //           ),
+    //           DishfulMenuItem(
+    //             text: "Delete",
+    //             iconData: Icons.delete,
+    //             onTap: () {
+    //               DbService.publicDb.recipes.delete(recipe.id);
+    //               Navigator.maybePop(context);
+    //             },
+    //           ),
+    //           DishfulMenuItem(
+    //             text: "Export",
+    //             iconData: Icons.file_download,
+    //             onTap: () {},
+    //           ),
+    //           DishfulMenuItem(
+    //             text: "Sharing",
+    //             iconData: Icons.group,
+    //             onTap: () {},
+    //           ),
+    //         ],
+    //       ),
+    //       onSave: () async {
+    //         await uploadPicture.save(ref);
+    //         ref.refresh(recipeProvider);
+    //       },
+    //       body: (isEditing) => Column(
+    //         mainAxisSize: MainAxisSize.min,
+    //         children: [
+    //           if (isEditing)
+    //             uploadPicture
+    //           else
+    //             DishfulPicture(picture: recipe.pictures.maybeFirst),
+    //           Expanded(child: Iterations(recipe.id)),
+    //         ],
+    //       ),
+    //     );
+    //   },
+    // );
   }
 }

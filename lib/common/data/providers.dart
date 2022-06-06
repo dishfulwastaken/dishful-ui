@@ -45,11 +45,12 @@ extension AsyncValueExtension<T> on AsyncValue<T> {
 
   Widget toWidget({
     required Widget Function(T) data,
+    Widget? skeleton,
     bool allowError = false,
   }) =>
       when(
         data: data,
-        loading: () => DishfulLoading(),
+        loading: () => skeleton != null ? skeleton : DishfulLoading(),
         error: (error, trace) => allowError
             ? Error.throwWithStackTrace(
                 error,

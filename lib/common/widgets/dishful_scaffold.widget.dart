@@ -11,9 +11,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DishfulScaffold extends ConsumerWidget {
   final String? title;
-  final ProviderListenable<String?>? dynamicTitle;
+  final ProviderListenable<AsyncValue<String?>>? dynamicTitle;
   final String? subtitle;
-  final ProviderListenable<String?>? dynamicSubtitle;
+  final ProviderListenable<AsyncValue<String?>>? dynamicSubtitle;
   final bool withDrawer;
   final Widget Function(bool) body;
   final Widget Function(BuildContext)? leading;
@@ -66,7 +66,11 @@ class DishfulScaffold extends ConsumerWidget {
         : Consumer(builder: ((_, ref, __) {
             final _dynamicTitle = ref.watch(dynamicTitle!);
 
-            return renderTitle(_dynamicTitle);
+            return _dynamicTitle.when(
+              data: renderTitle,
+              loading: () => Container(),
+              error: (_, __) => Container(),
+            );
           }));
 
     Text renderSubtitle(String? text) => Text(
@@ -80,7 +84,11 @@ class DishfulScaffold extends ConsumerWidget {
         return Consumer(builder: ((_, ref, __) {
           final _dynamicSubtitle = ref.watch(dynamicSubtitle!);
 
-          return renderSubtitle(_dynamicSubtitle);
+          return _dynamicSubtitle.when(
+            data: renderSubtitle,
+            loading: () => Container(),
+            error: (_, __) => Container(),
+          );
         }));
     })();
 
