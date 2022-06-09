@@ -14,7 +14,6 @@ class LandingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("LANDING PAGE BUILD");
     WidgetsBinding.instance.scheduleFrameCallback((_) async {
       try {
         await CloudService.init();
@@ -23,12 +22,9 @@ class LandingPage extends StatelessWidget {
         await DbService.initPublicDb();
         await FunctionsService.init();
         await StorageService.init();
-        print("DONE");
       } catch (_) {
         print("Warning: init may have already been called!");
       }
-
-      print("GOING TO AUTH");
 
       context.goAuth();
     });

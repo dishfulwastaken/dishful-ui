@@ -1,6 +1,5 @@
 import 'package:dishful/common/data/strings.dart';
 import 'package:dishful/common/data/providers.dart';
-import 'package:dishful/common/domain/picture.dart';
 import 'package:dishful/common/domain/recipe.dart';
 import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/db.service.dart';
@@ -9,8 +8,6 @@ import 'package:dishful/common/widgets/dishful_empty.widget.dart';
 import 'package:dishful/common/widgets/dishful_icon_button.widget.dart';
 import 'package:dishful/common/widgets/dishful_menu.widget.dart';
 import 'package:dishful/common/widgets/dishful_scaffold.widget.dart';
-import 'package:dishful/common/widgets/forms/dishful_dropdown_field.widget.dart';
-import 'package:dishful/common/widgets/pictures/dishful_picture.widget.dart';
 import 'package:dishful/common/widgets/replacements/form_builder_choice_chips.dart';
 import 'package:dishful/pages/recipes/recipes_card.widget.dart';
 import 'package:dishful/theme/palette.dart';

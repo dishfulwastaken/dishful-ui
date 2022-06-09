@@ -35,8 +35,7 @@ class DishfulScaffold extends ConsumerWidget {
     this.action,
     this.onSave,
     this.onCancel,
-  })  : assert(leading != null),
-        assert(title != null || dynamicTitle != null),
+  })  : assert(title != null || dynamicTitle != null),
         super(key: key);
 
   Widget build(BuildContext context, WidgetRef ref) {

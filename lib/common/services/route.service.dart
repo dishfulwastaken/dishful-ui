@@ -1,3 +1,5 @@
+import 'package:dishful/common/domain/recipe.dart';
+import 'package:dishful/pages/error/error.widget.dart';
 import 'package:dishful/pages/landing/landing.widget.dart';
 import 'package:dishful/pages/profile/profile.widget.dart';
 import 'package:dishful/pages/recipes/recipes.widget.dart';
@@ -9,6 +11,7 @@ import 'package:go_router/go_router.dart';
 enum _Route { landing, auth, profile, recipes, recipe }
 
 final _router = GoRouter(
+  errorBuilder: (context, state) => ErrorPage(error: state.error!),
   routes: [
     GoRoute(
       name: _Route.landing.toString(),
@@ -35,7 +38,8 @@ final _router = GoRouter(
       path: '/recipes/:recipeId',
       builder: (context, state) {
         final recipeId = state.params['recipeId']!;
-        return RecipePage(recipeId);
+        final recipe = state.extra as Recipe?;
+        return RecipePage(recipeId, initialRecipe: recipe);
       },
     )
   ],
@@ -54,8 +58,12 @@ extension GoRoutes on BuildContext {
     goNamed(_Route.recipes.toString());
   }
 
-  void goRecipe(String recipeId) {
-    goNamed(_Route.recipe.toString(), params: {'recipeId': recipeId});
+  void goRecipe(String recipeId, {Recipe? recipe}) {
+    goNamed(
+      _Route.recipe.toString(),
+      params: {'recipeId': recipeId},
+      extra: recipe,
+    );
   }
 
   RouteInformationParser<Object> get routeInformationParser =>

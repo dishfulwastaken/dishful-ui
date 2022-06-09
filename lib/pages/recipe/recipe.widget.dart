@@ -15,8 +15,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RecipePage extends ConsumerWidget {
   late final AutoDisposeStreamProvider<Recipe?> recipeProvider;
+  final Recipe? initialRecipe;
 
-  RecipePage(String id) {
+  RecipePage(String id, {this.initialRecipe}) {
     recipeProvider = watchProvider(DbService.publicDb.recipes, id: id);
   }
 
