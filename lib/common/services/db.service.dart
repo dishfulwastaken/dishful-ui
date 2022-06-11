@@ -9,7 +9,6 @@ import 'package:dishful/common/domain/iteration.dart';
 import 'package:dishful/common/domain/recipe.dart';
 import 'package:dishful/common/domain/review.dart';
 import 'package:dishful/common/domain/subscription.dart';
-import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/cloud.service.dart';
 import 'package:dishful/common/services/storage.service.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -22,8 +21,8 @@ part 'db/db_mock.dart';
 part 'db/db.types.dart';
 
 class DbService {
-  static Db? _hiveDb;
-  static Db? _firestoreDb;
+  static PrivateDb? _hiveDb;
+  static PublicDb? _firestoreDb;
   static final _mockDb = MockDb();
 
   static Future<void> initPrivateDb() async {
@@ -36,16 +35,16 @@ class DbService {
     await _firestoreDb!.init();
   }
 
-  static Db get privateDb {
+  static PrivateDb get privateDb {
     assert(_hiveDb != null, 'DbService.initPrivateDb must be called first!');
     return _hiveDb!;
   }
 
-  static Db get publicDb {
+  static PublicDb get publicDb {
     assert(
         _firestoreDb != null, 'DbService.initPublicDb must be called first!');
     return _firestoreDb!;
   }
 
-  static Db get mockDb => _mockDb;
+  static PublicDb get mockDb => _mockDb;
 }

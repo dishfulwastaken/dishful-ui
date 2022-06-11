@@ -2,6 +2,7 @@ import 'package:dishful/common/data/maybe.dart';
 import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/data/strings.dart';
 import 'package:dishful/common/domain/recipe.dart';
+import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/test.dart';
 import 'package:dishful/common/widgets/dishful_icon_button.widget.dart';
@@ -14,11 +15,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RecipePage extends ConsumerWidget {
-  late final AutoDisposeStreamProvider<Recipe?> recipeProvider;
+  late final AsyncValueProvider<Recipe?> recipeProvider;
   final Recipe? initialRecipe;
 
   RecipePage(String id, {this.initialRecipe}) {
-    recipeProvider = watchProvider(DbService.publicDb.recipes, id: id);
+    recipeProvider = oneProvider(DbService.publicDb.recipes, id: id);
   }
 
   @override
@@ -39,7 +40,20 @@ class RecipePage extends ConsumerWidget {
       }),
     );
 
-    return name;
+    return Scaffold(
+      body: Column(
+        children: [
+          name,
+          TextButton(
+            onPressed: () {
+              // recipeProvider.refresh(ref);
+              ref.refresh(recipeProvider);
+            },
+            child: Text('refresh'),
+          )
+        ],
+      ),
+    );
 
     // return recipeValue.toWidget(
     //   data: (recipe) {

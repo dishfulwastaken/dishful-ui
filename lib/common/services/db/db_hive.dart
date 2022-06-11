@@ -90,7 +90,7 @@ class HiveClient<T extends Serializable> extends Client<T> {
   }
 }
 
-class HiveDb extends Db {
+class HiveDb extends PrivateDb {
   Future<HiveClient<T>> _buildClient<T extends Serializable>(
     String boxName,
     Serializer<T> serializer,
@@ -100,17 +100,12 @@ class HiveDb extends Db {
     return client;
   }
 
-  HiveClient<Subscription>? _subscriptions;
   HiveClient<Recipe>? _recipes;
   HiveClient<Iteration>? _iterations;
 
   Future<void> init() async {
     await Hive.initFlutter();
 
-    _subscriptions = await _buildClient(
-      _HiveBoxName.subscriptions,
-      SubscriptionSerializer(),
-    );
     _recipes = await _buildClient(
       _HiveBoxName.recipes,
       RecipeSerializer(),
@@ -125,7 +120,6 @@ class HiveDb extends Db {
     await Hive.close();
   }
 
-  HiveClient<Subscription> get subscriptions => _subscriptions!;
   HiveClient<Recipe> get recipes => _recipes!;
   HiveClient<Iteration> iterations(String recipeId) => _iterations!;
 }

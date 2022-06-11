@@ -52,7 +52,7 @@ class MockClient<T extends Serializable> extends Client<T> {
   FilterAdapter get filterAdapter => throw UnimplementedError();
 }
 
-class MockDb extends Db {
+class MockDb extends PublicDb {
   MockClient<T> _build<T extends Serializable>(
     Serializer<T> serializer,
   ) {

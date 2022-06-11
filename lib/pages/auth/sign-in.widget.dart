@@ -1,5 +1,6 @@
 import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/route.service.dart';
+import 'package:dishful/common/services/subscription.service.dart';
 import 'package:dishful/common/widgets/forms/dishful_text_field.widget.dart';
 import 'package:dishful/pages/auth/auth-button.widget.dart';
 import 'package:dishful/pages/auth/auth-text-button.widget.dart';
@@ -37,6 +38,8 @@ class SignIn extends ConsumerWidget {
               email: emailField.getValue(formState),
               password: passwordField.getValue(formState),
             );
+            await SubscriptionService.signIn();
+
             context.goRecipes();
           } on AuthException<SignInAuthExceptionCode> catch (error) {
             switch (error.code) {

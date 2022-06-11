@@ -2,6 +2,7 @@ import 'package:dishful/common/domain/subscription.dart';
 import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/services/route.service.dart';
+import 'package:dishful/common/services/subscription.service.dart';
 import 'package:dishful/common/widgets/forms/dishful_text_field.widget.dart';
 import 'package:dishful/pages/auth/auth-button.widget.dart';
 import 'package:dishful/pages/auth/auth-text-button.widget.dart';
@@ -39,13 +40,11 @@ class SignUp extends ConsumerWidget {
           try {
             final email = emailField.getValue(formState);
             final password = passwordField.getValue(formState);
-            final userId = await AuthService.signUp(
+            await AuthService.signUp(
               email: email,
               password: password,
             );
-
-            final subscription = Subscription.create(id: userId);
-            await DbService.publicDb.subscriptions.create(subscription);
+            await SubscriptionService.signUp();
 
             context.goRecipes();
           } on AuthException<SignUpAuthExceptionCode> catch (error) {

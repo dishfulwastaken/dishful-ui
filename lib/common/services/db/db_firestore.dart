@@ -146,7 +146,7 @@ class FirestoreClient<T extends Serializable> extends Client<T> {
   }
 }
 
-class FirestoreDb extends Db {
+class FirestoreDb extends PublicDb {
   Future<void> init() async {
     assert(CloudService.ready, "CloudService.init must be called first!");
 

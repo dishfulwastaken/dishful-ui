@@ -1,5 +1,6 @@
 import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/db.service.dart';
+import 'package:dishful/common/services/subscription.service.dart';
 import 'package:dishful/common/widgets/dishful_error.widget.dart';
 import 'package:dishful/common/widgets/dishful_loading.widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -101,3 +102,20 @@ AutoDisposeStreamProvider<User?> watchCurrentUserProvider() =>
       ref.onDispose(stream.close);
       await for (final value in stream) yield value;
     });
+
+typedef AsyncValueProvider<T> = ProviderBase<AsyncValue<T>>;
+
+AsyncValueProvider<T?> oneProvider<T extends Serializable>(
+  Client<T> client, {
+  required String id,
+}) =>
+    SubscriptionService.isCurrentUserSubscribed
+        ? watchProvider(client, id: id)
+        : getProvider(client, id: id);
+
+AsyncValueProvider<List<T>> allProvider<T extends Serializable>(
+  Client<T> client,
+) =>
+    SubscriptionService.isCurrentUserSubscribed
+        ? watchAllProvider(client)
+        : getAllProvider(client);
