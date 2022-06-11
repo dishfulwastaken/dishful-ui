@@ -1,4 +1,3 @@
-import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/domain/iteration.dart';
 import 'package:dishful/common/services/db.service.dart';
@@ -8,10 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class Iterations extends ConsumerWidget {
-  late final FutureProvider<List<Iteration>> recipeIterationsProvider;
+  late final AsyncValueProvider<List<Iteration>> recipeIterationsProvider;
 
   Iterations(String id) {
-    recipeIterationsProvider = getAllProvider(
+    recipeIterationsProvider = allProvider(
       DbService.publicDb.iterations(id),
     );
   }

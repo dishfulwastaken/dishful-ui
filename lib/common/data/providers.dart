@@ -114,8 +114,9 @@ AsyncValueProvider<T?> oneProvider<T extends Serializable>(
         : getProvider(client, id: id);
 
 AsyncValueProvider<List<T>> allProvider<T extends Serializable>(
-  Client<T> client,
-) =>
+  Client<T> client, {
+  List<Filter>? filters,
+}) =>
     SubscriptionService.isCurrentUserSubscribed
-        ? watchAllProvider(client)
-        : getAllProvider(client);
+        ? watchAllProvider(client, filters: filters)
+        : getAllProvider(client, filters: filters);
