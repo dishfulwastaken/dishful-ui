@@ -17,7 +17,7 @@ class RecipesCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.goRecipe(_recipe.id, recipe: _recipe),
+      onTap: () => RouteService.goRecipe(_recipe.id, recipe: _recipe),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(14),
         child: ConstrainedBox(

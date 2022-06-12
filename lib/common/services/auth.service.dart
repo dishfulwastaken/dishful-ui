@@ -11,6 +11,7 @@ class AuthException<T extends Enum> implements Exception {
 }
 
 enum SignUpAuthExceptionCode { emailTaken, passwordWeak, other }
+
 enum SignInAuthExceptionCode {
   userDisabled,
   userNotFoundWithEmail,
@@ -18,6 +19,7 @@ enum SignInAuthExceptionCode {
   tooManyAttempts,
   other
 }
+
 enum SignOutAuthExceptionCode { other }
 
 class AuthService {
@@ -64,7 +66,8 @@ class AuthService {
             message: "Error: ${error.code}",
           );
       }
-    } on Exception {
+    } on Exception catch (error) {
+      print("Unknwon AuthException: $error");
       throw AuthException(
         message: "An unknown error occurred.",
         code: SignUpAuthExceptionCode.other,
@@ -106,7 +109,8 @@ class AuthService {
             message: "Error: ${error.code}",
           );
       }
-    } on Exception {
+    } on Exception catch (error) {
+      print("Unknwon AuthException: $error");
       throw AuthException(
         message: "An unknown error occurred.",
         code: SignInAuthExceptionCode.other,
@@ -117,7 +121,8 @@ class AuthService {
   static Future<void> signOut() async {
     try {
       await _auth.signOut();
-    } on Exception {
+    } on Exception catch (error) {
+      print("Unknwon AuthException: $error");
       throw AuthException(
         message: "An unknown error occurred.",
         code: SignOutAuthExceptionCode.other,

@@ -46,7 +46,7 @@ class SignUp extends ConsumerWidget {
             );
             await SubscriptionService.signUp();
 
-            context.goRecipes();
+            RouteService.goRecipes();
           } on AuthException<SignUpAuthExceptionCode> catch (error) {
             switch (error.code) {
               case SignUpAuthExceptionCode.passwordWeak:

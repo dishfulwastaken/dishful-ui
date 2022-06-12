@@ -24,8 +24,8 @@ class Dishful extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Dishful',
       theme: themeData,
-      routeInformationParser: context.routeInformationParser,
-      routerDelegate: context.routerDelegate,
+      routeInformationParser: RouteService.routeInformationParser,
+      routerDelegate: RouteService.routerDelegate,
       localizationsDelegates: [FormBuilderLocalizations.delegate],
       builder: (context, child) => ResponsiveWrapper.builder(
         child,

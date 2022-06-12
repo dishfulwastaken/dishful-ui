@@ -45,28 +45,32 @@ final _router = GoRouter(
   ],
 );
 
-extension GoRoutes on BuildContext {
-  void goAuth() {
-    goNamed(_Route.auth.toString());
+class RouteService {
+  static void goLanding() {
+    _router.goNamed(_Route.landing.toString());
   }
 
-  void goProfile() {
-    goNamed(_Route.profile.toString());
+  static void goAuth() {
+    _router.goNamed(_Route.auth.toString());
   }
 
-  void goRecipes() {
-    goNamed(_Route.recipes.toString());
+  static void goProfile() {
+    _router.goNamed(_Route.profile.toString());
   }
 
-  void goRecipe(String recipeId, {Recipe? recipe}) {
-    goNamed(
+  static void goRecipes() {
+    _router.goNamed(_Route.recipes.toString());
+  }
+
+  static void goRecipe(String recipeId, {Recipe? recipe}) {
+    _router.goNamed(
       _Route.recipe.toString(),
       params: {'recipeId': recipeId},
       extra: recipe,
     );
   }
 
-  RouteInformationParser<Object> get routeInformationParser =>
+  static RouteInformationParser<Object> get routeInformationParser =>
       _router.routeInformationParser;
-  RouterDelegate<Object> get routerDelegate => _router.routerDelegate;
+  static RouterDelegate<Object> get routerDelegate => _router.routerDelegate;
 }

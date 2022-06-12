@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:dishful/common/data/providers.dart';
-import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/widgets/dishful_drawer.widget.dart';
 import 'package:dishful/common/widgets/dishful_icon_button.widget.dart';
 import 'package:dishful/theme/palette.dart';
@@ -11,9 +10,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DishfulScaffold extends ConsumerWidget {
   final String? title;
-  final ProviderListenable<AsyncValue<String?>>? dynamicTitle;
+  final AsyncValueListenable<String?>? titleProvider;
   final String? subtitle;
-  final ProviderListenable<AsyncValue<String?>>? dynamicSubtitle;
+  final AsyncValueListenable<String?>? subtitleProvider;
   final bool withDrawer;
   final Widget Function(bool) body;
   final Widget Function(BuildContext)? leading;
@@ -26,17 +25,48 @@ class DishfulScaffold extends ConsumerWidget {
   DishfulScaffold({
     Key? key,
     this.title,
-    this.dynamicTitle,
+    this.titleProvider,
     this.subtitle,
-    this.dynamicSubtitle,
+    this.subtitleProvider,
     this.withDrawer = false,
     required this.body,
     this.leading,
     this.action,
     this.onSave,
     this.onCancel,
-  })  : assert(title != null || dynamicTitle != null),
+  })  : assert(title != null || titleProvider != null),
         super(key: key);
+
+  Widget buildTitle(BuildContext context) => title != null
+      ? Text(title!, style: context.titleLarge)
+      : Consumer(builder: ((_, ref, __) {
+          final titleValue = ref.watch(titleProvider!);
+
+          return titleValue.toWidget(
+            data: (newTitle) => Text(newTitle ?? '', style: context.titleLarge),
+          );
+        }));
+
+  Widget? buildSubtitle(BuildContext context) {
+    if (subtitle != null)
+      return Text(
+        subtitle!,
+        style: context.bodyMedium!.copyWith(color: Palette.grey),
+      );
+    if (subtitleProvider != null)
+      return Consumer(builder: ((_, ref, __) {
+        final subtitleValue = ref.watch(subtitleProvider!);
+
+        return subtitleValue.toWidget(
+          data: (newSubtitle) => Text(
+            newSubtitle ?? '',
+            style: context.bodyMedium!.copyWith(color: Palette.grey),
+          ),
+        );
+      }));
+
+    return null;
+  }
 
   Widget build(BuildContext context, WidgetRef ref) {
     final isEditing = ref.watch(isEditingProvider);
@@ -57,39 +87,8 @@ class DishfulScaffold extends ConsumerWidget {
       icon: Icon(Icons.close),
     );
 
-    Text renderTitle(String? text) =>
-        Text(text ?? '', style: context.titleLarge);
-
-    final _title = title != null
-        ? renderTitle(title)
-        : Consumer(builder: ((_, ref, __) {
-            final _dynamicTitle = ref.watch(dynamicTitle!);
-
-            return _dynamicTitle.when(
-              data: renderTitle,
-              loading: () => Container(),
-              error: (_, __) => Container(),
-            );
-          }));
-
-    Text renderSubtitle(String? text) => Text(
-          text ?? '',
-          style: context.bodyMedium!.copyWith(color: Palette.grey),
-        );
-
-    final _subtitle = (() {
-      if (subtitle != null) return renderSubtitle(subtitle);
-      if (dynamicSubtitle != null)
-        return Consumer(builder: ((_, ref, __) {
-          final _dynamicSubtitle = ref.watch(dynamicSubtitle!);
-
-          return _dynamicSubtitle.when(
-            data: renderSubtitle,
-            loading: () => Container(),
-            error: (_, __) => Container(),
-          );
-        }));
-    })();
+    final _title = buildTitle(context);
+    final _subtitle = buildSubtitle(context);
 
     return Scaffold(
       drawer: withDrawer ? DishfulDrawer() : null,

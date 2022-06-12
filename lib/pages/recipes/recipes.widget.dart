@@ -40,6 +40,11 @@ class RecipesPage extends ConsumerWidget {
     final recipesValue = ref.watch(recipesProvider);
     final filterStatus = ref.watch(filterStatusProvider);
 
+    final createNewRecipe = () {
+      DbService.publicDb.recipes.create(randomRecipe);
+      ref.refresh(recipesProvider);
+    };
+
     final recipesList = ParallaxArea(
       child: recipesValue.toWidget(
         data: (recipes) {
@@ -50,7 +55,7 @@ class RecipesPage extends ConsumerWidget {
                   .toList();
 
           return filteredRecipes.isEmpty
-              ? DishfulEmpty(subject: "recipe", onPressed: () {})
+              ? DishfulEmpty(subject: "recipe", onPressed: createNewRecipe)
               : Flexible(
                   child: AnimatedSwitcher(
                     duration: 400.milliseconds,
@@ -114,10 +119,7 @@ class RecipesPage extends ConsumerWidget {
           DishfulMenuItem(
             text: "New Recipe",
             iconData: Icons.add,
-            onTap: () {
-              DbService.publicDb.recipes.create(randomRecipe);
-              ref.refresh(recipesProvider);
-            },
+            onTap: createNewRecipe,
           ),
           DishfulMenuItem(
             text: "Import",

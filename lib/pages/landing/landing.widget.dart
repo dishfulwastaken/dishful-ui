@@ -26,7 +26,7 @@ class LandingPage extends StatelessWidget {
         print("Warning: init may have already been called!");
       }
 
-      context.goAuth();
+      RouteService.goAuth();
     });
 
     return Scaffold(

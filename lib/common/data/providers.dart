@@ -15,8 +15,13 @@ extension WidgetRefExtension on WidgetRef {
 }
 
 extension SelectFromDataExtension<T> on ProviderBase<AsyncValue<T>> {
-  ProviderListenable<AsyncValue<U>> selectFromData<U>(U Function(T) selector) {
-    return this.select((value) => value.whenData(selector));
+  ProviderListenable<AsyncValue<U>> selectFromData<U>(
+    U Function(T) selector, {
+    T? initialValue,
+  }) {
+    return this.select((value) => initialValue != null && value.isLoading
+        ? AsyncValue.data(selector(initialValue))
+        : value.whenData(selector));
   }
 }
 
@@ -44,14 +49,19 @@ extension AsyncValueExtension<T> on AsyncValue<T> {
     throw "Failed to add AsyncValues";
   }
 
+  /// Note: [initialValue] is redundant if [this] provider
+  /// is using [SelectFromDataExtension] with an [initialValue].
   Widget toWidget({
     required Widget Function(T) data,
-    Widget? skeleton,
+    T? initialValue,
+    Widget? loading,
     bool allowError = false,
   }) =>
       when(
         data: data,
-        loading: () => skeleton != null ? skeleton : DishfulLoading(),
+        loading: () => initialValue != null
+            ? data(initialValue)
+            : (loading ?? DishfulLoading()),
         error: (error, trace) => allowError
             ? Error.throwWithStackTrace(
                 error,
@@ -104,6 +114,7 @@ AutoDisposeStreamProvider<User?> watchCurrentUserProvider() =>
     });
 
 typedef AsyncValueProvider<T> = ProviderBase<AsyncValue<T>>;
+typedef AsyncValueListenable<T> = ProviderListenable<AsyncValue<T>>;
 
 AsyncValueProvider<T?> oneProvider<T extends Serializable>(
   Client<T> client, {

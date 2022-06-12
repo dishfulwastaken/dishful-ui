@@ -10,7 +10,9 @@ import 'package:dishful/common/domain/recipe.dart';
 import 'package:dishful/common/domain/review.dart';
 import 'package:dishful/common/domain/subscription.dart';
 import 'package:dishful/common/services/cloud.service.dart';
+import 'package:dishful/common/services/route.service.dart';
 import 'package:dishful/common/services/storage.service.dart';
+import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -36,13 +38,26 @@ class DbService {
   }
 
   static PrivateDb get privateDb {
-    assert(_hiveDb != null, 'DbService.initPrivateDb must be called first!');
+    if (_hiveDb == null) {
+      print("Routing to landing page to re-init private DB");
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        RouteService.goLanding();
+      });
+    }
+
     return _hiveDb!;
   }
 
   static PublicDb get publicDb {
-    assert(
-        _firestoreDb != null, 'DbService.initPublicDb must be called first!');
+    if (_hiveDb == null) {
+      print("Routing to landing page to re-init public DB");
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        RouteService.goLanding();
+      });
+    }
+
     return _firestoreDb!;
   }
 

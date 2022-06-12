@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:image/image.dart';
@@ -43,7 +42,7 @@ Image normalizeImage(
 ///
 /// Flutter cannot use raw bytes, so this function must be used
 /// to create fully encoded images with their correct headers.
-Image bytesToImage(Uint8List bytes) => decodeImage(bytes.toList())!;
+Image bytesToImage(Uint8List bytes) => decodeImage(bytes)!;
 
 /// Convert the given [Image] into [bytes].
 ///

@@ -23,9 +23,12 @@ class DishfulUploadPicture extends ConsumerWidget {
   final FutureOr<void> Function(Picture) onUpload;
   final FutureOr<void> Function(Picture) onDelete;
 
+  final DishfulUploadPictureController? controller;
+
   DishfulUploadPicture({
     Key? key,
     this.initialValue,
+    this.controller,
     required this.onUpload,
     required this.onDelete,
   })  : _pictureUploaderProvider = StateProvider(
@@ -90,6 +93,8 @@ class DishfulUploadPicture extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (controller != null) controller!.save = () => this.save(ref);
+
     final isLoading = ref.watch(_isLoadingProvider);
     final pictureUploader = ref.watch(_pictureUploaderProvider);
     final blurHashPicture = pictureUploader?.pictureWithoutPath;
@@ -194,4 +199,15 @@ class _PictureUploader {
   _PictureUploader.initialValue({Picture? initialValue})
       : upload = (() => Future.value(initialValue)),
         pictureWithoutPath = initialValue;
+}
+
+/// Allows any code that has access to the controller
+/// instance to call [save].
+///
+/// If passed to a [DishfulUploadPicture], the build method
+/// will set [save] on the controller.
+/// Else, [save] will remain unset, so make sure you
+/// pass the exact same instance to the upload picture!
+class DishfulUploadPictureController {
+  late Future<void> Function() save;
 }

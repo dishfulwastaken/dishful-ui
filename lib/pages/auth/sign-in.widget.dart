@@ -40,7 +40,7 @@ class SignIn extends ConsumerWidget {
             );
             await SubscriptionService.signIn();
 
-            context.goRecipes();
+            RouteService.goRecipes();
           } on AuthException<SignInAuthExceptionCode> catch (error) {
             switch (error.code) {
               case SignInAuthExceptionCode.passwordWrong:

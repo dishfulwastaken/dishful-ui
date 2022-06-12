@@ -2,8 +2,8 @@ import 'package:dishful/common/data/maybe.dart';
 import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/data/strings.dart';
 import 'package:dishful/common/domain/recipe.dart';
-import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/db.service.dart';
+import 'package:dishful/common/services/route.service.dart';
 import 'package:dishful/common/test.dart';
 import 'package:dishful/common/widgets/dishful_icon_button.widget.dart';
 import 'package:dishful/common/widgets/dishful_menu.widget.dart';
@@ -17,133 +17,125 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class RecipePage extends ConsumerWidget {
   late final AsyncValueProvider<Recipe?> recipeProvider;
   final Recipe? initialRecipe;
+  final String recipeId;
+  final uploadPictureController = new DishfulUploadPictureController();
 
-  RecipePage(String id, {this.initialRecipe}) {
-    recipeProvider = oneProvider(DbService.publicDb.recipes, id: id);
+  RecipePage(this.recipeId, {this.initialRecipe}) {
+    recipeProvider = oneProvider(DbService.publicDb.recipes, id: recipeId);
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final recipeValue = ref.watch(recipeProvider);
-
-    final recipeNameProvider = recipeProvider.selectFromData(
+    final titleProvider = recipeProvider.selectFromData(
       (data) => data?.name,
+      initialValue: initialRecipe,
     );
-    final name = Consumer(
-      builder: ((context, ref, child) {
-        final recipeNameValue = ref.watch(recipeNameProvider);
-
-        return recipeNameValue.toWidget(
-          data: (name) => Text(name ?? ''),
-          allowError: true,
-        );
-      }),
+    final subtitleProvider = recipeProvider.selectFromData(
+      (data) =>
+          "${data?.iterationCount} Iterations  |  ${data?.status.name.toTitleCase()}",
+      initialValue: initialRecipe,
+    );
+    final picturesProvider = recipeProvider.selectFromData(
+      (data) => data?.pictures,
+      initialValue: initialRecipe,
     );
 
-    return Scaffold(
-      body: Column(
-        children: [
-          name,
-          TextButton(
-            onPressed: () {
-              // recipeProvider.refresh(ref);
-              ref.refresh(recipeProvider);
+    final uploadPicture = Consumer(
+      builder: (context, ref, child) {
+        final picturesValue = ref.watch(picturesProvider);
+
+        return picturesValue.toWidget(
+          data: (pictures) => DishfulUploadPicture(
+            controller: uploadPictureController,
+            initialValue:
+                pictures != null && pictures.isNotEmpty ? pictures.first : null,
+            onUpload: (picture) async {
+              final recipe = ref.read(recipeProvider).asData!.value!;
+              final updatedRecipe = recipe.copyWith(
+                pictures: [picture],
+              );
+
+              await DbService.publicDb.recipes.update(updatedRecipe);
             },
-            child: Text('refresh'),
-          )
+            onDelete: (picture) async {
+              final recipe = ref.read(recipeProvider).asData!.value!;
+              final updatedRecipe = recipe.copyWith(pictures: []);
+
+              await DbService.publicDb.recipes.update(updatedRecipe);
+            },
+          ),
+        );
+      },
+    );
+
+    final picture = Consumer(
+      builder: (context, ref, child) {
+        final picturesValue = ref.watch(picturesProvider);
+
+        return picturesValue.toWidget(
+          data: (pictures) => DishfulPicture(picture: pictures?.maybeFirst),
+        );
+      },
+    );
+
+    return DishfulScaffold(
+      titleProvider: titleProvider,
+      subtitleProvider: subtitleProvider,
+      leading: (_) => DishfulIconButton(
+        icon: const BackButtonIcon(),
+        onPressed: () {
+          RouteService.goRecipes();
+        },
+      ),
+      action: (_, setIsEditing) => DishfulMenu(
+        items: [
+          DishfulMenuItem(
+            text: "New Iteration",
+            iconData: Icons.add,
+            onTap: () {
+              DbService.publicDb
+                  .iterations(recipeId)
+                  .create(randomIteration(recipeId, recipeId));
+            },
+          ),
+          DishfulMenuItem(
+            text: "Edit",
+            iconData: Icons.edit,
+            onTap: () {
+              setIsEditing(true);
+            },
+          ),
+          DishfulMenuItem(
+            text: "Delete",
+            iconData: Icons.delete,
+            onTap: () {
+              DbService.publicDb.recipes.delete(recipeId);
+              Navigator.maybePop(context);
+            },
+          ),
+          DishfulMenuItem(
+            text: "Export",
+            iconData: Icons.file_download,
+            onTap: () {},
+          ),
+          DishfulMenuItem(
+            text: "Sharing",
+            iconData: Icons.group,
+            onTap: () {},
+          ),
+        ],
+      ),
+      onSave: () async {
+        await uploadPictureController.save();
+        ref.refresh(recipeProvider);
+      },
+      body: (isEditing) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (isEditing) uploadPicture else picture,
+          Expanded(child: Iterations(recipeId)),
         ],
       ),
     );
-
-    // return recipeValue.toWidget(
-    //   data: (recipe) {
-    //     if (recipe == null) return throw "No recipe found with ID";
-
-    //     final uploadPicture = DishfulUploadPicture(
-    //       initialValue:
-    //           recipe.pictures.isNotEmpty ? recipe.pictures.first : null,
-    //       onUpload: (picture) async {
-    //         final updatedRecipe = recipe.copyWith(
-    //           pictures: [picture],
-    //         );
-
-    //         await DbService.publicDb.recipes.update(updatedRecipe);
-    //       },
-    //       onDelete: (picture) async {
-    //         final updatedRecipe = recipe.copyWith(pictures: []);
-
-    //         await DbService.publicDb.recipes.update(updatedRecipe);
-    //       },
-    //     );
-
-    //     uploadPicture.build().
-
-    //     return DishfulScaffold(
-    //       dynamicTitle: recipeProvider.select((value) => value.value?.name),
-    //       dynamicSubtitle: recipeProvider.select(
-    //         (value) =>
-    //             "${value.value?.iterationCount} Iterations  |  ${value.value?.status.name.toTitleCase()}",
-    //       ),
-    //       leading: (_) => DishfulIconButton(
-    //         icon: const BackButtonIcon(),
-    //         onPressed: () {
-    //           Navigator.maybePop(context);
-    //         },
-    //       ),
-    //       action: (_, setIsEditing) => DishfulMenu(
-    //         items: [
-    //           DishfulMenuItem(
-    //             text: "New Iteration",
-    //             iconData: Icons.add,
-    //             onTap: () {
-    //               DbService.publicDb
-    //                   .iterations(recipe.id)
-    //                   .create(randomIteration(recipe.id, recipe.id));
-    //             },
-    //           ),
-    //           DishfulMenuItem(
-    //             text: "Edit",
-    //             iconData: Icons.edit,
-    //             onTap: () {
-    //               setIsEditing(true);
-    //             },
-    //           ),
-    //           DishfulMenuItem(
-    //             text: "Delete",
-    //             iconData: Icons.delete,
-    //             onTap: () {
-    //               DbService.publicDb.recipes.delete(recipe.id);
-    //               Navigator.maybePop(context);
-    //             },
-    //           ),
-    //           DishfulMenuItem(
-    //             text: "Export",
-    //             iconData: Icons.file_download,
-    //             onTap: () {},
-    //           ),
-    //           DishfulMenuItem(
-    //             text: "Sharing",
-    //             iconData: Icons.group,
-    //             onTap: () {},
-    //           ),
-    //         ],
-    //       ),
-    //       onSave: () async {
-    //         await uploadPicture.save(ref);
-    //         ref.refresh(recipeProvider);
-    //       },
-    //       body: (isEditing) => Column(
-    //         mainAxisSize: MainAxisSize.min,
-    //         children: [
-    //           if (isEditing)
-    //             uploadPicture
-    //           else
-    //             DishfulPicture(picture: recipe.pictures.maybeFirst),
-    //           Expanded(child: Iterations(recipe.id)),
-    //         ],
-    //       ),
-    //     );
-    //   },
-    // );
   }
 }
