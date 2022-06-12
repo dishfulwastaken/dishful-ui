@@ -1,6 +1,5 @@
 import 'package:dishful/common/data/strings.dart';
 import 'package:dishful/common/data/providers.dart';
-import 'package:dishful/common/domain/picture.dart';
 import 'package:dishful/common/domain/recipe.dart';
 import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/db.service.dart';
@@ -9,8 +8,6 @@ import 'package:dishful/common/widgets/dishful_empty.widget.dart';
 import 'package:dishful/common/widgets/dishful_icon_button.widget.dart';
 import 'package:dishful/common/widgets/dishful_menu.widget.dart';
 import 'package:dishful/common/widgets/dishful_scaffold.widget.dart';
-import 'package:dishful/common/widgets/forms/dishful_dropdown_field.widget.dart';
-import 'package:dishful/common/widgets/pictures/dishful_picture.widget.dart';
 import 'package:dishful/common/widgets/replacements/form_builder_choice_chips.dart';
 import 'package:dishful/pages/recipes/recipes_card.widget.dart';
 import 'package:dishful/theme/palette.dart';
@@ -24,10 +21,10 @@ import 'package:awesome_extensions/awesome_extensions.dart';
 final filterStatusProvider = StateProvider<Status?>((_) => null);
 
 class RecipesPage extends ConsumerWidget {
-  late final FutureProvider<List<Recipe>> recipesProvider;
+  late final AsyncValueProvider<List<Recipe>> recipesProvider;
 
   RecipesPage() {
-    recipesProvider = getAllProvider(
+    recipesProvider = allProvider(
       DbService.publicDb.recipes,
       filters: [
         Filter(
@@ -43,6 +40,11 @@ class RecipesPage extends ConsumerWidget {
     final recipesValue = ref.watch(recipesProvider);
     final filterStatus = ref.watch(filterStatusProvider);
 
+    final createNewRecipe = () {
+      DbService.publicDb.recipes.create(randomRecipe);
+      ref.refresh(recipesProvider);
+    };
+
     final recipesList = ParallaxArea(
       child: recipesValue.toWidget(
         data: (recipes) {
@@ -53,7 +55,7 @@ class RecipesPage extends ConsumerWidget {
                   .toList();
 
           return filteredRecipes.isEmpty
-              ? DishfulEmpty(subject: "recipe", onPressed: () {})
+              ? DishfulEmpty(subject: "recipe", onPressed: createNewRecipe)
               : Flexible(
                   child: AnimatedSwitcher(
                     duration: 400.milliseconds,
@@ -117,9 +119,7 @@ class RecipesPage extends ConsumerWidget {
           DishfulMenuItem(
             text: "New Recipe",
             iconData: Icons.add,
-            onTap: () {
-              DbService.publicDb.recipes.create(randomRecipe);
-            },
+            onTap: createNewRecipe,
           ),
           DishfulMenuItem(
             text: "Import",

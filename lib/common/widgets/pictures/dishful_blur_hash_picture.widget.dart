@@ -1,8 +1,5 @@
-import 'dart:typed_data';
-
-import 'package:blurhash_dart/blurhash_dart.dart';
-import 'package:dishful/common/data/image.dart';
 import 'package:flutter/material.dart';
+import 'package:octo_image/octo_image.dart';
 
 class DishfulBlurHashPicture extends StatelessWidget {
   final String? blurHash;
@@ -29,12 +26,10 @@ class DishfulBlurHashPicture extends StatelessWidget {
       /// [DishfulBlurHashPicture].
       return Container(color: Colors.white, width: 100, height: 100);
 
-    Uint8List bytes = imageToBytes(
-      BlurHash.decode(blurHash!).toImage(width!, height!),
+    return SizedBox(
+      width: width!.toDouble(),
+      height: height!.toDouble(),
+      child: OctoPlaceholder.blurHash(blurHash!)(context),
     );
-
-    if (onDecode != null) onDecode!();
-
-    return Image.memory(bytes);
   }
 }

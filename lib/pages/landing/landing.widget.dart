@@ -14,9 +14,7 @@ class LandingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance?.scheduleFrameCallback((_) async {
-      WidgetsFlutterBinding.ensureInitialized();
-
+    WidgetsBinding.instance.scheduleFrameCallback((_) async {
       try {
         await CloudService.init();
         await AuthService.init();
@@ -28,7 +26,7 @@ class LandingPage extends StatelessWidget {
         print("Warning: init may have already been called!");
       }
 
-      RouteService.goToAuth(context);
+      RouteService.goAuth();
     });
 
     return Scaffold(

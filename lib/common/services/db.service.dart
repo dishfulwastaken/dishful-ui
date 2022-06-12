@@ -9,9 +9,10 @@ import 'package:dishful/common/domain/iteration.dart';
 import 'package:dishful/common/domain/recipe.dart';
 import 'package:dishful/common/domain/review.dart';
 import 'package:dishful/common/domain/subscription.dart';
-import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/cloud.service.dart';
+import 'package:dishful/common/services/route.service.dart';
 import 'package:dishful/common/services/storage.service.dart';
+import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -22,8 +23,8 @@ part 'db/db_mock.dart';
 part 'db/db.types.dart';
 
 class DbService {
-  static Db? _hiveDb;
-  static Db? _firestoreDb;
+  static PrivateDb? _hiveDb;
+  static PublicDb? _firestoreDb;
   static final _mockDb = MockDb();
 
   static Future<void> initPrivateDb() async {
@@ -36,16 +37,29 @@ class DbService {
     await _firestoreDb!.init();
   }
 
-  static Db get privateDb {
-    assert(_hiveDb != null, 'DbService.initPrivateDb must be called first!');
+  static PrivateDb get privateDb {
+    if (_hiveDb == null) {
+      print("Routing to landing page to re-init private DB");
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        RouteService.goLanding();
+      });
+    }
+
     return _hiveDb!;
   }
 
-  static Db get publicDb {
-    assert(
-        _firestoreDb != null, 'DbService.initPublicDb must be called first!');
+  static PublicDb get publicDb {
+    if (_hiveDb == null) {
+      print("Routing to landing page to re-init public DB");
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        RouteService.goLanding();
+      });
+    }
+
     return _firestoreDb!;
   }
 
-  static Db get mockDb => _mockDb;
+  static PublicDb get mockDb => _mockDb;
 }

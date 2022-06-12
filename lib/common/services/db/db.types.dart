@@ -87,16 +87,22 @@ abstract class Client<T extends Serializable> {
   Stream<T?> watch(String id);
 }
 
-abstract class Db {
+abstract class _Db {
   Future<void> init();
   Future<void> close();
-  Client<Subscription> get subscriptions;
-  Client<Recipe> get recipes;
-  Client<Iteration> iterations(String recipeId);
 
   String buildPath(Iterable<String> paths) {
     return paths.intersperse("/").join();
   }
+}
+
+abstract class PrivateDb extends _Db {
+  Client<Recipe> get recipes;
+  Client<Iteration> iterations(String recipeId);
+}
+
+abstract class PublicDb extends PrivateDb {
+  Client<Subscription> get subscriptions;
 }
 
 enum DbProvider { hive, firebase, mock }

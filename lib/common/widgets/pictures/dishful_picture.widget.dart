@@ -18,9 +18,12 @@ class DishfulPicture extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (picture?.path == null)
-      return Icon(
-        Icons.hide_image,
-        size: noImageIconSize,
+      return Padding(
+        padding: const EdgeInsets.all(16),
+        child: Icon(
+          Icons.hide_image,
+          size: noImageIconSize,
+        ),
       );
 
     return OctoImage.fromSet(

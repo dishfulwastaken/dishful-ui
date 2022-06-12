@@ -1,5 +1,6 @@
 import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/db.service.dart';
+import 'package:dishful/common/services/subscription.service.dart';
 import 'package:dishful/common/widgets/dishful_error.widget.dart';
 import 'package:dishful/common/widgets/dishful_loading.widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,6 +11,17 @@ import 'package:tuple/tuple.dart';
 extension WidgetRefExtension on WidgetRef {
   void set<T>(StateProvider<T> of, T to) {
     read(of.notifier).state = to;
+  }
+}
+
+extension SelectFromDataExtension<T> on ProviderBase<AsyncValue<T>> {
+  ProviderListenable<AsyncValue<U>> selectFromData<U>(
+    U Function(T) selector, {
+    T? initialValue,
+  }) {
+    return this.select((value) => initialValue != null && value.isLoading
+        ? AsyncValue.data(selector(initialValue))
+        : value.whenData(selector));
   }
 }
 
@@ -37,16 +49,28 @@ extension AsyncValueExtension<T> on AsyncValue<T> {
     throw "Failed to add AsyncValues";
   }
 
+  /// Note: [initialValue] is redundant if [this] provider
+  /// is using [SelectFromDataExtension] with an [initialValue].
   Widget toWidget({
     required Widget Function(T) data,
+    T? initialValue,
+    Widget? loading,
+    bool allowError = false,
   }) =>
       when(
         data: data,
-        loading: () => DishfulLoading(),
-        error: (error, trace) => DishfulError(
-          error: error.toString(),
-          stack: trace.toString(),
-        ),
+        loading: () => initialValue != null
+            ? data(initialValue)
+            : (loading ?? DishfulLoading()),
+        error: (error, trace) => allowError
+            ? Error.throwWithStackTrace(
+                error,
+                trace ?? new StackTrace.fromString("Missing stack trace"),
+              )
+            : DishfulError(
+                error: error.toString(),
+                stack: trace.toString(),
+              ),
       );
 }
 
@@ -88,3 +112,22 @@ AutoDisposeStreamProvider<User?> watchCurrentUserProvider() =>
       ref.onDispose(stream.close);
       await for (final value in stream) yield value;
     });
+
+typedef AsyncValueProvider<T> = ProviderBase<AsyncValue<T>>;
+typedef AsyncValueListenable<T> = ProviderListenable<AsyncValue<T>>;
+
+AsyncValueProvider<T?> oneProvider<T extends Serializable>(
+  Client<T> client, {
+  required String id,
+}) =>
+    SubscriptionService.isCurrentUserSubscribed
+        ? watchProvider(client, id: id)
+        : getProvider(client, id: id);
+
+AsyncValueProvider<List<T>> allProvider<T extends Serializable>(
+  Client<T> client, {
+  List<Filter>? filters,
+}) =>
+    SubscriptionService.isCurrentUserSubscribed
+        ? watchAllProvider(client, filters: filters)
+        : getAllProvider(client, filters: filters);

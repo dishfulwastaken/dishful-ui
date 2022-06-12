@@ -9,8 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DishfulScaffold extends ConsumerWidget {
-  final String title;
+  final String? title;
+  final AsyncValueListenable<String?>? titleProvider;
   final String? subtitle;
+  final AsyncValueListenable<String?>? subtitleProvider;
   final bool withDrawer;
   final Widget Function(bool) body;
   final Widget Function(BuildContext)? leading;
@@ -22,16 +24,49 @@ class DishfulScaffold extends ConsumerWidget {
 
   DishfulScaffold({
     Key? key,
-    required this.title,
+    this.title,
+    this.titleProvider,
     this.subtitle,
+    this.subtitleProvider,
     this.withDrawer = false,
     required this.body,
     this.leading,
     this.action,
     this.onSave,
     this.onCancel,
-  })  : assert(leading != null),
+  })  : assert(title != null || titleProvider != null),
         super(key: key);
+
+  Widget buildTitle(BuildContext context) => title != null
+      ? Text(title!, style: context.titleLarge)
+      : Consumer(builder: ((_, ref, __) {
+          final titleValue = ref.watch(titleProvider!);
+
+          return titleValue.toWidget(
+            data: (newTitle) => Text(newTitle ?? '', style: context.titleLarge),
+          );
+        }));
+
+  Widget? buildSubtitle(BuildContext context) {
+    if (subtitle != null)
+      return Text(
+        subtitle!,
+        style: context.bodyMedium!.copyWith(color: Palette.grey),
+      );
+    if (subtitleProvider != null)
+      return Consumer(builder: ((_, ref, __) {
+        final subtitleValue = ref.watch(subtitleProvider!);
+
+        return subtitleValue.toWidget(
+          data: (newSubtitle) => Text(
+            newSubtitle ?? '',
+            style: context.bodyMedium!.copyWith(color: Palette.grey),
+          ),
+        );
+      }));
+
+    return null;
+  }
 
   Widget build(BuildContext context, WidgetRef ref) {
     final isEditing = ref.watch(isEditingProvider);
@@ -51,6 +86,9 @@ class DishfulScaffold extends ConsumerWidget {
       },
       icon: Icon(Icons.close),
     );
+
+    final _title = buildTitle(context);
+    final _subtitle = buildSubtitle(context);
 
     return Scaffold(
       drawer: withDrawer ? DishfulDrawer() : null,
@@ -75,14 +113,8 @@ class DishfulScaffold extends ConsumerWidget {
                 ],
               ),
               Container(height: 20),
-              Text(title, style: context.titleLarge),
-              if (subtitle != null) ...[
-                Container(height: 10),
-                Text(
-                  subtitle!,
-                  style: context.bodyMedium!.copyWith(color: Palette.grey),
-                ),
-              ],
+              _title,
+              if (_subtitle != null) ...[Container(height: 10), _subtitle],
               Container(height: 16),
               Expanded(child: body(isEditing)),
             ],
