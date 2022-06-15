@@ -7,6 +7,7 @@ import 'package:dishful/common/test.dart';
 import 'package:dishful/common/widgets/dishful_empty.widget.dart';
 import 'package:dishful/common/widgets/dishful_icon_button.widget.dart';
 import 'package:dishful/common/widgets/dishful_menu.widget.dart';
+import 'package:dishful/common/widgets/dishful_modal_bottom_sheet.widget.dart';
 import 'package:dishful/common/widgets/dishful_scaffold.widget.dart';
 import 'package:dishful/common/widgets/replacements/form_builder_choice_chips.dart';
 import 'package:dishful/pages/recipes/recipes_card.widget.dart';
@@ -104,6 +105,18 @@ class RecipesPage extends ConsumerWidget {
         ],
       ),
     );
+    final modal = DishfulModalBottomSheet(
+      title: 'hello there',
+      leading: (_, close) => IconButton(
+        icon: Icon(Icons.close),
+        onPressed: close,
+      ),
+      body: (_) => Text('kenobi'),
+      child: (open) => TextButton(
+        child: Text('open me up'),
+        onPressed: open,
+      ),
+    );
 
     return DishfulScaffold(
       title: "Recipes",
@@ -131,6 +144,7 @@ class RecipesPage extends ConsumerWidget {
       body: (_) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          modal,
           filtersList,
           Container(height: 25),
           Expanded(
