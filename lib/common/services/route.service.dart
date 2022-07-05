@@ -5,6 +5,7 @@ import 'package:dishful/pages/profile/profile.widget.dart';
 import 'package:dishful/pages/recipes/recipes.widget.dart';
 import 'package:dishful/pages/recipe/recipe.widget.dart';
 import 'package:dishful/pages/auth/auth.widget.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
@@ -39,7 +40,16 @@ final _router = GoRouter(
       builder: (context, state) {
         final recipeId = state.params['recipeId']!;
         final recipe = state.extra as Recipe?;
-        return RecipePage(recipeId, initialRecipe: recipe);
+
+        /// TODO: this is never passed... we need to check shared preferences
+        /// or some other local data store to know what the last opened iteration
+        /// id was, and pick that. If none, just fetch all iterations and pick the most recent.
+        final iterationId = state.params['iterationId'];
+        return RecipePage(
+          recipeId,
+          initialRecipe: recipe,
+          iterationId: iterationId,
+        );
       },
     )
   ],
@@ -62,12 +72,19 @@ class RouteService {
     _router.goNamed(_Route.recipes.toString());
   }
 
-  static void goRecipe(String recipeId, {Recipe? recipe}) {
+  static void goRecipe(String recipeId, {Recipe? recipe, String? iterationId}) {
     _router.goNamed(
       _Route.recipe.toString(),
-      params: {'recipeId': recipeId},
+      params: {
+        'recipeId': recipeId,
+        if (iterationId != null) 'iterationId': iterationId,
+      },
       extra: recipe,
     );
+  }
+
+  static void pop() {
+    _router.pop();
   }
 
   static RouteInformationParser<Object> get routeInformationParser =>

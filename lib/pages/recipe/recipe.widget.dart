@@ -1,3 +1,5 @@
+import 'package:animations/animations.dart';
+import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:dishful/common/data/maybe.dart';
 import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/data/strings.dart';
@@ -18,9 +20,10 @@ class RecipePage extends ConsumerWidget {
   late final AsyncValueProvider<Recipe?> recipeProvider;
   final Recipe? initialRecipe;
   final String recipeId;
+  final String? iterationId;
   final uploadPictureController = new DishfulUploadPictureController();
 
-  RecipePage(this.recipeId, {this.initialRecipe}) {
+  RecipePage(this.recipeId, {this.initialRecipe, this.iterationId}) {
     recipeProvider = oneProvider(DbService.publicDb.recipes, id: recipeId);
   }
 
@@ -38,6 +41,36 @@ class RecipePage extends ConsumerWidget {
     final picturesProvider = recipeProvider.selectFromData(
       (data) => data?.pictures,
       initialValue: initialRecipe,
+    );
+
+    final iterationsDropdown = OpenContainer(
+      closedElevation: 0,
+      closedBuilder: (context, open) => Container(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.fork_right),
+            Container(width: 8),
+            Text(iterationId ?? 'Iteration 1', style: context.bodySmall),
+            Spacer(),
+            Icon(Icons.expand_more),
+          ],
+        ),
+      ),
+      openBuilder: (context, close) => DishfulScaffold(
+        title: iterationId ?? 'Iteration 1',
+        subtitle: 'yeety 2',
+        leading: (_) => DishfulIconButton(
+          icon: Icon(Icons.close),
+          onPressed: close,
+        ),
+        body: (_) => Text('yeet body'),
+      ),
     );
 
     final uploadPicture = Consumer(
@@ -132,6 +165,7 @@ class RecipePage extends ConsumerWidget {
       body: (isEditing) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          iterationsDropdown,
           if (isEditing) uploadPicture else picture,
           Expanded(child: Iterations(recipeId)),
         ],
