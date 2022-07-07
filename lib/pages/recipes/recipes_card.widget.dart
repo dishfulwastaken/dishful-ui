@@ -2,6 +2,7 @@ import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:dishful/common/data/maybe.dart';
 import 'package:dishful/common/data/strings.dart';
 import 'package:dishful/common/domain/recipe.dart';
+import 'package:dishful/common/services/preferences.service.dart';
 import 'package:dishful/common/services/route.service.dart';
 import 'package:dishful/common/widgets/pictures/dishful_blur_hash_picture.widget.dart';
 import 'package:dishful/common/widgets/pictures/dishful_picture.widget.dart';
@@ -17,7 +18,13 @@ class RecipesCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => RouteService.goRecipe(_recipe.id, recipe: _recipe),
+      onTap: () => RouteService.goRecipe(
+        _recipe.id,
+        recipe: _recipe,
+        iterationId: PreferencesService.getLastOpenedIteration(
+          recipeId: _recipe.id,
+        ),
+      ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(14),
         child: ConstrainedBox(

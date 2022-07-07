@@ -2,7 +2,6 @@ part of db;
 
 class _HiveBoxName {
   static const _base = 'dishful_hive_db';
-  static const subscriptions = '${_base}_subscriptions';
   static const recipes = '${_base}_recipes';
   static const iterations = '${_base}_iterations';
 }

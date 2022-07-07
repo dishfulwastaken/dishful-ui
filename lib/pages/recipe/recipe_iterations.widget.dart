@@ -1,40 +1,181 @@
+import 'package:animations/animations.dart';
+import 'package:awesome_extensions/awesome_extensions.dart';
+import 'package:dishful/common/data/maybe.dart';
 import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/domain/iteration.dart';
+import 'package:dishful/common/domain/recipe.dart';
 import 'package:dishful/common/services/db.service.dart';
+import 'package:dishful/common/services/preferences.service.dart';
+import 'package:dishful/common/services/route.service.dart';
 import 'package:dishful/common/widgets/dishful_empty.widget.dart';
+import 'package:dishful/common/widgets/dishful_icon_button.widget.dart';
+import 'package:dishful/common/widgets/dishful_scaffold.widget.dart';
 import 'package:dishful/pages/recipe/recipe_iterations_card.widget.dart';
+import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class Iterations extends ConsumerWidget {
-  late final AsyncValueProvider<List<Iteration>> recipeIterationsProvider;
+  final String recipeId;
+  final Recipe? initialRecipe;
+  final AsyncValue<Iteration?> iterationValue;
+  final AsyncValueProvider<List<Iteration>> iterationsProvider;
+  final StateProvider<String?> selectedIterationIdProvider;
 
-  Iterations(String id) {
-    recipeIterationsProvider = allProvider(
-      DbService.publicDb.iterations(id),
+  Iterations(
+    this.recipeId,
+    this.initialRecipe,
+    this.iterationValue, {
+    required this.iterationsProvider,
+    required this.selectedIterationIdProvider,
+  });
+
+  Future<void> selectIteration(WidgetRef ref, String iterationId) async {
+    await PreferencesService.setLastOpenedIteration(
+      recipeId: recipeId,
+      lastOpenedIterationId: iterationId,
+    );
+    ref.set(selectedIterationIdProvider, iterationId);
+  }
+
+  Widget closedBuilder(BuildContext context, void Function() open) {
+    final text = iterationValue.toWidget(
+      loading: Text('Loading...', style: context.bodySmall),
+      data: (iteration) => Text(
+        iteration?.title ?? 'Select an iteration',
+        style: context.bodySmall,
+      ),
+    );
+
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.fork_right),
+          Container(width: 8),
+          text,
+          Spacer(),
+          Icon(Icons.expand_more),
+        ],
+      ),
+    );
+  }
+
+  Widget openBuilder(
+    BuildContext context,
+    void Function() close,
+    String? iterationId,
+  ) {
+    final title = iterationValue.whenData(
+      (iteration) => iteration?.title ?? 'Select an iteration',
+    );
+    final createdAt = iterationValue.whenData(
+      (iteration) => iteration?.createdAt,
+    );
+    final changes = iterationValue.whenData(
+      (iteration) => iteration?.changes,
+    );
+    final hasSelectedIteration = iterationValue.valueOrNull != null;
+
+    return DishfulScaffold(
+      title: title.valueOrNull ?? 'No iteration selected',
+      subtitle: createdAt.valueOrNull?.toString(),
+      leading: (_) => DishfulIconButton(
+        icon: Icon(Icons.close),
+        onPressed: close,
+      ),
+      body: (_) {
+        final changesList = Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Changes', style: context.bodySmall),
+            Container(height: 4),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: changes.valueOrNull
+                      ?.map((change) => Text(change.id))
+                      .toList() ??
+                  [],
+            )
+          ],
+        );
+        final otherIterationsList = Consumer(
+          builder: (context, ref, child) {
+            final iterationsValue = ref.watch(iterationsProvider);
+
+            return iterationsValue.toWidget(data: (iterations) {
+              final otherIterations = iterations.where(
+                (iteration) => iteration.id != iterationId,
+              );
+              final emptyIterations = DishfulEmpty(
+                subject: 'iteration',
+                onPressed: () => print('whatever'),
+              );
+
+              return iterations.isEmpty
+                  ? emptyIterations
+                  : Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (hasSelectedIteration)
+                          Text(
+                            'Select a different iteration',
+                            style: context.bodySmall,
+                          ),
+                        Container(height: 4),
+                        otherIterations.isEmpty
+                            ? emptyIterations
+                            : Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: otherIterations
+                                    .map(
+                                      (iteration) => TextButton(
+                                        child: Text(iteration.id),
+                                        onPressed: () {
+                                          selectIteration(ref, iteration.id);
+                                          RouteService.goRecipe(
+                                            recipeId,
+                                            recipe: initialRecipe,
+                                            iterationId: iterationId,
+                                          );
+                                          close();
+                                        },
+                                      ),
+                                    )
+                                    .toList(),
+                              )
+                      ],
+                    );
+            });
+          },
+        );
+
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (hasSelectedIteration) changesList,
+            otherIterationsList
+          ],
+        );
+      },
     );
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final recipeIterationsValue = ref.watch(recipeIterationsProvider);
+    final iterationId = ref.watch(selectedIterationIdProvider);
 
-    return recipeIterationsValue.toWidget(
-      data: (recipeIterations) {
-        final recipeIterationsList = recipeIterations.isEmpty
-            ? DishfulEmpty(subject: "iteration", onPressed: () {})
-            : ListView.builder(
-                itemCount: recipeIterations.length,
-                itemBuilder: (context, index) {
-                  final recipeIteration = recipeIterations[index];
-                  return IterationsCard(recipeIteration);
-                },
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-              );
-
-        return recipeIterationsList;
-      },
+    return OpenContainer(
+      closedElevation: 0,
+      closedBuilder: (context, state) => closedBuilder(context, state),
+      openBuilder: (context, state) => openBuilder(context, state, iterationId),
     );
   }
 }

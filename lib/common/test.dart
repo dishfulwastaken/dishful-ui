@@ -54,6 +54,7 @@ Iteration randomIteration(String recipeId, String parentId) => Iteration(
       parentId: parentId,
       changes: [],
       reviews: [],
+      title: f.sport.name(),
     );
 
 Ingredient get randomIngredient => Ingredient(

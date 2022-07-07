@@ -1,3 +1,4 @@
+import 'package:dishful/common/services/preferences.service.dart';
 import 'package:dishful/common/services/storage.service.dart';
 import 'package:dishful/common/widgets/dishful_loading.widget.dart';
 import 'package:dishful/theme/palette.dart';
@@ -16,6 +17,8 @@ class LandingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     WidgetsBinding.instance.scheduleFrameCallback((_) async {
       try {
+        await PreferencesService.init();
+
         await CloudService.init();
         await AuthService.init();
         await DbService.initPrivateDb();

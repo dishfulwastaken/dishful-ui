@@ -3,6 +3,7 @@ import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:dishful/common/data/maybe.dart';
 import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/data/strings.dart';
+import 'package:dishful/common/domain/iteration.dart';
 import 'package:dishful/common/domain/recipe.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/services/route.service.dart';
@@ -18,6 +19,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RecipePage extends ConsumerWidget {
   late final AsyncValueProvider<Recipe?> recipeProvider;
+  late final AsyncValueProvider<List<Iteration>> iterationsProvider;
+  late final StateProvider<String?> selectedIterationIdProvider;
   final Recipe? initialRecipe;
   final String recipeId;
   final String? iterationId;
@@ -25,10 +28,28 @@ class RecipePage extends ConsumerWidget {
 
   RecipePage(this.recipeId, {this.initialRecipe, this.iterationId}) {
     recipeProvider = oneProvider(DbService.publicDb.recipes, id: recipeId);
+    iterationsProvider = allProvider(DbService.publicDb.iterations(recipeId));
+    selectedIterationIdProvider = StateProvider((_) => iterationId);
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final selectedIterationId = ref.watch(selectedIterationIdProvider);
+    final iterationProvider = iterationsProvider.selectFromData(
+      (data) => data.maybeSingleWhere(
+        (iteration) => iteration.id == selectedIterationId,
+      ),
+    );
+    final iterationValue = ref.watch(iterationProvider);
+
+    final iterations = Iterations(
+      recipeId,
+      initialRecipe,
+      iterationValue,
+      iterationsProvider: iterationsProvider,
+      selectedIterationIdProvider: selectedIterationIdProvider,
+    );
+
     final titleProvider = recipeProvider.selectFromData(
       (data) => data?.name,
       initialValue: initialRecipe,
@@ -41,36 +62,6 @@ class RecipePage extends ConsumerWidget {
     final picturesProvider = recipeProvider.selectFromData(
       (data) => data?.pictures,
       initialValue: initialRecipe,
-    );
-
-    final iterationsDropdown = OpenContainer(
-      closedElevation: 0,
-      closedBuilder: (context, open) => Container(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(4),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.fork_right),
-            Container(width: 8),
-            Text(iterationId ?? 'Iteration 1', style: context.bodySmall),
-            Spacer(),
-            Icon(Icons.expand_more),
-          ],
-        ),
-      ),
-      openBuilder: (context, close) => DishfulScaffold(
-        title: iterationId ?? 'Iteration 1',
-        subtitle: 'yeety 2',
-        leading: (_) => DishfulIconButton(
-          icon: Icon(Icons.close),
-          onPressed: close,
-        ),
-        body: (_) => Text('yeet body'),
-      ),
     );
 
     final uploadPicture = Consumer(
@@ -165,9 +156,9 @@ class RecipePage extends ConsumerWidget {
       body: (isEditing) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          iterationsDropdown,
+          iterations,
           if (isEditing) uploadPicture else picture,
-          Expanded(child: Iterations(recipeId)),
+          Expanded(child: Container()),
         ],
       ),
     );

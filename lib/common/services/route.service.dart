@@ -1,4 +1,5 @@
 import 'package:dishful/common/domain/recipe.dart';
+import 'package:dishful/common/services/preferences.service.dart';
 import 'package:dishful/pages/error/error.widget.dart';
 import 'package:dishful/pages/landing/landing.widget.dart';
 import 'package:dishful/pages/profile/profile.widget.dart';
@@ -9,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
-enum _Route { landing, auth, profile, recipes, recipe }
+enum _Route { landing, auth, profile, recipes, recipe, iteration }
 
 final _router = GoRouter(
   errorBuilder: (context, state) => ErrorPage(error: state.error!),
@@ -35,16 +36,36 @@ final _router = GoRouter(
       builder: (context, state) => RecipesPage(),
     ),
     GoRoute(
-      name: _Route.recipe.toString(),
-      path: '/recipes/:recipeId',
+        name: _Route.recipe.toString(),
+        path: '/recipes/:recipeId',
+        builder: (context, state) {
+          final recipeId = state.params['recipeId']!;
+          final recipe = state.extra as Recipe?;
+
+          return RecipePage(
+            recipeId,
+            initialRecipe: recipe,
+            iterationId: null,
+          );
+        },
+        redirect: (state) {
+          final recipeId = state.params['recipeId']!;
+          final lastOpenedIterationId =
+              PreferencesService.getLastOpenedIteration(recipeId: recipeId);
+
+          if (lastOpenedIterationId != null)
+            return '/recipes/$recipeId/iteration/$lastOpenedIterationId';
+
+          return null;
+        }),
+    GoRoute(
+      name: _Route.iteration.toString(),
+      path: '/recipes/:recipeId/iteration/:iterationId',
       builder: (context, state) {
         final recipeId = state.params['recipeId']!;
         final recipe = state.extra as Recipe?;
-
-        /// TODO: this is never passed... we need to check shared preferences
-        /// or some other local data store to know what the last opened iteration
-        /// id was, and pick that. If none, just fetch all iterations and pick the most recent.
         final iterationId = state.params['iterationId'];
+
         return RecipePage(
           recipeId,
           initialRecipe: recipe,
@@ -73,12 +94,17 @@ class RouteService {
   }
 
   static void goRecipe(String recipeId, {Recipe? recipe, String? iterationId}) {
+    final routeName = iterationId != null
+        ? _Route.iteration.toString()
+        : _Route.recipe.toString();
+    final params = {
+      'recipeId': recipeId,
+      if (iterationId != null) 'iterationId': iterationId,
+    };
+
     _router.goNamed(
-      _Route.recipe.toString(),
-      params: {
-        'recipeId': recipeId,
-        if (iterationId != null) 'iterationId': iterationId,
-      },
+      routeName,
+      params: params,
       extra: recipe,
     );
   }

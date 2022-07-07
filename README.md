@@ -101,7 +101,7 @@ Let's discuss some specific scenarios:
 
   - **Premium user navigates Recipes -> Recipe**<br />
     On the recipes page we should be streaming all of the recipe data. Once we try navigating into a specific recipe, we should:
-      - Pause the stream of all recipes
+      - Stop the stream of all recipes
       - Pass the latest recipe data corresponding to the clicked recipe on to the recipe page
       - Display the recipe page initially with the latest recipe data from previous step
       - Begin streaming this recipe data

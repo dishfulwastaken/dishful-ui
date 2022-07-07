@@ -14,7 +14,7 @@ extension WidgetRefExtension on WidgetRef {
   }
 }
 
-extension SelectFromDataExtension<T> on ProviderBase<AsyncValue<T>> {
+extension SelectFromDataExtension<T> on AsyncValueProvider<T> {
   ProviderListenable<AsyncValue<U>> selectFromData<U>(
     U Function(T) selector, {
     T? initialValue,
