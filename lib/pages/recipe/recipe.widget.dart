@@ -9,13 +9,16 @@ import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/services/route.service.dart';
 import 'package:dishful/common/test.dart';
 import 'package:dishful/common/widgets/dishful_icon_button.widget.dart';
+import 'package:dishful/common/widgets/dishful_icon_text.widget.dart';
 import 'package:dishful/common/widgets/dishful_menu.widget.dart';
 import 'package:dishful/common/widgets/dishful_scaffold.widget.dart';
 import 'package:dishful/common/widgets/pictures/dishful_picture.widget.dart';
 import 'package:dishful/common/widgets/pictures/dishful_upload_picture.widget.dart';
 import 'package:dishful/pages/recipe/recipe_iterations.widget.dart';
+import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tab_container/tab_container.dart';
 
 class RecipePage extends ConsumerWidget {
   late final AsyncValueProvider<Recipe?> recipeProvider;
@@ -31,6 +34,20 @@ class RecipePage extends ConsumerWidget {
     iterationsProvider = allProvider(DbService.publicDb.iterations(recipeId));
     selectedIterationIdProvider = StateProvider((_) => iterationId);
   }
+
+  Widget buildIconTextButton({
+    required String text,
+    required IconData iconData,
+    required void Function() onPressed,
+  }) =>
+      TextButton(
+        onPressed: onPressed,
+        child: DishfulIconText(
+          text: text,
+          iconData: iconData,
+          stretch: false,
+        ),
+      );
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -62,6 +79,53 @@ class RecipePage extends ConsumerWidget {
     final picturesProvider = recipeProvider.selectFromData(
       (data) => data?.pictures,
       initialValue: initialRecipe,
+    );
+    final instructionsProvider = recipeProvider.selectFromData(
+      (data) => data?.instructions,
+      initialValue: initialRecipe,
+    );
+    final ingredientsProvider = recipeProvider.selectFromData(
+      (data) => data?.ingredients,
+      initialValue: initialRecipe,
+    );
+
+    final ingredientsTab = Consumer(
+      builder: (context, ref, child) {
+        final ingredientsValue = ref.watch(ingredientsProvider);
+
+        return ingredientsValue.toWidget(
+          data: (ingredients) => ingredients!.isEmpty
+              ? Text('No ingredients').paddingAll(20)
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: ingredients
+                      .asMap()
+                      .map((index, ingredient) => MapEntry(
+                          index, Text("${index + 1}) ${ingredient.name}")))
+                      .values
+                      .toList(),
+                ),
+        );
+      },
+    );
+    final instructionsTab = Consumer(
+      builder: (context, ref, child) {
+        final instructionsValue = ref.watch(instructionsProvider);
+
+        return instructionsValue.toWidget(
+          data: (instructions) => instructions!.isEmpty
+              ? Text('No instructions').paddingAll(20)
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: instructions
+                      .asMap()
+                      .map((index, ingredient) => MapEntry(index,
+                          Text("${index + 1}) ${ingredient.description}")))
+                      .values
+                      .toList(),
+                ),
+        );
+      },
     );
 
     final uploadPicture = Consumer(
@@ -153,12 +217,49 @@ class RecipePage extends ConsumerWidget {
         await uploadPictureController.save();
         ref.refresh(recipeProvider);
       },
-      body: (isEditing) => Column(
-        mainAxisSize: MainAxisSize.min,
+      body: (isEditing) => ListView(
+        shrinkWrap: true,
         children: [
           iterations,
+          Container(height: 12),
           if (isEditing) uploadPicture else picture,
-          Expanded(child: Container()),
+          Container(height: 12),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: [
+                  buildIconTextButton(
+                    text: '4',
+                    iconData: Icons.group,
+                    onPressed: () {},
+                  ),
+                  buildIconTextButton(
+                    text: '25 min',
+                    iconData: Icons.timer,
+                    onPressed: () {},
+                  ),
+                  buildIconTextButton(
+                    text: '2.8',
+                    iconData: Icons.star,
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+              Container(height: 12),
+              IntrinsicHeight(
+                child: TabContainer(
+                  color: Colors.white,
+                  radius: 6,
+                  tabs: ['Ingredients', 'Instructions'],
+                  children: [ingredientsTab, instructionsTab],
+                ),
+              ),
+              Container(height: 12),
+            ],
+          ),
         ],
       ),
     );

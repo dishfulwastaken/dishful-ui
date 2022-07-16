@@ -48,6 +48,7 @@ dependencies:
   modal_bottom_sheet: ^2.0.1
   parallax_animation: ^0.0.3
   blobs: ^2.0.0
+  tab_container: ^2.0.0
 
   octo_image: ^1.0.1
   cached_network_image: ^3.2.0
