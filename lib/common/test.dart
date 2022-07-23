@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:dishful/common/data/units.dart';
 import 'package:dishful/common/domain/ingredient.dart';
 import 'package:dishful/common/domain/iteration.dart';
 import 'package:dishful/common/domain/recipe.dart';
@@ -40,7 +41,7 @@ Recipe get randomRecipe => Recipe(
       pictures: [],
       cookTime: randomDuration,
       prepTime: randomDuration,
-      ingredients: generateAtMost(5, () => randomIngredient),
+      ingredients: generateAtMost(15, () => randomIngredient),
       instructions: generateAtMost(8, () => randomInstruction),
       serves: f.randomGenerator.integer(4, min: 1),
       updatedAt: f.date.dateTime(),
@@ -60,8 +61,17 @@ Iteration randomIteration(String recipeId, String parentId) => Iteration(
 Ingredient get randomIngredient => Ingredient(
       id: f.guid.guid(),
       name: f.food.cuisine(),
-      amount: f.randomGenerator.decimal(min: 0.1) * 10,
-      unit: f.randomGenerator.element(IngredientUnit.values),
+      amount: (f.randomGenerator.decimal(min: 0.1) * 10).roundToDouble(),
+      unit: f.randomGenerator.element(CookingUnit.values),
+      substitutes: generateAtMost(
+        2,
+        () => Ingredient(
+          id: f.guid.guid(),
+          name: f.food.cuisine(),
+          amount: (f.randomGenerator.decimal(min: 0.1) * 10).roundToDouble(),
+          unit: f.randomGenerator.element(CookingUnit.values),
+        ),
+      ),
     );
 
 Instruction get randomInstruction => Instruction(

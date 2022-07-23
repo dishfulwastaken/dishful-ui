@@ -1,3 +1,4 @@
+import 'package:dishful/common/data/units.dart';
 import 'package:dishful/common/services/db.service.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
@@ -13,27 +14,32 @@ class Ingredient extends Serializable {
   final String id;
   final String name;
   final double amount;
-  final IngredientUnit unit;
+  final CookingUnit unit;
 
-  /// Each substitute may require multiple ingredients to be replaced,
-  /// e.g. 1 cup of milk -> [[1 cup water, 1 tbsp malt], [1 cup oat milk]]
   @IngredientSerializer()
-  final List<List<Ingredient>>? substitutes;
+  final List<Ingredient> substitutes;
 
   Ingredient({
     required this.id,
     required this.name,
     required this.amount,
     required this.unit,
-    this.substitutes,
+    this.substitutes = const [],
   });
 
   Ingredient.create({
     required this.name,
     required this.amount,
     required this.unit,
-    this.substitutes,
+    this.substitutes = const [],
   }) : id = uuid.v1();
+
+  String toString() {
+    final isPlural = amount != 1;
+    final pluralizedUnit = isPlural ? unit.plural : unit.name;
+
+    return "$amount ${pluralizedUnit} of $name";
+  }
 }
 
 class IngredientSerializer extends Serializer<Ingredient> {
@@ -47,5 +53,3 @@ class NullableIngredientSerializer extends Serializer<Ingredient?> {
   Ingredient? fromJson(Json json) => _$IngredientFromJson(json);
   Json toJson(Ingredient? data) => data == null ? {} : _$IngredientToJson(data);
 }
-
-enum IngredientUnit { l, ml, kg, g, tsp, tbsp, cup, ounce }

@@ -98,12 +98,25 @@ class RecipePage extends ConsumerWidget {
               ? Text('No ingredients').paddingAll(20)
               : Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: ingredients
-                      .asMap()
-                      .map((index, ingredient) => MapEntry(
-                          index, Text("${index + 1}) ${ingredient.name}")))
-                      .values
-                      .toList(),
+                  children: ingredients.map((ingredient) {
+                    /// [ListTile] is not computing the correct height, so
+                    /// we force a dynamic calculation with [IntrinsicHeight].
+                    return IntrinsicHeight(
+                      child: ListTile(
+                        // leading: Text("$number:", style: context.labelMedium),
+                        title: Text(
+                          ingredient.toString(),
+                          style: context.bodyMedium,
+                        ),
+                        subtitle: ingredient.substitutes.isNotEmpty
+                            ? Text(
+                                "${ingredient.substitutes.length} substitute(s) available",
+                                style: context.labelMedium,
+                              )
+                            : null,
+                      ),
+                    );
+                  }).toList(),
                 ),
         );
       },
@@ -119,8 +132,8 @@ class RecipePage extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: instructions
                       .asMap()
-                      .map((index, ingredient) => MapEntry(index,
-                          Text("${index + 1}) ${ingredient.description}")))
+                      .map((index, instruction) => MapEntry(index,
+                          Text("${index + 1}) ${instruction.description}")))
                       .values
                       .toList(),
                 ),
@@ -217,50 +230,52 @@ class RecipePage extends ConsumerWidget {
         await uploadPictureController.save();
         ref.refresh(recipeProvider);
       },
-      body: (isEditing) => ListView(
-        shrinkWrap: true,
-        children: [
-          iterations,
-          Container(height: 12),
-          if (isEditing) uploadPicture else picture,
-          Container(height: 12),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                children: [
-                  buildIconTextButton(
-                    text: '4',
-                    iconData: Icons.group,
-                    onPressed: () {},
-                  ),
-                  buildIconTextButton(
-                    text: '25 min',
-                    iconData: Icons.timer,
-                    onPressed: () {},
-                  ),
-                  buildIconTextButton(
-                    text: '2.8',
-                    iconData: Icons.star,
-                    onPressed: () {},
-                  ),
-                ],
-              ),
-              Container(height: 12),
-              IntrinsicHeight(
-                child: TabContainer(
-                  color: Colors.white,
-                  radius: 6,
-                  tabs: ['Ingredients', 'Instructions'],
-                  children: [ingredientsTab, instructionsTab],
+      body: (isEditing) => SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            iterations,
+            Container(height: 12),
+            if (isEditing) uploadPicture else picture,
+            Container(height: 12),
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: [
+                buildIconTextButton(
+                  text: '4',
+                  iconData: Icons.group,
+                  onPressed: () {},
                 ),
+                buildIconTextButton(
+                  text: '25 min',
+                  iconData: Icons.timer,
+                  onPressed: () {},
+                ),
+                buildIconTextButton(
+                  text: '2.8',
+                  iconData: Icons.star,
+                  onPressed: () {},
+                ),
+              ],
+            ),
+            Container(height: 12),
+            IntrinsicHeight(
+              child: TabContainer(
+                color: Colors.white,
+                radius: 6,
+                childPadding: const EdgeInsets.all(12.0),
+                selectedTextStyle: context.bodyMedium!.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+                unselectedTextStyle: context.bodyMedium,
+                tabs: ['Ingredients', 'Instructions'],
+                children: [ingredientsTab, instructionsTab],
               ),
-              Container(height: 12),
-            ],
-          ),
-        ],
+            ),
+            Container(height: 800),
+          ],
+        ),
       ),
     );
   }
