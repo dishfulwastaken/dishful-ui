@@ -1,5 +1,5 @@
-import 'package:animations/animations.dart';
 import 'package:awesome_extensions/awesome_extensions.dart';
+import 'package:dishful/common/data/mapWithIndex.dart';
 import 'package:dishful/common/data/maybe.dart';
 import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/data/strings.dart';
@@ -15,7 +15,6 @@ import 'package:dishful/common/widgets/dishful_scaffold.widget.dart';
 import 'package:dishful/common/widgets/pictures/dishful_picture.widget.dart';
 import 'package:dishful/common/widgets/pictures/dishful_upload_picture.widget.dart';
 import 'package:dishful/pages/recipe/recipe_iterations.widget.dart';
-import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tab_container/tab_container.dart';
@@ -103,7 +102,7 @@ class RecipePage extends ConsumerWidget {
                     /// we force a dynamic calculation with [IntrinsicHeight].
                     return IntrinsicHeight(
                       child: ListTile(
-                        // leading: Text("$number:", style: context.labelMedium),
+                        contentPadding: const EdgeInsets.all(2),
                         title: Text(
                           ingredient.toString(),
                           style: context.bodyMedium,
@@ -130,12 +129,30 @@ class RecipePage extends ConsumerWidget {
               ? Text('No instructions').paddingAll(20)
               : Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: instructions
-                      .asMap()
-                      .map((index, instruction) => MapEntry(index,
-                          Text("${index + 1}) ${instruction.description}")))
-                      .values
-                      .toList(),
+                  children: instructions.mapWithIndex(
+                    (index, instruction) {
+                      final number = index + 1;
+
+                      /// [ListTile] is not computing the correct height, so
+                      /// we force a dynamic calculation with [IntrinsicHeight].
+                      return IntrinsicHeight(
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(4),
+                          leading: Text("$number:", style: context.labelMedium),
+                          title: Text(
+                            instruction.title.toString(),
+                            style: context.bodyMedium,
+                          ),
+                          subtitle: instruction.description != null
+                              ? Text(
+                                  instruction.description!,
+                                  style: context.labelMedium,
+                                )
+                              : null,
+                        ),
+                      );
+                    },
+                  ),
                 ),
         );
       },
@@ -264,7 +281,10 @@ class RecipePage extends ConsumerWidget {
               child: TabContainer(
                 color: Colors.white,
                 radius: 6,
-                childPadding: const EdgeInsets.all(12.0),
+                childPadding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 8,
+                ),
                 selectedTextStyle: context.bodyMedium!.copyWith(
                   fontWeight: FontWeight.bold,
                 ),

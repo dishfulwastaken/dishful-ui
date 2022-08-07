@@ -11,24 +11,18 @@ final uuid = Uuid();
 @JsonSerializable()
 class Instruction extends Serializable {
   final String id;
-  final int position;
-  final String? title;
-  final String description;
-  final Duration? timer;
+  final String title;
+  final String? description;
 
   Instruction({
     required this.id,
-    required this.position,
-    this.title,
-    required this.description,
-    this.timer,
+    required this.title,
+    this.description,
   });
 
   Instruction.create({
-    required this.position,
-    this.title,
-    required this.description,
-    this.timer,
+    required this.title,
+    this.description,
   }) : id = uuid.v1();
 }
 

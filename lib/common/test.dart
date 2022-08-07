@@ -42,7 +42,7 @@ Recipe get randomRecipe => Recipe(
       cookTime: randomDuration,
       prepTime: randomDuration,
       ingredients: generateAtMost(15, () => randomIngredient),
-      instructions: generateAtMost(8, () => randomInstruction),
+      instructions: generateAtMost(12, () => randomInstruction),
       serves: f.randomGenerator.integer(4, min: 1),
       updatedAt: f.date.dateTime(),
     );
@@ -76,8 +76,8 @@ Ingredient get randomIngredient => Ingredient(
 
 Instruction get randomInstruction => Instruction(
       id: f.guid.guid(),
-      position: f.randomGenerator.integer(100),
-      description: f.lorem.sentence(),
+      title: f.lorem.words(3).join(' '),
+      description: f.randomGenerator.boolean() ? f.lorem.sentence() : null,
     );
 
 void main() async {
