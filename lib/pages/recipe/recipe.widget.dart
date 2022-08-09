@@ -293,7 +293,7 @@ class RecipePage extends ConsumerWidget {
                 children: [ingredientsTab, instructionsTab],
               ),
             ),
-            Container(height: 800),
+            Container(height: 80),
           ],
         ),
       ),

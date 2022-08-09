@@ -1,4 +1,5 @@
-import 'package:dishful/pages/auth/logo.widget.dart';
+import 'package:awesome_extensions/awesome_extensions.dart';
+import 'package:dishful/common/widgets/dishful_logo.widget.dart';
 import 'package:dishful/pages/auth/sign-in.widget.dart';
 import 'package:dishful/pages/auth/sign-up.widget.dart';
 import 'package:dishful/theme/palette.dart';
@@ -24,7 +25,8 @@ class AuthPage extends ConsumerWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Logo(),
+            DishfulLogo(size: 180, placeholderColor: Palette.primaryDark),
+            Text("Dishful", style: context.headlineMedium).paddingOnly(top: 6),
             Spacer(),
             ConstrainedBox(
               constraints: BoxConstraints(maxHeight: 412, maxWidth: 800),

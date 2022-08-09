@@ -4,6 +4,7 @@ import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/widgets/dishful_drawer.widget.dart';
 import 'package:dishful/common/widgets/dishful_icon_button.widget.dart';
+import 'package:dishful/common/widgets/dishful_logo.widget.dart';
 import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -87,6 +88,10 @@ class DishfulScaffold extends ConsumerWidget {
       icon: Icon(Icons.close),
     );
 
+    /// Ensures there is always a widget on the right to center
+    /// the [DishfulLogo].
+    final rightPlaceholder = Container(width: 24);
+
     final _title = buildTitle(context);
     final _subtitle = buildSubtitle(context);
 
@@ -106,10 +111,16 @@ class DishfulScaffold extends ConsumerWidget {
                     cancelButton
                   else if (leading != null)
                     leading!(context),
+                  DishfulLogo(
+                    size: 38,
+                    placeholderColor: Palette.primaryLight,
+                  ),
                   if (isEditing)
                     saveButton
                   else if (action != null)
                     action!(context, setIsEditing)
+                  else
+                    rightPlaceholder
                 ],
               ),
               Container(height: 20),
