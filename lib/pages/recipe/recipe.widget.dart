@@ -270,8 +270,13 @@ class RecipePage extends ConsumerWidget {
                   onPressed: () {},
                 ),
                 buildIconTextButton(
-                  text: '2.8',
-                  iconData: Icons.star,
+                  text: 'Hot',
+                  iconData: Icons.fireplace,
+                  onPressed: () {},
+                ),
+                buildIconTextButton(
+                  text: 'Vegan',
+                  iconData: Icons.grass,
                   onPressed: () {},
                 ),
               ],

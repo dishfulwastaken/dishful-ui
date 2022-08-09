@@ -19,7 +19,6 @@ class Recipe extends Serializable {
   final String id;
   final String name;
   final String description;
-  final String? inspiration;
   final int iterationCount;
   final Status status;
   final Map<String, Role> roles;
@@ -53,7 +52,6 @@ class Recipe extends Serializable {
     required this.roles,
     required this.name,
     required this.description,
-    this.inspiration,
     required this.iterationCount,
     required this.status,
     required this.createdAt,
@@ -70,7 +68,6 @@ class Recipe extends Serializable {
     this.diets,
     required this.name,
     required this.description,
-    this.inspiration,
   })  : id = uuid.v1(),
         roles = {AuthService.currentUser.uid: Role.owner},
         iterationCount = 0,

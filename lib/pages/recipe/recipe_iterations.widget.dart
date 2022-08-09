@@ -1,17 +1,13 @@
 import 'package:animations/animations.dart';
 import 'package:awesome_extensions/awesome_extensions.dart';
-import 'package:dishful/common/data/maybe.dart';
 import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/domain/iteration.dart';
 import 'package:dishful/common/domain/recipe.dart';
-import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/services/preferences.service.dart';
 import 'package:dishful/common/services/route.service.dart';
 import 'package:dishful/common/widgets/dishful_empty.widget.dart';
 import 'package:dishful/common/widgets/dishful_icon_button.widget.dart';
 import 'package:dishful/common/widgets/dishful_scaffold.widget.dart';
-import 'package:dishful/pages/recipe/recipe_iterations_card.widget.dart';
-import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

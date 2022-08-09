@@ -17,6 +17,7 @@ class Review extends Serializable {
   final String? review;
   @PictureSerializer()
   final List<Picture> pictures;
+  final DateTime createdAt;
 
   Review({
     required this.id,
@@ -24,6 +25,7 @@ class Review extends Serializable {
     required this.rating,
     this.review,
     required this.pictures,
+    required this.createdAt,
   });
 
   Review.create({
@@ -31,7 +33,8 @@ class Review extends Serializable {
     required this.rating,
     this.review,
   })  : id = uuid.v1(),
-        pictures = [];
+        pictures = [],
+        createdAt = DateTime.now();
 }
 
 class ReviewSerializer extends Serializer<Review> {
