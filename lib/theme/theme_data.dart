@@ -8,7 +8,7 @@ final themeData = ThemeData(
   primaryColorLight: Palette.primaryLight,
   secondaryHeaderColor: Palette.secondary,
   scaffoldBackgroundColor: Palette.white,
-  canvasColor: Colors.transparent,
+  canvasColor: Palette.white,
   backgroundColor: Palette.white,
   splashColor: Palette.primaryLight,
   textTheme: TextTheme(
