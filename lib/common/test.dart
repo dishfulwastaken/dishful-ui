@@ -34,7 +34,6 @@ Recipe get randomRecipe => Recipe(
       description: f.lorem
           .sentences(f.randomGenerator.integer(4, min: 1))
           .reduce((acc, cur) => "$acc $cur"),
-      inspiration: f.lorem.sentence(),
       iterationCount: 0,
       status: f.randomGenerator.element(Status.values),
       createdAt: f.date.dateTime(),

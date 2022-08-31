@@ -75,6 +75,10 @@ class RecipePage extends ConsumerWidget {
           "${data?.iterationCount} Iterations  |  ${data?.status.name.toTitleCase()}",
       initialValue: initialRecipe,
     );
+    final descriptionProvider = recipeProvider.selectFromData(
+      (data) => data?.description,
+      initialValue: initialRecipe,
+    );
     final picturesProvider = recipeProvider.selectFromData(
       (data) => data?.pictures,
       initialValue: initialRecipe,
@@ -196,6 +200,17 @@ class RecipePage extends ConsumerWidget {
       },
     );
 
+    final description = Consumer(
+      builder: (context, ref, child) {
+        final descriptionValue = ref.watch(descriptionProvider);
+
+        return descriptionValue.toWidget(
+          data: (_description) =>
+              _description == null ? Container() : Text(_description),
+        );
+      },
+    );
+
     return DishfulScaffold(
       titleProvider: titleProvider,
       subtitleProvider: subtitleProvider,
@@ -251,9 +266,11 @@ class RecipePage extends ConsumerWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            iterations,
+            description,
             Container(height: 12),
             if (isEditing) uploadPicture else picture,
+            Container(height: 12),
+            iterations,
             Container(height: 12),
             Wrap(
               spacing: 10,
