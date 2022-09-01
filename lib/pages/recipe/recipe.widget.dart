@@ -266,11 +266,14 @@ class RecipePage extends ConsumerWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            description,
+            iterations,
             Container(height: 12),
             if (isEditing) uploadPicture else picture,
             Container(height: 12),
-            iterations,
+            Align(
+              alignment: Alignment.topLeft,
+              child: description,
+            ),
             Container(height: 12),
             Wrap(
               spacing: 10,
