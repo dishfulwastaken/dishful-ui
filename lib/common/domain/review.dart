@@ -13,7 +13,7 @@ final uuid = Uuid();
 class Review extends Serializable {
   final String id;
   final String reviewerId;
-  final int rating;
+  final double rating;
   final String? review;
   @PictureSerializer()
   final List<Picture> pictures;

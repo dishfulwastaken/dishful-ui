@@ -30,7 +30,7 @@ class Recipe extends Serializable {
   final List<Picture> pictures;
 
   final int serves;
-  final int? spiceLevel;
+  final SpiceLevel? spiceLevel;
   final Duration cookTime;
   final Duration prepTime;
   @IngredientSerializer()
@@ -77,6 +77,7 @@ class Recipe extends Serializable {
         pictures = [];
 
   bool get isShared => roles.length > 1;
+  Duration get totalTime => cookTime + prepTime;
 
   Recipe applyChange(Change change) {
     switch (change.type) {
@@ -147,6 +148,8 @@ class RecipeSerializer extends Serializer<Recipe> {
 
 enum Status { perfected, iterating, dropped }
 
-enum Diet { none, vegetarian, vegan, gluttenFree }
+enum Diet { vegetarian, vegan, glutenFree, lactoseFree, keto, dairyFree }
 
 enum Role { owner, editor, reader, reviewer }
+
+enum SpiceLevel { mild, medium, hot, extraHot }

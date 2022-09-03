@@ -2,7 +2,6 @@ import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:dishful/common/data/mapWithIndex.dart';
 import 'package:dishful/common/data/maybe.dart';
 import 'package:dishful/common/data/providers.dart';
-import 'package:dishful/common/data/strings.dart';
 import 'package:dishful/common/domain/iteration.dart';
 import 'package:dishful/common/domain/recipe.dart';
 import 'package:dishful/common/services/db.service.dart';
@@ -17,6 +16,7 @@ import 'package:dishful/common/widgets/pictures/dishful_upload_picture.widget.da
 import 'package:dishful/pages/recipe/recipe_iterations.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:recase/recase.dart';
 import 'package:tab_container/tab_container.dart';
 
 class RecipePage extends ConsumerWidget {
@@ -72,11 +72,27 @@ class RecipePage extends ConsumerWidget {
     );
     final subtitleProvider = recipeProvider.selectFromData(
       (data) =>
-          "${data?.iterationCount} Iterations  |  ${data?.status.name.toTitleCase()}",
+          "${data?.iterationCount} Iterations  |  ${data?.status.name.titleCase}",
       initialValue: initialRecipe,
     );
     final descriptionProvider = recipeProvider.selectFromData(
       (data) => data?.description,
+      initialValue: initialRecipe,
+    );
+    final servesProvider = recipeProvider.selectFromData(
+      (data) => data?.serves,
+      initialValue: initialRecipe,
+    );
+    final timeProvider = recipeProvider.selectFromData(
+      (data) => data?.totalTime,
+      initialValue: initialRecipe,
+    );
+    final spiceLevelProvider = recipeProvider.selectFromData(
+      (data) => data?.spiceLevel,
+      initialValue: initialRecipe,
+    );
+    final dietsProvider = recipeProvider.selectFromData(
+      (data) => data?.diets,
       initialValue: initialRecipe,
     );
     final picturesProvider = recipeProvider.selectFromData(
@@ -141,7 +157,7 @@ class RecipePage extends ConsumerWidget {
                       /// we force a dynamic calculation with [IntrinsicHeight].
                       return IntrinsicHeight(
                         child: ListTile(
-                          contentPadding: const EdgeInsets.all(4),
+                          contentPadding: const EdgeInsets.fromLTRB(0, 4, 4, 4),
                           leading: Text("$number:", style: context.labelMedium),
                           title: Text(
                             instruction.title.toString(),
@@ -205,8 +221,76 @@ class RecipePage extends ConsumerWidget {
         final descriptionValue = ref.watch(descriptionProvider);
 
         return descriptionValue.toWidget(
-          data: (_description) =>
-              _description == null ? Container() : Text(_description),
+          data: (_description) => _description == null
+              ? Container()
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(_description),
+                    Container(height: 16),
+                  ],
+                ),
+        );
+      },
+    );
+
+    final serves = Consumer(
+      builder: (context, ref, child) {
+        final servesValue = ref.watch(servesProvider);
+
+        return servesValue.toWidget(
+          data: (_serves) => DishfulIconText(
+            text: '$_serves',
+            iconData: Icons.group,
+            stretch: false,
+          ),
+        );
+      },
+    );
+
+    final time = Consumer(
+      builder: (context, ref, child) {
+        final timeValue = ref.watch(timeProvider);
+
+        return timeValue.toWidget(
+          data: (_time) => DishfulIconText(
+            text: '${_time?.inMinutes} min',
+            iconData: Icons.timer,
+            stretch: false,
+          ),
+        );
+      },
+    );
+
+    final spiceLevel = Consumer(
+      builder: (context, ref, child) {
+        final spiceLevelValue = ref.watch(spiceLevelProvider);
+
+        return spiceLevelValue.toWidget(
+          data: (_spiceLevel) => _spiceLevel == null
+              ? Container()
+              : DishfulIconText(
+                  text: _spiceLevel.name.titleCase,
+                  iconData: Icons.local_fire_department,
+                  stretch: false,
+                ),
+        );
+      },
+    );
+
+    final diets = Consumer(
+      builder: (context, ref, child) {
+        final dietsValue = ref.watch(dietsProvider);
+
+        return dietsValue.toWidget(
+          data: (_diets) => _diets == null || _diets.isEmpty
+              ? Container()
+              : DishfulIconText(
+                  text: _diets.map((_diet) => _diet.name.titleCase).join(', '),
+                  iconData: Icons.eco,
+                  stretch: false,
+                ),
         );
       },
     );
@@ -265,43 +349,24 @@ class RecipePage extends ConsumerWidget {
       body: (isEditing) => SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             iterations,
             Container(height: 12),
             if (isEditing) uploadPicture else picture,
             Container(height: 12),
-            Align(
-              alignment: Alignment.topLeft,
-              child: description,
-            ),
-            Container(height: 12),
             Wrap(
               spacing: 10,
-              runSpacing: 10,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                buildIconTextButton(
-                  text: '4',
-                  iconData: Icons.group,
-                  onPressed: () {},
-                ),
-                buildIconTextButton(
-                  text: '25 min',
-                  iconData: Icons.timer,
-                  onPressed: () {},
-                ),
-                buildIconTextButton(
-                  text: 'Hot',
-                  iconData: Icons.fireplace,
-                  onPressed: () {},
-                ),
-                buildIconTextButton(
-                  text: 'Vegan',
-                  iconData: Icons.grass,
-                  onPressed: () {},
-                ),
+                serves,
+                time,
+                spiceLevel,
+                diets,
               ],
             ),
             Container(height: 12),
+            description,
             IntrinsicHeight(
               child: TabContainer(
                 color: Colors.white,

@@ -1,6 +1,5 @@
 import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:dishful/common/data/maybe.dart';
-import 'package:dishful/common/data/strings.dart';
 import 'package:dishful/common/domain/recipe.dart';
 import 'package:dishful/common/services/preferences.service.dart';
 import 'package:dishful/common/services/route.service.dart';
@@ -9,6 +8,7 @@ import 'package:dishful/common/widgets/pictures/dishful_picture.widget.dart';
 import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:parallax_animation/parallax_animation.dart';
+import 'package:recase/recase.dart';
 
 class RecipesCard extends StatelessWidget {
   final Recipe _recipe;
@@ -70,7 +70,7 @@ class RecipesCard extends StatelessWidget {
                       Text(_recipe.name, style: context.titleMedium),
                       Container(height: 10),
                       Text(
-                        "${_recipe.iterationCount} Iterations  |  ${_recipe.status.name.toTitleCase()}",
+                        "${_recipe.iterationCount} Iterations  |  ${_recipe.status.name.titleCase}",
                         style:
                             context.bodyMedium!.copyWith(color: Palette.grey),
                       ),

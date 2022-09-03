@@ -1,5 +1,4 @@
 import 'package:awesome_extensions/awesome_extensions.dart';
-import 'package:dishful/common/data/strings.dart';
 import 'package:dishful/common/widgets/forms/dishful_form_field.widget.dart';
 import 'package:dishful/common/widgets/replacements/form_builder_dropdown.dart';
 import 'package:dishful/theme/palette.dart';
@@ -8,6 +7,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart'
     hide FormBuilderDropdown;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:recase/recase.dart';
 
 enum ThemeMode { auto, light, dark }
 
@@ -60,11 +60,11 @@ class DishfulDropdownField<T extends Enum> extends ConsumerWidget
       items: values
           .map((value) => DropdownMenuItem(
                 value: value,
-                child: Text(value.name.toTitleCase()),
+                child: Text(value.name.titleCase),
               ))
           .toList(),
       validator: FormBuilderValidators.compose([
-        FormBuilderValidators.required(context),
+        FormBuilderValidators.required(),
         ...additionalValidators ?? [],
       ]),
       dropdownColor: Colors.white,

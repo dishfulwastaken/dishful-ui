@@ -6,14 +6,13 @@ import 'package:dishful/common/domain/iteration.dart';
 import 'package:dishful/common/domain/recipe.dart';
 import 'package:dishful/common/domain/instruction.dart';
 import 'package:dishful/common/services/auth.service.dart';
-import 'package:dishful/common/services/db.service.dart';
 import 'package:dishful/common/services/ingress.service.dart';
 import 'package:faker/faker.dart';
 
 final r = Random();
 final f = Faker();
 
-List<T> generateAtMost<T extends Serializable>(
+List<T> generateAtMost<T>(
   int max,
   T Function() generator,
 ) {
@@ -44,6 +43,8 @@ Recipe get randomRecipe => Recipe(
       instructions: generateAtMost(12, () => randomInstruction),
       serves: f.randomGenerator.integer(4, min: 1),
       updatedAt: f.date.dateTime(),
+      diets: generateAtMost(3, () => f.randomGenerator.element(Diet.values)),
+      spiceLevel: f.randomGenerator.element(SpiceLevel.values),
     );
 
 Iteration randomIteration(String recipeId, String parentId) => Iteration(

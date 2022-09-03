@@ -1,4 +1,3 @@
-import 'package:dishful/common/data/strings.dart';
 import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/domain/recipe.dart';
 import 'package:dishful/common/services/auth.service.dart';
@@ -17,6 +16,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart'
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:parallax_animation/parallax_animation.dart';
 import 'package:awesome_extensions/awesome_extensions.dart';
+import 'package:recase/recase.dart';
 
 final filterStatusProvider = StateProvider<Status?>((_) => null);
 
@@ -98,7 +98,7 @@ class RecipesPage extends ConsumerWidget {
           ...Status.values.map(
             (status) => FormBuilderFieldOption(
               value: status,
-              child: Text(status.name.toTitleCase()),
+              child: Text(status.name.titleCase),
             ),
           )
         ],

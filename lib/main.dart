@@ -24,6 +24,7 @@ class Dishful extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Dishful',
       theme: themeData,
+      routeInformationProvider: RouteService.routeInformationProvider,
       routeInformationParser: RouteService.routeInformationParser,
       routerDelegate: RouteService.routerDelegate,
       localizationsDelegates: [FormBuilderLocalizations.delegate],

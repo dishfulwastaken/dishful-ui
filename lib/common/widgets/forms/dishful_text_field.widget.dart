@@ -53,7 +53,7 @@ class DishfulTextField extends ConsumerWidget with DishfulFormField<String> {
         icon: Icons.email,
         obscureText: false,
         keyboardType: TextInputType.emailAddress,
-        additionalValidators: [FormBuilderValidators.email(context)],
+        additionalValidators: [FormBuilderValidators.email()],
         cursorColor: Colors.white,
         textColor: Palette.white,
         fillColor: Palette.primaryLight,
@@ -99,7 +99,7 @@ class DishfulTextField extends ConsumerWidget with DishfulFormField<String> {
       keyboardType: keyboardType,
       obscureText: obscureText,
       validator: FormBuilderValidators.compose([
-        FormBuilderValidators.required(context),
+        FormBuilderValidators.required(),
         ...additionalValidators ?? [],
       ]),
       textAlignVertical: TextAlignVertical.center,

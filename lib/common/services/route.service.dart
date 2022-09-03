@@ -116,4 +116,6 @@ class RouteService {
   static RouteInformationParser<Object> get routeInformationParser =>
       _router.routeInformationParser;
   static RouterDelegate<Object> get routerDelegate => _router.routerDelegate;
+  static RouteInformationProvider get routeInformationProvider =>
+      _router.routeInformationProvider;
 }

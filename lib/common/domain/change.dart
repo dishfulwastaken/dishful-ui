@@ -17,7 +17,7 @@ class Change extends Serializable {
   final ChangeType type;
 
   final int? newServes;
-  final int? newSpiceLevel;
+  final SpiceLevel? newSpiceLevel;
   final Duration? newCookTime;
   final Duration? newPrepTime;
   @NullableIngredientSerializer()
