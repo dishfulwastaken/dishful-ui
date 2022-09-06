@@ -33,7 +33,7 @@ class DishfulDrawer extends StatelessWidget {
           ),
           DishfulDrawerItem(
             text: "My Recipes",
-            iconData: Icons.home,
+            iconData: Icons.home_rounded,
             routeKey: DrawerRouteKey.recipes,
             onPressed: () {
               RouteService.goRecipes();
@@ -41,13 +41,13 @@ class DishfulDrawer extends StatelessWidget {
           ),
           DishfulDrawerItem(
             text: "Shared with Me",
-            iconData: Icons.group,
+            iconData: Icons.group_rounded,
             routeKey: DrawerRouteKey.sharedWithMe,
             onPressed: () {},
           ),
           DishfulDrawerItem(
             text: "Profile",
-            iconData: Icons.account_circle,
+            iconData: Icons.account_circle_rounded,
             routeKey: DrawerRouteKey.profile,
             onPressed: () {
               RouteService.goProfile();
@@ -55,13 +55,13 @@ class DishfulDrawer extends StatelessWidget {
           ),
           DishfulDrawerItem(
             text: "Preferences",
-            iconData: Icons.tune,
+            iconData: Icons.tune_rounded,
             routeKey: DrawerRouteKey.preferences,
             onPressed: () {},
           ),
           DishfulDrawerItem(
             text: "About",
-            iconData: Icons.info,
+            iconData: Icons.info_rounded,
             routeKey: DrawerRouteKey.about,
             onPressed: () {},
           ),

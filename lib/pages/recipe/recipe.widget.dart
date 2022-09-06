@@ -242,7 +242,7 @@ class RecipePage extends ConsumerWidget {
         return servesValue.toWidget(
           data: (_serves) => DishfulIconText(
             text: '$_serves',
-            iconData: Icons.group,
+            iconData: Icons.group_rounded,
             stretch: false,
           ),
         );
@@ -256,7 +256,7 @@ class RecipePage extends ConsumerWidget {
         return timeValue.toWidget(
           data: (_time) => DishfulIconText(
             text: '${_time?.inMinutes} min',
-            iconData: Icons.timer,
+            iconData: Icons.timer_rounded,
             stretch: false,
           ),
         );
@@ -272,7 +272,7 @@ class RecipePage extends ConsumerWidget {
               ? Container()
               : DishfulIconText(
                   text: _spiceLevel.name.titleCase,
-                  iconData: Icons.local_fire_department,
+                  iconData: Icons.local_fire_department_rounded,
                   stretch: false,
                 ),
         );
@@ -288,7 +288,7 @@ class RecipePage extends ConsumerWidget {
               ? Container()
               : DishfulIconText(
                   text: _diets.map((_diet) => _diet.name.titleCase).join(', '),
-                  iconData: Icons.eco,
+                  iconData: Icons.eco_rounded,
                   stretch: false,
                 ),
         );
@@ -308,23 +308,28 @@ class RecipePage extends ConsumerWidget {
         items: [
           DishfulMenuItem(
             text: "New Iteration",
-            iconData: Icons.add,
-            onTap: () {
-              DbService.publicDb
-                  .iterations(recipeId)
-                  .create(randomIteration(recipeId, recipeId));
+            iconData: Icons.add_rounded,
+            onTap: () async {
+              final recipe = ref.read(recipeProvider);
+
+              if (recipe.value != null) {
+                await DbService.publicDb
+                    .iterations(recipeId)
+                    .create(randomIteration(recipe.value!, recipeId));
+                ref.refresh(iterationsProvider);
+              }
             },
           ),
           DishfulMenuItem(
             text: "Edit",
-            iconData: Icons.edit,
+            iconData: Icons.edit_rounded,
             onTap: () {
               setIsEditing(true);
             },
           ),
           DishfulMenuItem(
             text: "Delete",
-            iconData: Icons.delete,
+            iconData: Icons.delete_rounded,
             onTap: () {
               DbService.publicDb.recipes.delete(recipeId);
               Navigator.maybePop(context);
@@ -332,12 +337,12 @@ class RecipePage extends ConsumerWidget {
           ),
           DishfulMenuItem(
             text: "Export",
-            iconData: Icons.file_download,
+            iconData: Icons.file_download_rounded,
             onTap: () {},
           ),
           DishfulMenuItem(
             text: "Sharing",
-            iconData: Icons.group,
+            iconData: Icons.group_rounded,
             onTap: () {},
           ),
         ],

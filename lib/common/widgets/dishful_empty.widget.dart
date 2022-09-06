@@ -18,7 +18,7 @@ class DishfulEmpty extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(Icons.folder_off_outlined),
+        Icon(Icons.folder_off_rounded),
         Container(height: 8),
         Text(
           "No ${subject}s found...",
@@ -30,7 +30,7 @@ class DishfulEmpty extends StatelessWidget {
           onPressed: onPressed,
           child: DishfulIconText(
             text: "New $subject",
-            iconData: Icons.add,
+            iconData: Icons.add_rounded,
             stretch: false,
           ),
         ),

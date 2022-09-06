@@ -78,14 +78,14 @@ class DishfulScaffold extends ConsumerWidget {
         if (onSave != null) onSave!();
         setIsEditing(false);
       },
-      icon: Icon(Icons.save),
+      icon: Icon(Icons.save_rounded),
     );
     final cancelButton = DishfulIconButton(
       onPressed: () async {
         if (onCancel != null) onCancel!();
         setIsEditing(false);
       },
-      icon: Icon(Icons.close),
+      icon: Icon(Icons.close_rounded),
     );
 
     /// Ensures there is always a widget on the right to center

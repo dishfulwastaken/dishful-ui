@@ -18,7 +18,7 @@ class DishfulError extends StatelessWidget {
     return ListView(
       shrinkWrap: true,
       children: [
-        Icon(Icons.error_outline),
+        Icon(Icons.error_rounded),
         Container(height: 8),
         Text(
           "Something went wrong...",

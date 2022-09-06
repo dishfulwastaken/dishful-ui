@@ -60,7 +60,7 @@ class SignIn extends ConsumerWidget {
     final signUpText = AuthTextButton(
       text: "Or sign up",
       onPressed: toSignUp,
-      rightIcon: FontAwesomeIcons.longArrowAltRight,
+      rightIcon: FontAwesomeIcons.rightLong,
     );
 
     return FormBuilder(

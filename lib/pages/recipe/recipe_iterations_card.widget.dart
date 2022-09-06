@@ -24,7 +24,7 @@ class IterationsCard extends StatelessWidget {
               final r = await FunctionsService.fetchHtml(testUrlA);
               print(r);
             },
-            icon: Icon(Icons.cloud),
+            icon: Icon(Icons.cloud_rounded),
           ),
         ],
       ),

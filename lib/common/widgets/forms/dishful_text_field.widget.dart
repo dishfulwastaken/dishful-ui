@@ -50,7 +50,7 @@ class DishfulTextField extends ConsumerWidget with DishfulFormField<String> {
   static DishfulTextField email(BuildContext context) => DishfulTextField(
         name: "email",
         hintText: "Email address",
-        icon: Icons.email,
+        icon: Icons.email_rounded,
         obscureText: false,
         keyboardType: TextInputType.emailAddress,
         additionalValidators: [FormBuilderValidators.email()],
@@ -64,7 +64,7 @@ class DishfulTextField extends ConsumerWidget with DishfulFormField<String> {
   static DishfulTextField password(BuildContext context) => DishfulTextField(
         name: "password",
         hintText: "Password",
-        icon: Icons.lock,
+        icon: Icons.lock_rounded,
         obscureText: true,
         additionalValidators: [],
         cursorColor: Colors.white,
@@ -81,7 +81,7 @@ class DishfulTextField extends ConsumerWidget with DishfulFormField<String> {
       DishfulTextField(
         name: "confirm-password",
         hintText: "Confirm Password",
-        icon: Icons.lock,
+        icon: Icons.lock_rounded,
         obscureText: true,
         additionalValidators: [passwordMatchValidator],
         cursorColor: Colors.white,

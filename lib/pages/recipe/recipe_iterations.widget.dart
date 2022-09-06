@@ -1,5 +1,7 @@
 import 'package:animations/animations.dart';
 import 'package:awesome_extensions/awesome_extensions.dart';
+import 'package:dishful/common/data/datetime.dart';
+import 'package:dishful/common/data/intersperse.dart';
 import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/domain/iteration.dart';
 import 'package:dishful/common/domain/recipe.dart';
@@ -52,11 +54,11 @@ class Iterations extends ConsumerWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.fork_right),
+          Icon(Icons.fork_right_rounded),
           Container(width: 8),
           text,
           Spacer(),
-          Icon(Icons.expand_more),
+          Icon(Icons.expand_more_rounded),
         ],
       ),
     );
@@ -82,7 +84,7 @@ class Iterations extends ConsumerWidget {
       title: title.valueOrNull ?? 'No iteration selected',
       subtitle: createdAt.valueOrNull?.toString(),
       leading: (_) => DishfulIconButton(
-        icon: Icon(Icons.close),
+        icon: Icon(Icons.close_rounded),
         onPressed: close,
       ),
       body: (_) {
@@ -98,7 +100,8 @@ class Iterations extends ConsumerWidget {
                       ?.map((change) => Text(change.id))
                       .toList() ??
                   [],
-            )
+            ),
+            Container(height: 12),
           ],
         );
         final otherIterationsList = Consumer(
@@ -131,20 +134,42 @@ class Iterations extends ConsumerWidget {
                             : Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: otherIterations
-                                    .map(
-                                      (iteration) => TextButton(
-                                        child: Text(iteration.id),
-                                        onPressed: () {
-                                          selectIteration(ref, iteration.id);
-                                          RouteService.goRecipe(
-                                            recipeId,
-                                            recipe: initialRecipe,
-                                            iterationId: iterationId,
-                                          );
-                                          close();
-                                        },
-                                      ),
+                                    .map<Widget>(
+                                      (iteration) {
+                                        final titleText = iteration.title ??
+                                            'Iteration #${iterations.indexOf(iteration) + 1}';
+
+                                        return ListTile(
+                                          title: Text(
+                                            titleText,
+                                            style: context.bodyMedium,
+                                          ),
+                                          subtitle: Text(
+                                            iteration.createdAt.formatted,
+                                            style: context.labelMedium,
+                                          ),
+                                          onTap: () {
+                                            selectIteration(ref, iteration.id);
+                                            RouteService.goRecipe(
+                                              recipeId,
+                                              recipe: initialRecipe,
+                                              iterationId: iteration.id,
+                                            );
+                                            close();
+                                          },
+                                          tileColor: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                          ),
+                                          trailing: Icon(
+                                            Icons.chevron_right_rounded,
+                                          ),
+                                        );
+                                      },
                                     )
+                                    .toList()
+                                    .intersperse(Container(height: 8))
                                     .toList(),
                               )
                       ],

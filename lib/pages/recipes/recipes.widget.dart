@@ -109,7 +109,7 @@ class RecipesPage extends ConsumerWidget {
       title: "Recipes",
       withDrawer: true,
       leading: (context) => DishfulIconButton(
-        icon: Icon(Icons.menu),
+        icon: Icon(Icons.menu_rounded),
         onPressed: () {
           Scaffold.of(context).openDrawer();
         },
@@ -118,12 +118,12 @@ class RecipesPage extends ConsumerWidget {
         items: [
           DishfulMenuItem(
             text: "New Recipe",
-            iconData: Icons.add,
+            iconData: Icons.add_rounded,
             onTap: createNewRecipe,
           ),
           DishfulMenuItem(
             text: "Import",
-            iconData: Icons.file_upload,
+            iconData: Icons.file_upload_rounded,
             onTap: () {},
           ),
         ],

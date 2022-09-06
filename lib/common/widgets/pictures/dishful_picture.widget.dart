@@ -21,7 +21,7 @@ class DishfulPicture extends StatelessWidget {
       return Padding(
         padding: const EdgeInsets.all(16),
         child: Icon(
-          Icons.hide_image,
+          Icons.hide_image_rounded,
           size: noImageIconSize,
         ),
       );

@@ -44,7 +44,7 @@ class DishfulMenu extends ConsumerWidget {
             ignoring: isOpen,
             child: DishfulIconButton(
               onPressed: () => ref.set(isOpenProvider, true),
-              icon: Icon(Icons.more_horiz),
+              icon: Icon(Icons.more_horiz_rounded),
             ),
           ),
           portalFollower: IgnorePointer(

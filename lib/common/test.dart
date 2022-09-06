@@ -1,6 +1,8 @@
 import 'dart:math';
 
+import 'package:dishful/common/data/maybe.dart';
 import 'package:dishful/common/data/units.dart';
+import 'package:dishful/common/domain/change.dart';
 import 'package:dishful/common/domain/ingredient.dart';
 import 'package:dishful/common/domain/iteration.dart';
 import 'package:dishful/common/domain/recipe.dart';
@@ -47,16 +49,40 @@ Recipe get randomRecipe => Recipe(
       spiceLevel: f.randomGenerator.element(SpiceLevel.values),
     );
 
-Iteration randomIteration(String recipeId, String parentId) => Iteration(
+Iteration randomIteration(Recipe recipe, String parentId) => Iteration(
       id: f.guid.guid(),
-      recipeId: recipeId,
+      recipeId: recipe.id,
       createdAt: f.date.dateTime(),
       updatedAt: f.date.dateTime(),
       parentId: parentId,
-      changes: [],
+      changes: generateAtMost(3, () => randomChange(recipe)),
       reviews: [],
       title: f.sport.name(),
     );
+
+Change randomChange(Recipe originalRecipe) {
+  final type = f.randomGenerator.element(ChangeType.values);
+  final changedIngredientId = originalRecipe.ingredients.maybeFirst?.id;
+  final changedInstructionId = originalRecipe.instructions.maybeFirst?.id;
+
+  return Change(
+    id: f.guid.guid(),
+    type: type,
+    newServes: f.randomGenerator.integer(4, min: 1),
+    newSpiceLevel: f.randomGenerator.element(SpiceLevel.values),
+    newCookTime: randomDuration,
+    newPrepTime: randomDuration,
+    newIngredient: changedIngredientId != null
+        ? randomIngredient.copyWith(id: changedIngredientId)
+        : null,
+    newInstruction: changedInstructionId != null
+        ? randomInstruction.copyWith(id: changedInstructionId)
+        : null,
+    newDiet: type == ChangeType.removeDiet
+        ? f.randomGenerator.element(originalRecipe.diets ?? [])
+        : f.randomGenerator.element(Diet.values),
+  );
+}
 
 Ingredient get randomIngredient => Ingredient(
       id: f.guid.guid(),

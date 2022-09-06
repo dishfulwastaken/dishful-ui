@@ -47,7 +47,7 @@ class DishfulDropdownField<T extends Enum> extends ConsumerWidget
   static DishfulDropdownField<ThemeMode> theme(BuildContext context) =>
       DishfulDropdownField(
         name: "theme",
-        icon: Icons.palette,
+        icon: Icons.palette_rounded,
         initialValue: ThemeMode.auto,
         values: ThemeMode.values,
       );
@@ -71,7 +71,10 @@ class DishfulDropdownField<T extends Enum> extends ConsumerWidget
       elevation: 0,
       borderRadius: BorderRadius.all(Radius.circular(4)),
       style: context.bodySmall!.copyWith(color: textColor),
-      icon: Icon(Icons.expand_more, color: Palette.lightGrey).paddingOnly(
+      icon: Icon(
+        Icons.expand_more_rounded,
+        color: Palette.lightGrey,
+      ).paddingOnly(
         right: 6,
       ),
       decoration: InputDecoration(

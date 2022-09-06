@@ -223,7 +223,7 @@ class FormBuilderDropdown<T> extends FormBuilderField<T> {
     this.iconDisabledColor,
     this.iconEnabledColor,
     this.allowClear = false,
-    this.clearIcon = const Icon(Icons.close),
+    this.clearIcon = const Icon(Icons.close_rounded),
     this.onTap,
     this.autofocus = false,
     this.shouldRequestFocus = false,
