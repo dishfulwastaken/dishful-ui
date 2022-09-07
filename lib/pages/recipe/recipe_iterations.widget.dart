@@ -2,6 +2,7 @@ import 'package:animations/animations.dart';
 import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:dishful/common/data/datetime.dart';
 import 'package:dishful/common/data/intersperse.dart';
+import 'package:dishful/common/data/maybe.dart';
 import 'package:dishful/common/data/providers.dart';
 import 'package:dishful/common/domain/iteration.dart';
 import 'package:dishful/common/domain/recipe.dart';
@@ -9,9 +10,13 @@ import 'package:dishful/common/services/preferences.service.dart';
 import 'package:dishful/common/services/route.service.dart';
 import 'package:dishful/common/widgets/dishful_empty.widget.dart';
 import 'package:dishful/common/widgets/dishful_icon_button.widget.dart';
+import 'package:dishful/common/widgets/dishful_icon_text.widget.dart';
+import 'package:dishful/common/widgets/dishful_menu.widget.dart';
 import 'package:dishful/common/widgets/dishful_scaffold.widget.dart';
+import 'package:dishful/theme/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:timelines/timelines.dart';
 
 class Iterations extends ConsumerWidget {
   final String recipeId;
@@ -28,11 +33,16 @@ class Iterations extends ConsumerWidget {
     required this.selectedIterationIdProvider,
   });
 
-  Future<void> selectIteration(WidgetRef ref, String iterationId) async {
-    await PreferencesService.setLastOpenedIteration(
-      recipeId: recipeId,
-      lastOpenedIterationId: iterationId,
-    );
+  Future<void> selectIteration(WidgetRef ref, String? iterationId) async {
+    if (iterationId == null) {
+      await PreferencesService.removeLastOpenedIteration(recipeId: recipeId);
+    } else {
+      await PreferencesService.setLastOpenedIteration(
+        recipeId: recipeId,
+        lastOpenedIterationId: iterationId,
+      );
+    }
+
     ref.set(selectedIterationIdProvider, iterationId);
   }
 
@@ -81,98 +91,160 @@ class Iterations extends ConsumerWidget {
     final hasSelectedIteration = iterationValue.valueOrNull != null;
 
     return DishfulScaffold(
-      title: title.valueOrNull ?? 'No iteration selected',
-      subtitle: createdAt.valueOrNull?.toString(),
       leading: (_) => DishfulIconButton(
         icon: Icon(Icons.close_rounded),
         onPressed: close,
       ),
+      title: 'Iterations',
+      subtitle: 'Select an iteration node',
       body: (_) {
-        final changesList = Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Changes', style: context.bodySmall),
-            Container(height: 4),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: changes.valueOrNull
-                      ?.map((change) => Text(change.id))
-                      .toList() ??
-                  [],
-            ),
-            Container(height: 12),
-          ],
-        );
-        final otherIterationsList = Consumer(
+        final timeline = Consumer(
           builder: (context, ref, child) {
             final iterationsValue = ref.watch(iterationsProvider);
 
             return iterationsValue.toWidget(data: (iterations) {
-              final otherIterations = iterations.where(
-                (iteration) => iteration.id != iterationId,
-              );
               final emptyIterations = DishfulEmpty(
                 subject: 'iteration',
                 onPressed: () => print('whatever'),
               );
 
+              iterations.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+
               return iterations.isEmpty
                   ? emptyIterations
-                  : Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (hasSelectedIteration)
-                          Text(
-                            'Select a different iteration',
-                            style: context.bodySmall,
+                  : Flexible(
+                      child: FixedTimeline(
+                        theme: TimelineThemeData(color: Palette.lightGrey),
+                        children: [
+                          TimelineTile(
+                            contents: Container(height: 68),
+                            node: TimelineNode(
+                              endConnector: DashedLineConnector(),
+                              indicator: Indicator.widget(
+                                child: DishfulMenuItem(
+                                  iconData: Icons.add_rounded,
+                                  text: 'New',
+                                  onTap: () {},
+                                ),
+                              ),
+                            ),
                           ),
-                        Container(height: 4),
-                        otherIterations.isEmpty
-                            ? emptyIterations
-                            : Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: otherIterations
-                                    .map<Widget>(
-                                      (iteration) {
-                                        final titleText = iteration.title ??
-                                            'Iteration #${iterations.indexOf(iteration) + 1}';
+                          ...iterations.map((iteration) {
+                            final isFirst =
+                                iteration.id == iterations.maybeFirst?.id;
+                            final isSelectedIteration =
+                                iteration.id == iterationValue.valueOrNull?.id;
 
-                                        return ListTile(
-                                          title: Text(
+                            final index = iterations.indexOf(iteration);
+                            final titleText =
+                                iteration.title ?? 'Iteration #${index + 1}';
+
+                            return TimelineTile(
+                              oppositeContents: Container(
+                                margin: const EdgeInsets.all(14),
+                                child: Text(
+                                  iteration.createdAt.formatted,
+                                  style: context.labelMedium,
+                                ),
+                              ),
+                              contents: isSelectedIteration
+                                  ? Container(
+                                      margin: const EdgeInsets.all(16),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 12),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
                                             titleText,
-                                            style: context.bodyMedium,
+                                            style: context.titleSmall,
                                           ),
-                                          subtitle: Text(
-                                            iteration.createdAt.formatted,
-                                            style: context.labelMedium,
-                                          ),
-                                          onTap: () {
-                                            selectIteration(ref, iteration.id);
-                                            RouteService.goRecipe(
-                                              recipeId,
-                                              recipe: initialRecipe,
-                                              iterationId: iteration.id,
-                                            );
-                                            close();
-                                          },
-                                          tileColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(6),
-                                          ),
-                                          trailing: Icon(
-                                            Icons.chevron_right_rounded,
-                                          ),
-                                        );
-                                      },
+                                          Container(height: 4),
+                                          Text(iteration.changes.length
+                                              .toString()),
+                                          Text(iteration.reviews.length
+                                              .toString()),
+                                        ],
+                                      ),
                                     )
-                                    .toList()
-                                    .intersperse(Container(height: 8))
-                                    .toList(),
-                              )
-                      ],
+                                  : Container(
+                                      margin: const EdgeInsets.all(16),
+                                      child: Text(
+                                        titleText,
+                                        style: context.bodySmall,
+                                      ),
+                                    ),
+                              node: GestureDetector(
+                                onTap: () {
+                                  selectIteration(ref, iteration.id);
+                                  RouteService.goRecipe(
+                                    recipeId,
+                                    recipe: initialRecipe,
+                                    iterationId: iteration.id,
+                                  );
+                                  close();
+                                },
+                                child: TimelineNode(
+                                  startConnector: isFirst
+                                      ? DashedLineConnector()
+                                      : SolidLineConnector(),
+                                  endConnector: SolidLineConnector(),
+                                  indicator: isSelectedIteration
+                                      ? Indicator.dot(
+                                          color: Palette.primary,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(4),
+                                            child: Icon(
+                                              Icons.check_rounded,
+                                              color: Colors.white,
+                                              size: 14,
+                                            ),
+                                          ),
+                                        )
+                                      : Indicator.dot(),
+                                ),
+                              ),
+                            );
+                          }),
+                          TimelineTile(
+                            contents: Container(height: 52),
+                            node: GestureDetector(
+                              onTap: () {
+                                selectIteration(ref, null);
+                                RouteService.goRecipe(
+                                  recipeId,
+                                  recipe: initialRecipe,
+                                  iterationId: null,
+                                );
+                                close();
+                              },
+                              child: TimelineNode(
+                                startConnector: SolidLineConnector(),
+                                indicator: Indicator.dot(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4),
+                                    child: Icon(
+                                      Icons.flag_rounded,
+                                      color: Colors.white,
+                                      size: 14,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Text('Original', style: context.titleSmall),
+                          if (initialRecipe != null)
+                            Text(
+                              initialRecipe!.createdAt.formatted,
+                              style: context.labelMedium,
+                            )
+                        ],
+                      ),
                     );
             });
           },
@@ -180,10 +252,7 @@ class Iterations extends ConsumerWidget {
 
         return Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
-            if (hasSelectedIteration) changesList,
-            otherIterationsList
-          ],
+          children: [timeline],
         );
       },
     );

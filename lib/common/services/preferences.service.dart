@@ -32,6 +32,21 @@ class PreferencesService {
         Future.value(null);
   }
 
+  static Future<void> removeLastOpenedIteration({required String recipeId}) {
+    if (_preferences == null) {
+      print("Routing to landing page to re-init preferences");
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        RouteService.goLanding();
+      });
+    }
+
+    return _preferences?.remove(
+          _getKey(_Prefix.lastOpenedIteration, recipeId),
+        ) ??
+        Future.value(null);
+  }
+
   static String? getLastOpenedIteration({required String recipeId}) {
     if (_preferences == null) {
       print("Routing to landing page to re-init preferences");

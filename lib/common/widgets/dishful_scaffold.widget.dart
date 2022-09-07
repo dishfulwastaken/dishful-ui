@@ -35,18 +35,22 @@ class DishfulScaffold extends ConsumerWidget {
     this.action,
     this.onSave,
     this.onCancel,
-  })  : assert(title != null || titleProvider != null),
-        super(key: key);
+  }) : super(key: key);
 
-  Widget buildTitle(BuildContext context) => title != null
-      ? Text(title!, style: context.titleLarge)
-      : Consumer(builder: ((_, ref, __) {
-          final titleValue = ref.watch(titleProvider!);
+  Widget? buildTitle(BuildContext context) {
+    if (title != null) return Text(title!, style: context.titleLarge);
 
-          return titleValue.toWidget(
-            data: (newTitle) => Text(newTitle ?? '', style: context.titleLarge),
-          );
-        }));
+    if (titleProvider != null)
+      return Consumer(builder: ((_, ref, __) {
+        final titleValue = ref.watch(titleProvider!);
+
+        return titleValue.toWidget(
+          data: (newTitle) => Text(newTitle ?? '', style: context.titleLarge),
+        );
+      }));
+
+    return null;
+  }
 
   Widget? buildSubtitle(BuildContext context) {
     if (subtitle != null)
@@ -123,8 +127,7 @@ class DishfulScaffold extends ConsumerWidget {
                     rightPlaceholder
                 ],
               ),
-              Container(height: 20),
-              _title,
+              if (_title != null) ...[Container(height: 20), _title],
               if (_subtitle != null) ...[Container(height: 10), _subtitle],
               Container(height: 16),
               Expanded(child: body(isEditing)),
