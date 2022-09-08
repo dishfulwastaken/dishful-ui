@@ -7,6 +7,7 @@ import 'package:dishful/common/domain/ingredient.dart';
 import 'package:dishful/common/domain/iteration.dart';
 import 'package:dishful/common/domain/recipe.dart';
 import 'package:dishful/common/domain/instruction.dart';
+import 'package:dishful/common/domain/review.dart';
 import 'package:dishful/common/services/auth.service.dart';
 import 'package:dishful/common/services/ingress.service.dart';
 import 'package:faker/faker.dart';
@@ -16,9 +17,10 @@ final f = Faker();
 
 List<T> generateAtMost<T>(
   int max,
-  T Function() generator,
-) {
-  return List.filled(f.randomGenerator.integer(max), 0)
+  T Function() generator, {
+  int? min,
+}) {
+  return List.filled(f.randomGenerator.integer(max, min: min ?? 0), 0)
       .map((_) => generator.call())
       .toList();
 }
@@ -55,9 +57,18 @@ Iteration randomIteration(Recipe recipe, String parentId) => Iteration(
       createdAt: f.date.dateTime(),
       updatedAt: f.date.dateTime(),
       parentId: parentId,
-      changes: generateAtMost(3, () => randomChange(recipe)),
-      reviews: [],
+      changes: generateAtMost(3, () => randomChange(recipe), min: 1),
+      reviews: [randomReview],
       title: f.sport.name(),
+    );
+
+Review get randomReview => Review(
+      id: f.guid.guid(),
+      reviewerId: f.guid.guid(),
+      rating: f.randomGenerator.decimal() * 10,
+      review: f.lorem.sentence(),
+      pictures: [],
+      createdAt: f.date.dateTime(),
     );
 
 Change randomChange(Recipe originalRecipe) {

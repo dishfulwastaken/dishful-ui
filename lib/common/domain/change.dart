@@ -70,6 +70,39 @@ class Change extends Serializable {
     this.swapInstructionIdTwo,
     this.newDiet,
   }) : id = uuid.v1();
+
+  /// TODO: update this method to take the current recipe so that we can create
+  /// much more human-friendly and descriptive strings.
+  String toString() {
+    switch (type) {
+      case ChangeType.editServes:
+        return 'Update serves to $newServes';
+      case ChangeType.editSpiceLevel:
+        return 'Update spice level to $newSpiceLevel';
+      case ChangeType.editCookTime:
+        return 'Update cook time to $newCookTime';
+      case ChangeType.editPrepTime:
+        return 'Update prep time to $newPrepTime';
+      case ChangeType.editIngredient:
+        return 'Update ingredient to $newIngredient';
+      case ChangeType.removeIngredient:
+        return 'Remove ingredient: $newIngredient';
+      case ChangeType.addIngredient:
+        return 'Add ingredient: $newIngredient';
+      case ChangeType.editInstruction:
+        return 'Update instruction to $newInstruction';
+      case ChangeType.removeInstruction:
+        return 'Remove instruction: $newInstruction';
+      case ChangeType.addInstruction:
+        return 'Add instruction: $newInstruction';
+      case ChangeType.swapInstructions:
+        return 'Swap instructions: $swapInstructionIdOne, $swapInstructionIdOne';
+      case ChangeType.removeDiet:
+        return 'Remove diet: $newDiet';
+      case ChangeType.addDiet:
+        return 'Add diet: $newDiet';
+    }
+  }
 }
 
 class ChangeSerializer extends Serializer<Change> {

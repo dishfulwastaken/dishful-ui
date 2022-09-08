@@ -112,139 +112,152 @@ class Iterations extends ConsumerWidget {
 
               return iterations.isEmpty
                   ? emptyIterations
-                  : Flexible(
-                      child: FixedTimeline(
-                        theme: TimelineThemeData(color: Palette.lightGrey),
-                        children: [
-                          TimelineTile(
-                            contents: Container(height: 68),
-                            node: TimelineNode(
-                              endConnector: DashedLineConnector(),
-                              indicator: Indicator.widget(
-                                child: DishfulMenuItem(
-                                  iconData: Icons.add_rounded,
-                                  text: 'New',
-                                  onTap: () {},
+                  : FixedTimeline(
+                      theme: TimelineThemeData(
+                          color: Palette.lightGrey,
+                          nodePosition: 0,
+                          connectorTheme: ConnectorThemeData(space: 32)),
+                      children: [
+                        TimelineTile(
+                          contents: Text('New', style: context.titleSmall),
+                          node: TimelineNode(
+                            endConnector: DashedLineConnector(),
+                            indicator: Indicator.outlined(
+                              child: Padding(
+                                padding: const EdgeInsets.all(4),
+                                child: Icon(
+                                  Icons.add_rounded,
+                                  color: Palette.grey,
+                                  size: 16,
                                 ),
                               ),
                             ),
                           ),
-                          ...iterations.map((iteration) {
-                            final isFirst =
-                                iteration.id == iterations.maybeFirst?.id;
-                            final isSelectedIteration =
-                                iteration.id == iterationValue.valueOrNull?.id;
+                        ),
+                        ...iterations.map((iteration) {
+                          final isFirst =
+                              iteration.id == iterations.maybeFirst?.id;
+                          final isSelectedIteration =
+                              iteration.id == iterationValue.valueOrNull?.id;
 
-                            final index = iterations.indexOf(iteration);
-                            final titleText =
-                                iteration.title ?? 'Iteration #${index + 1}';
+                          final index = iterations.indexOf(iteration);
+                          final titleText =
+                              iteration.title ?? 'Iteration #${index + 1}';
 
-                            return TimelineTile(
-                              oppositeContents: Container(
-                                margin: const EdgeInsets.all(14),
-                                child: Text(
-                                  iteration.createdAt.formatted,
-                                  style: context.labelMedium,
-                                ),
-                              ),
-                              contents: isSelectedIteration
-                                  ? Container(
-                                      margin: const EdgeInsets.all(16),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(6),
-                                      ),
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 12),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            titleText,
-                                            style: context.titleSmall,
-                                          ),
-                                          Container(height: 4),
-                                          Text(iteration.changes.length
-                                              .toString()),
-                                          Text(iteration.reviews.length
-                                              .toString()),
-                                        ],
-                                      ),
-                                    )
-                                  : Container(
-                                      margin: const EdgeInsets.all(16),
-                                      child: Text(
-                                        titleText,
-                                        style: context.bodySmall,
-                                      ),
+                          return TimelineTile(
+                            contents: isSelectedIteration
+                                ? Container(
+                                    margin: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(6),
                                     ),
-                              node: GestureDetector(
-                                onTap: () {
-                                  selectIteration(ref, iteration.id);
-                                  RouteService.goRecipe(
-                                    recipeId,
-                                    recipe: initialRecipe,
-                                    iterationId: iteration.id,
-                                  );
-                                  close();
-                                },
-                                child: TimelineNode(
-                                  startConnector: isFirst
-                                      ? DashedLineConnector()
-                                      : SolidLineConnector(),
-                                  endConnector: SolidLineConnector(),
-                                  indicator: isSelectedIteration
-                                      ? Indicator.dot(
-                                          color: Palette.primary,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(4),
-                                            child: Icon(
-                                              Icons.check_rounded,
-                                              color: Colors.white,
-                                              size: 14,
-                                            ),
-                                          ),
-                                        )
-                                      : Indicator.dot(),
-                                ),
-                              ),
-                            );
-                          }),
-                          TimelineTile(
-                            contents: Container(height: 52),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 12,
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          titleText,
+                                          style: context.titleSmall,
+                                        ),
+                                        Container(height: 4),
+                                        Text(
+                                          iteration.createdAt.formatted,
+                                          style: context.labelMedium,
+                                        ),
+                                        Container(height: 8),
+                                        Text(iteration.changes
+                                            .map((change) => change.toString())
+                                            .join(', ')),
+                                        Text(
+                                          iteration.review?.review ??
+                                              'No review',
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Container(
+                                    margin: const EdgeInsets.all(10),
+                                    child: Text(
+                                      titleText,
+                                      style: context.bodySmall,
+                                    ),
+                                  ),
                             node: GestureDetector(
                               onTap: () {
-                                selectIteration(ref, null);
+                                selectIteration(ref, iteration.id);
                                 RouteService.goRecipe(
                                   recipeId,
                                   recipe: initialRecipe,
-                                  iterationId: null,
+                                  iterationId: iteration.id,
                                 );
                                 close();
                               },
                               child: TimelineNode(
-                                startConnector: SolidLineConnector(),
-                                indicator: Indicator.dot(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4),
-                                    child: Icon(
-                                      Icons.flag_rounded,
-                                      color: Colors.white,
-                                      size: 14,
-                                    ),
+                                startConnector: isFirst
+                                    ? DashedLineConnector()
+                                    : SolidLineConnector(),
+                                endConnector: SolidLineConnector(),
+                                indicator: isSelectedIteration
+                                    ? Indicator.dot(
+                                        color: Palette.primary,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(4),
+                                          child: Icon(
+                                            Icons.check_rounded,
+                                            color: Colors.white,
+                                            size: 14,
+                                          ),
+                                        ),
+                                      )
+                                    : Indicator.dot(),
+                              ),
+                            ),
+                          );
+                        }),
+
+                        TimelineTile(
+                          contents: Text(
+                            'Original',
+                            style: context.titleSmall,
+                          ),
+                          node: GestureDetector(
+                            onTap: () {
+                              selectIteration(ref, null);
+                              RouteService.goRecipe(
+                                recipeId,
+                                recipe: initialRecipe,
+                                iterationId: null,
+                              );
+                              close();
+                            },
+                            child: TimelineNode(
+                              startConnector: SolidLineConnector(),
+                              indicator: Indicator.dot(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4),
+                                  child: Icon(
+                                    Icons.flag_rounded,
+                                    color: Colors.white,
+                                    size: 14,
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                          Text('Original', style: context.titleSmall),
-                          if (initialRecipe != null)
-                            Text(
-                              initialRecipe!.createdAt.formatted,
-                              style: context.labelMedium,
-                            )
-                        ],
-                      ),
+                        ),
+                        // Text('Original', style: context.titleSmall),
+                        // if (initialRecipe != null)
+                        //   Text(
+                        //     initialRecipe!.createdAt.formatted,
+                        //     style: context.labelMedium,
+                        //   )
+                      ],
                     );
             });
           },

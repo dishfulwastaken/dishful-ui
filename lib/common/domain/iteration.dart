@@ -1,3 +1,4 @@
+import 'package:dishful/common/data/maybe.dart';
 import 'package:dishful/common/domain/change.dart';
 import 'package:dishful/common/domain/review.dart';
 import 'package:dishful/common/services/db.service.dart';
@@ -33,6 +34,8 @@ class Iteration extends Serializable {
     required this.createdAt,
     required this.updatedAt,
   });
+
+  Review? get review => reviews.maybeFirst;
 
   Iteration.create({
     required this.recipeId,
